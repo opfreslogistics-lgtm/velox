@@ -19,6 +19,11 @@ const dancing = Dancing_Script({
 export const metadata: Metadata = {
   title: "Velox Logistics - Global Shipping Solutions",
   description: "Modern, high-performance shipping and logistics platform.",
+  icons: {
+    icon: 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png',
+    shortcut: 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png',
+    apple: 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png',
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +33,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} ${dancing.variable}`}>
+      <head>
+        <link rel="icon" href="https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png" />
+        <link rel="shortcut icon" href="https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png" />
+        <link rel="apple-touch-icon" href="https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png" />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ClientLayoutWrapper>
           {children}
