@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full min-h-[1100px] lg:h-[900px] bg-brand-black overflow-hidden group font-sans pb-16 lg:pb-0">
+    <div className="relative w-full min-h-[900px] lg:h-[900px] bg-brand-black overflow-hidden group font-sans pb-10 lg:pb-0">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -43,10 +43,10 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Main Container */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-start gap-12">
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center lg:items-center justify-center gap-12 lg:gap-16 py-16 lg:py-0">
         
         {/* Left Content */}
-        <div className={`lg:w-7/12 pt-20 lg:pt-0 transition-all duration-1000 transform ${loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
+        <div className={`lg:w-7/12 pt-10 lg:pt-0 transition-all duration-1000 transform ${loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
           
           <div className="flex items-center gap-2 mb-6 animate-fade-in-up">
             <span className="h-1 w-12 bg-brand-red block shadow-[0_0_10px_rgba(212,5,17,0.8)]"></span>
