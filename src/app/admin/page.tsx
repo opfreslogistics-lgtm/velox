@@ -63,9 +63,14 @@ export default function AdminLogin() {
 
       router.push('/admin/dashboard');
     } catch (err: any) {
-      setError(err?.message || 'Unable to sign in right now.');
+      const msg = err?.message || '';
+      // Hide noisy storage quota errors from the UI; show a generic message instead.
+      const isStorageQuotaError = msg.toLowerCase().includes('quota') || msg.includes('sb-');
+      setError(isStorageQuotaError ? 'Unable to sign in right now. Please try again.' : (msg || 'Unable to sign in right now.'));
       setHint(
-        'If this keeps happening: (1) confirm NEXT_PUBLIC_SUPABASE_URL/ANON_KEY are set, (2) check Supabase project auth settings/allowed URLs, (3) verify quota/status in Supabase dashboard.'
+        isStorageQuotaError
+          ? null
+          : 'If this keeps happening: (1) confirm NEXT_PUBLIC_SUPABASE_URL/ANON_KEY are set, (2) check Supabase project auth settings/allowed URLs, (3) verify quota/status in Supabase dashboard.'
       );
     } finally {
       setLoading(false);
