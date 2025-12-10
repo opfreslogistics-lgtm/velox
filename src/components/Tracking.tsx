@@ -624,6 +624,18 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                       </div>
                     </div>
 
+                    {/* Item Description */}
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+                      <div className="p-6 space-y-3">
+                        <p className="text-xs uppercase tracking-[0.2em] font-bold text-brand-red">Item Description</p>
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-900">
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {rawShipment?.shipment_description || 'No item description provided.'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Special Instructions */}
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
                       <div className="p-6">
