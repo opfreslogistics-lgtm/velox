@@ -14,6 +14,34 @@ import dynamic from 'next/dynamic';
 import Barcode from '@/components/shipment/Barcode';
 import Stamp from '@/components/shipment/Stamp';
 
+// Master status-to-percentage map
+const STATUS_PROGRESS: Record<string, number> = {
+  'Pending': 5,
+  'Awaiting Payment': 10,
+  'Payment Confirmed': 20,
+  'Processing': 30,
+  'Ready for Pickup': 35,
+  'Driver En Route': 40,
+  'Picked Up': 45,
+  'At Warehouse': 50,
+  'In Transit': 60,
+  'Departed Facility': 65,
+  'Arrived at Facility': 70,
+  'Out for Delivery': 85,
+  'Delivered': 100,
+  'Returned to Sender': 0,
+  'Cancelled': 0,
+  'On Hold': 15,
+  'Delayed': 25,
+  'Weather Delay': 25,
+  'Address Issue': 25,
+  'Customs Hold': 35,
+  'Inspection Required': 45,
+  'Payment Verification Required': 15,
+  'Lost Package': 0,
+  'Damaged Package': 0,
+};
+
 // Dynamically import Google Maps component to avoid SSR issues
 const LeafletMap = dynamic(() => import('@/components/shipment/GoogleMap'), {
   ssr: false,
@@ -210,7 +238,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           completed: idx < events.length - 1,
           isCurrent: idx === events.length - 1,
           handler: (event as any).handler || (event as any).agent_name || '',
-          progress: ((idx + 1) / events.length) * 100,
+          progress: STATUS_PROGRESS[event.status] ?? ((idx + 1) / events.length) * 100,
         }));
       } else {
         // If no events, create initial event from shipment
@@ -223,7 +251,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           completed: false,
           isCurrent: true,
           handler: shipment.agent_name || '',
-          progress: shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25,
+          progress: STATUS_PROGRESS[shipment.status] ?? (shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25),
         }];
       }
 
