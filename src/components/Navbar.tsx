@@ -115,7 +115,7 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <div 
           className="flex items-center gap-3 cursor-pointer" 
-          onClick={() => handleNavClick('home')}
+          onClick={() => handleNavClick('/')}
         >
           <div className="bg-brand-red text-white p-2 rounded transform -skew-x-12">
             <Package size={28} className="transform skew-x-12" />
