@@ -13,6 +13,8 @@ import { supabase } from '@/lib/supabaseClient';
 import dynamic from 'next/dynamic';
 import Barcode from '@/components/shipment/Barcode';
 import Stamp from '@/components/shipment/Stamp';
+import QRCode from 'qrcode';
+import { generateInvoicePDF } from '@/lib/pdfInvoice';
 
 // Master status-to-percentage map
 const STATUS_PROGRESS: Record<string, number> = {
@@ -69,6 +71,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState('');
+  const [isPrinting, setIsPrinting] = useState(false);
 
   // Auto-search logic
   useEffect(() => {
@@ -277,6 +280,27 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
     }
   };
 
+  const handlePrintInvoice = async () => {
+    if (!data) return;
+    try {
+      setIsPrinting(true);
+      const qrDataUrl = await QRCode.toDataURL(data.trackingNumber || 'N/A');
+      await generateInvoicePDF({
+        shipment: data,
+        rawShipment,
+        history: data.history || [],
+        latestStatus: data.status,
+        progress: data.progress || 0,
+        qrDataUrl,
+      });
+    } catch (err) {
+      console.error('Failed to generate invoice PDF', err);
+      alert('Failed to generate invoice. Please try again.');
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   const getStatusColor = (status: ShipmentStatus | string) => {
     switch (status) {
       case 'Delivered': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800';
@@ -466,8 +490,12 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-indigo-500 to-blue-600 hover:to-blue-700 shadow-md">
-                    <Printer size={16}/> Print Invoice
+                  <button
+                    onClick={handlePrintInvoice}
+                    disabled={isPrinting}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-indigo-500 to-blue-600 hover:to-blue-700 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <Printer size={16}/> {isPrinting ? 'Generating PDF...' : 'Print Invoice'}
                   </button>
                   <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-emerald-500 to-green-600 hover:to-green-700 shadow-md">
                     <Share2 size={16}/> Share Tracking
