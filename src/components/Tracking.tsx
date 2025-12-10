@@ -239,7 +239,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           timestamp: new Date(event.timestamp).toLocaleString(),
           completed: idx < events.length - 1,
           isCurrent: idx === events.length - 1,
-          handler: (event as any).handler || (event as any).agent_name || '',
+          handler: (event as any).handler || (event as any).agent_name || shipment.agent_name || 'Assigned Agent',
           progress: STATUS_PROGRESS[event.status] ?? ((idx + 1) / events.length) * 100,
         }));
 
@@ -256,7 +256,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           timestamp: new Date(shipment.created_at || new Date()).toLocaleString(),
           completed: false,
           isCurrent: true,
-          handler: shipment.agent_name || '',
+          handler: shipment.agent_name || 'Assigned Agent',
           progress: STATUS_PROGRESS[shipment.status] ?? (shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25),
         }];
 
