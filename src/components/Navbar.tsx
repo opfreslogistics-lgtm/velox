@@ -150,14 +150,14 @@ const Navbar: React.FC = () => {
           </button>
 
           <button 
-            onClick={() => handleNavClick('admin-login')}
+            onClick={() => handleNavClick('/admin')}
             className="hidden md:flex items-center gap-2 text-sm font-bold text-brand-black dark:text-white hover:text-brand-red dark:hover:text-brand-red transition-colors"
           >
             <User size={20} />
             <span>Login</span>
           </button>
           <button 
-            onClick={() => handleNavClick('admin-login')}
+            onClick={() => handleNavClick('/admin')}
             className="hidden md:block bg-brand-yellow text-brand-black px-6 py-2.5 rounded font-bold text-sm hover:bg-brand-yellowDark transition-colors shadow-sm transform hover:-translate-y-0.5"
           >
             Sign Up
@@ -263,7 +263,7 @@ const Navbar: React.FC = () => {
                 </div>
             ))}
             <div className="pt-6 flex flex-col gap-3">
-                <button onClick={() => handleNavClick('admin-login')} className="w-full py-4 border-2 border-brand-black dark:border-white text-brand-black dark:text-white rounded font-bold uppercase hover:bg-brand-black hover:text-white dark:hover:bg-white dark:hover:text-brand-black transition-colors">Login Access</button>
+                <button onClick={() => handleNavClick('/admin')} className="w-full py-4 border-2 border-brand-black dark:border-white text-brand-black dark:text-white rounded font-bold uppercase hover:bg-brand-black hover:text-white dark:hover:bg-white dark:hover:text-brand-black transition-colors">Login Access</button>
                 <button onClick={() => handleNavClick('pricing')} className="w-full py-4 bg-brand-red text-white rounded font-bold uppercase hover:bg-brand-redDark transition-colors shadow-lg">Get a Quote</button>
             </div>
         </div>
