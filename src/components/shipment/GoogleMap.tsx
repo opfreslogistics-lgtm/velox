@@ -1,18 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { GoogleMap, LoadScript, Marker, Polyline, InfoWindow } from '@react-google-maps/api';
+import React, { useEffect, useRef, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
 import { geocodeAddress } from '@/lib/geocode';
-
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-};
-
-const defaultCenter = {
-  lat: 0,
-  lng: 0,
-};
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface GoogleMapProps {
   originAddress: string;
@@ -26,6 +17,10 @@ interface GoogleMapProps {
   height?: string;
 }
 
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+const MAP_STYLE = 'mapbox://styles/mapbox/streets-v12';
+const BRAND_RED = '#D40511';
+
 export default function GoogleMapComponent({
   originAddress,
   destinationAddress,
@@ -33,31 +28,23 @@ export default function GoogleMapComponent({
   showRoute = true,
   height = '500px',
 }: GoogleMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [destination, setDestination] = useState<{ lat: number; lng: number } | null>(null);
   const [currentLocationCoords, setCurrentLocationCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
-  const [directionsService, setDirectionsService] = useState<google.maps.DirectionsService | null>(null);
-  const [routePath, setRoutePath] = useState<google.maps.LatLng[]>([]);
+  const [mapReady, setMapReady] = useState(false);
 
-  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-
+  // Load coordinates (geocode addresses if needed)
   useEffect(() => {
     const loadLocations = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Geocode all addresses
-        const geocodePromises = [
-          geocodeAddress(originAddress),
-          geocodeAddress(destinationAddress),
-        ];
-
-        // If current location is provided as a name, geocode it too
+        const geocodePromises = [geocodeAddress(originAddress), geocodeAddress(destinationAddress)];
         if (currentLocation?.name && !currentLocation.lat) {
           geocodePromises.push(geocodeAddress(currentLocation.name));
         }
@@ -65,20 +52,13 @@ export default function GoogleMapComponent({
         const results = await Promise.all(geocodePromises);
         const [originData, destData, currentData] = results;
 
-        if (originData) {
-          setOrigin({ lat: originData.lat, lng: originData.lon });
-        }
-        if (destData) {
-          setDestination({ lat: destData.lat, lng: destData.lon });
-        }
+        if (originData) setOrigin({ lat: originData.lat, lng: originData.lon });
+        if (destData) setDestination({ lat: destData.lat, lng: destData.lon });
 
-        // Handle current location
         if (currentLocation) {
           if (currentLocation.lat && currentLocation.lng) {
-            // Already has coordinates
             setCurrentLocationCoords({ lat: currentLocation.lat, lng: currentLocation.lng });
           } else if (currentData) {
-            // Geocoded from name
             setCurrentLocationCoords({ lat: currentData.lat, lng: currentData.lon });
           }
         }
@@ -97,79 +77,119 @@ export default function GoogleMapComponent({
     loadLocations();
   }, [originAddress, destinationAddress, currentLocation]);
 
-  const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    setMap(mapInstance);
-    
-    // Initialize directions service
-    if (typeof google !== 'undefined') {
-      const service = new google.maps.DirectionsService();
-      setDirectionsService(service);
-    }
-  }, []);
-
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
-
-  // Calculate route when locations are ready
+  // Initialize Mapbox map once
   useEffect(() => {
-    if (!directionsService || !origin || !destination || typeof google === 'undefined') return;
+    if (!mapContainerRef.current || mapRef.current || !MAPBOX_TOKEN) return;
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: MAP_STYLE,
+      center: [0, 0],
+      zoom: 1.5,
+    });
 
-    const waypoints: google.maps.DirectionsWaypoint[] = [];
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.on('load', () => setMapReady(true));
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  // Update markers, polyline, and fit bounds whenever data changes
+  useEffect(() => {
+    if (!mapRef.current || !mapReady || !origin || !destination) return;
+    const map = mapRef.current;
+
+    // Clear previous markers and route
+    const existingMarkers = map.getContainer().querySelectorAll('.velox-marker');
+    existingMarkers.forEach((el) => el.remove());
+    if (map.getLayer('route-line')) {
+      map.removeLayer('route-line');
+    }
+    if (map.getSource('route')) {
+      map.removeSource('route');
+    }
+
+    const points: [number, number, string][] = [
+      [origin.lng, origin.lat, 'Sender Location'],
+    ];
     if (currentLocationCoords) {
-      waypoints.push({
-        location: new google.maps.LatLng(currentLocationCoords.lat, currentLocationCoords.lng),
-        stopover: true,
+      points.push([currentLocationCoords.lng, currentLocationCoords.lat, 'Current Location']);
+    }
+    points.push([destination.lng, destination.lat, 'Receiver Location']);
+
+    const createMarker = (coords: [number, number], color: string, label: string, pulsing = false) => {
+      const el = document.createElement('div');
+      el.className = 'velox-marker';
+      el.style.width = '14px';
+      el.style.height = '14px';
+      el.style.borderRadius = '50%';
+      el.style.background = color;
+      el.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.9)';
+      el.style.border = '2px solid #ffffff';
+      if (pulsing) {
+        el.style.animation = 'velox-pulse 1.4s infinite';
+      }
+      const marker = new mapboxgl.Marker(el).setLngLat(coords).setPopup(new mapboxgl.Popup({ offset: 12 }).setText(label));
+      marker.addTo(map);
+    };
+
+    // Markers
+    createMarker([origin.lng, origin.lat], '#0EA5E9', 'Sender Location');
+    if (currentLocationCoords) {
+      createMarker([currentLocationCoords.lng, currentLocationCoords.lat], '#FFCC00', 'Current Location', true);
+    }
+    createMarker([destination.lng, destination.lat], '#22C55E', 'Receiver Location');
+
+    // Polyline
+    if (showRoute && points.length >= 2) {
+      const coordinates = points.map((p) => [p[0], p[1]]);
+      map.addSource('route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates,
+          },
+          properties: {},
+        },
+      });
+      map.addLayer({
+        id: 'route-line',
+        type: 'line',
+        source: 'route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': BRAND_RED,
+          'line-width': 4,
+          'line-opacity': 0.9,
+        },
       });
     }
 
-    directionsService.route(
-      {
-        origin: new google.maps.LatLng(origin.lat, origin.lng),
-        destination: new google.maps.LatLng(destination.lat, destination.lng),
-        waypoints: waypoints.length > 0 ? waypoints : undefined,
-        travelMode: google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === 'OK' && result) {
-          const path: google.maps.LatLng[] = [];
-          result.routes[0].legs.forEach((leg) => {
-            leg.steps.forEach((step) => {
-              step.path.forEach((point) => {
-                path.push(point);
-              });
-            });
-          });
-          setRoutePath(path);
-        } else {
-          // Fallback: create simple straight line path
-          const simplePath: google.maps.LatLng[] = [
-            new google.maps.LatLng(origin.lat, origin.lng),
-          ];
-          if (currentLocationCoords) {
-            simplePath.push(new google.maps.LatLng(currentLocationCoords.lat, currentLocationCoords.lng));
-          }
-          simplePath.push(new google.maps.LatLng(destination.lat, destination.lng));
-          setRoutePath(simplePath);
-        }
-      }
+    // Fit bounds
+    const bounds = new mapboxgl.LngLatBounds();
+    points.forEach((p) => bounds.extend([p[0], p[1]]));
+    map.fitBounds(bounds, { padding: 60, animate: true });
+  }, [mapReady, origin, destination, currentLocationCoords, showRoute]);
+
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl" style={{ height }}>
+        <div className="text-center p-8">
+          <p className="text-red-500 mb-2">Mapbox token not configured</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Please set NEXT_PUBLIC_MAPBOX_TOKEN in .env.local</p>
+        </div>
+      </div>
     );
-  }, [directionsService, origin, destination, currentLocationCoords]);
-
-  // Fit bounds when locations change
-  useEffect(() => {
-    if (!map || !origin || !destination || typeof google === 'undefined') return;
-
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend(new google.maps.LatLng(origin.lat, origin.lng));
-    bounds.extend(new google.maps.LatLng(destination.lat, destination.lng));
-    
-    if (currentLocationCoords) {
-      bounds.extend(new google.maps.LatLng(currentLocationCoords.lat, currentLocationCoords.lng));
-    }
-
-    map.fitBounds(bounds, 50);
-  }, [map, origin, destination, currentLocationCoords]);
+  }
 
   if (loading) {
     return (
@@ -188,7 +208,8 @@ export default function GoogleMapComponent({
         <div className="text-center p-8">
           <p className="text-red-500 mb-2">{error || 'Unable to display map'}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Origin: {originAddress}<br />
+            Origin: {originAddress}
+            <br />
             Destination: {destinationAddress}
           </p>
         </div>
@@ -196,159 +217,37 @@ export default function GoogleMapComponent({
     );
   }
 
-  if (!googleMapsApiKey) {
-    return (
-      <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl" style={{ height }}>
-        <div className="text-center p-8">
-          <p className="text-red-500 mb-2">Google Maps API Key not configured</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env.local file
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const center = currentLocationCoords
-    ? { lat: currentLocationCoords.lat, lng: currentLocationCoords.lng }
-    : {
-        lat: (origin.lat + destination.lat) / 2,
-        lng: (origin.lng + destination.lng) / 2,
-      };
-
-  // Custom marker icons (only create if google is loaded)
-  const createMarkerIcon = (color: string, label: string) => {
-    const g = (typeof window !== 'undefined' ? (window as any).google : undefined);
-    if (!g || !g.maps || !g.maps.SymbolPath) return undefined;
-    return {
-      path: g.maps.SymbolPath.CIRCLE,
-      scale: 8,
-      fillColor: color,
-      fillOpacity: 1,
-      strokeColor: '#FFFFFF',
-      strokeWeight: 2,
-      label: {
-        text: label,
-        color: '#FFFFFF',
-        fontSize: '12px',
-        fontWeight: 'bold',
-      },
-    };
-  };
-
-  const originIcon = createMarkerIcon('#10B981', 'O');
-  const destinationIcon = createMarkerIcon('#EF4444', 'D');
-  const currentLocationIcon = createMarkerIcon('#3B82F6', '📍');
-
   return (
     <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg relative" style={{ height }}>
-      <LoadScript googleMapsApiKey={googleMapsApiKey} libraries={['places', 'geometry']}>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={currentLocation ? 6 : 5}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-          options={{
-            disableDefaultUI: false,
-            zoomControl: true,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: true,
-            styles: [
-              {
-                featureType: 'poi',
-                elementType: 'labels',
-                stylers: [{ visibility: 'off' }],
-              },
-            ],
-          }}
-        >
-          {/* Origin Marker */}
-          <Marker
-            position={origin}
-            icon={originIcon}
-            onClick={() => setSelectedMarker('origin')}
-          >
-            {selectedMarker === 'origin' && (
-              <InfoWindow onCloseClick={() => setSelectedMarker(null)}>
-                <div className="text-center">
-                  <p className="font-bold text-green-600">Origin</p>
-                  <p className="text-sm">{originAddress}</p>
-                </div>
-              </InfoWindow>
-            )}
-          </Marker>
-
-          {/* Destination Marker */}
-          <Marker
-            position={destination}
-            icon={destinationIcon}
-            onClick={() => setSelectedMarker('destination')}
-          >
-            {selectedMarker === 'destination' && (
-              <InfoWindow onCloseClick={() => setSelectedMarker(null)}>
-                <div className="text-center">
-                  <p className="font-bold text-red-600">Destination</p>
-                  <p className="text-sm">{destinationAddress}</p>
-                </div>
-              </InfoWindow>
-            )}
-          </Marker>
-
-          {/* Current Location Marker */}
-          {currentLocationCoords && (
-            <Marker
-              position={{ lat: currentLocationCoords.lat, lng: currentLocationCoords.lng }}
-              icon={currentLocationIcon}
-              onClick={() => setSelectedMarker('current')}
-              animation={typeof google !== 'undefined' ? google.maps.Animation.BOUNCE : undefined}
-            >
-              {selectedMarker === 'current' && (
-                <InfoWindow onCloseClick={() => setSelectedMarker(null)}>
-                  <div className="text-center">
-                    <p className="font-bold text-blue-600">Current Location</p>
-                    <p className="text-sm">{currentLocation?.name || 'In Transit'}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {currentLocationCoords.lat.toFixed(4)}, {currentLocationCoords.lng.toFixed(4)}
-                    </p>
-                  </div>
-                </InfoWindow>
-              )}
-            </Marker>
-          )}
-
-          {/* Route Polyline */}
-          {showRoute && routePath.length > 0 && typeof google !== 'undefined' && (
-            <Polyline
-              path={routePath}
-              options={{
-                strokeColor: '#D40511',
-                strokeOpacity: 0.8,
-                strokeWeight: 4,
-                geodesic: true,
-              }}
-            />
-          )}
-        </GoogleMap>
-      </LoadScript>
-
-      {/* Legend */}
+      <div ref={mapContainerRef} className="w-full h-full" />
+      <style jsx>{`
+        @keyframes velox-pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4);
+          }
+          70% {
+            box-shadow: 0 0 0 12px rgba(255, 204, 0, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+          }
+        }
+      `}</style>
       <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 z-[1000] border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col gap-2 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
-            <span className="font-semibold">Origin</span>
+            <div className="w-4 h-4 rounded-full bg-sky-500 border-2 border-white"></div>
+            <span className="font-semibold">Sender Location</span>
           </div>
           {currentLocationCoords && (
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white animate-pulse"></div>
+              <div className="w-4 h-4 rounded-full bg-amber-400 border-2 border-white animate-pulse"></div>
               <span className="font-semibold">Current Location</span>
             </div>
           )}
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white"></div>
-            <span className="font-semibold">Destination</span>
+            <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
+            <span className="font-semibold">Receiver Location</span>
           </div>
         </div>
       </div>
