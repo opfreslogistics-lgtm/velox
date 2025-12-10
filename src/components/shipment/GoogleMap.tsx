@@ -37,6 +37,34 @@ export default function GoogleMapComponent({
   const [error, setError] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
+  const buildGeocodeQueries = (addr?: string): string[] => {
+    if (!addr) return [];
+    const cleaned = addr
+      .replace(/\bN\/A\b/gi, '')
+      .replace(/\bNA\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .replace(/,+/g, ',')
+      .replace(/,\s*,/g, ', ')
+      .trim();
+    const parts = cleaned.split(',').map((p) => p.trim()).filter(Boolean);
+    const queries = new Set<string>();
+    if (cleaned) queries.add(cleaned);
+    if (parts.length >= 3) queries.add(parts.slice(-3).join(', '));
+    if (parts.length >= 2) queries.add(parts.slice(-2).join(', '));
+    if (parts.length >= 1) queries.add(parts.slice(-1).join(', '));
+    return Array.from(queries).filter(Boolean);
+  };
+
+  const geocodeWithFallback = async (addr?: string) => {
+    for (const query of buildGeocodeQueries(addr)) {
+      const res = await geocodeAddress(query);
+      if (res) {
+        return { lat: res.lat, lng: res.lon };
+      }
+    }
+    return null;
+  };
+
   // Load coordinates (geocode addresses if needed)
   useEffect(() => {
     const loadLocations = async () => {
@@ -44,27 +72,25 @@ export default function GoogleMapComponent({
         setLoading(true);
         setError(null);
 
-        const geocodePromises = [geocodeAddress(originAddress), geocodeAddress(destinationAddress)];
-        if (currentLocation?.name && !currentLocation.lat) {
-          geocodePromises.push(geocodeAddress(currentLocation.name));
-        }
+        const [originData, destData, currentData] = await Promise.all([
+          geocodeWithFallback(originAddress),
+          geocodeWithFallback(destinationAddress),
+          currentLocation?.name && !currentLocation.lat ? geocodeWithFallback(currentLocation.name) : Promise.resolve(null),
+        ]);
 
-        const results = await Promise.all(geocodePromises);
-        const [originData, destData, currentData] = results;
-
-        if (originData) setOrigin({ lat: originData.lat, lng: originData.lon });
-        if (destData) setDestination({ lat: destData.lat, lng: destData.lon });
+        if (originData) setOrigin(originData);
+        if (destData) setDestination(destData);
 
         if (currentLocation) {
           if (currentLocation.lat && currentLocation.lng) {
             setCurrentLocationCoords({ lat: currentLocation.lat, lng: currentLocation.lng });
           } else if (currentData) {
-            setCurrentLocationCoords({ lat: currentData.lat, lng: currentData.lon });
+            setCurrentLocationCoords(currentData);
           }
         }
 
         if (!originData || !destData) {
-          setError('Could not geocode addresses. Please check the addresses.');
+          setError('Could not geocode addresses. Please check the city, state, and country fields.');
         }
       } catch (err) {
         setError('Failed to load map data.');
