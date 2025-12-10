@@ -794,16 +794,23 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                                     {data.history.map((row, i) => (
-                                        <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-750">
-                                            <td className="p-4 font-medium dark:text-white">{row.timestamp}</td>
-                                            <td className="p-4 dark:text-gray-300">{row.location}</td>
+                                        <tr 
+                                          key={i} 
+                                          className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                        >
+                                            <td className="p-4 font-medium text-gray-800 dark:text-white">{row.timestamp}</td>
+                                            <td className="p-4 text-gray-700 dark:text-gray-300">{row.location}</td>
                                             <td className="p-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-bold uppercase whitespace-nowrap ${row.completed ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                <span className={`px-2 py-1 rounded text-xs font-bold uppercase whitespace-nowrap ${
+                                                  row.completed 
+                                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200' 
+                                                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-200'
+                                                }`}>
                                                     {row.status}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-gray-500">{row.handler}</td>
-                                            <td className="p-4 text-right font-mono">{row.progress}%</td>
+                                            <td className="p-4 text-gray-500 dark:text-gray-300">{row.handler}</td>
+                                            <td className="p-4 text-right font-mono text-gray-800 dark:text-gray-100">{row.progress}%</td>
                                         </tr>
                                     ))}
                                 </tbody>

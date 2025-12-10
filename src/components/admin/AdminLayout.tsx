@@ -43,16 +43,27 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ activePage, children }) => {
   const [isDark, setIsDark] = useState(false);
 
   React.useEffect(() => {
-    setIsDark(document.documentElement.classList.contains('dark'));
+    // Default to dark mode unless explicitly set to light
+    const savedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    const shouldBeDark = savedTheme !== 'light';
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
+    }
   }, []);
 
   const toggleTheme = () => {
     const html = document.documentElement;
     if (html.classList.contains('dark')) {
       html.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
       setIsDark(false);
     } else {
       html.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
       setIsDark(true);
     }
   };
