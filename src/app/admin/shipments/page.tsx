@@ -329,6 +329,7 @@ export default function ShipmentsPage() {
           status: currentShipment.status,
           description: `Shipment status updated to: ${currentShipment.status}`,
           timestamp: new Date().toISOString(),
+          location: currentShipment.current_location_name || '',
         }]);
       } else {
         // Create new
@@ -349,6 +350,7 @@ export default function ShipmentsPage() {
           status: currentShipment.status || 'Pending',
           description: `Shipment created with status: ${currentShipment.status || 'Pending'}`,
           timestamp: new Date().toISOString(),
+          location: currentShipment.current_location_name || currentShipment.sender_city || '',
         }]);
       }
       await loadShipments();
