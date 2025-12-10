@@ -193,6 +193,8 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
         : undefined;
 
       // Transform Supabase data to match Shipment interface
+      const baseProgress = STATUS_PROGRESS[shipment.status] ?? (shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25);
+
       const transformedData: Shipment = {
         id: shipment.id,
         trackingNumber: shipment.tracking_number,
@@ -213,7 +215,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
         dimensions: `${shipment.length}x${shipment.width}x${shipment.height} cm`,
         type: shipment.shipment_type,
         serviceType: shipment.delivery_speed,
-        progress: shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25,
+        progress: baseProgress,
         currentLocation,
         agent: mergedAgent,
         history: [],
@@ -240,6 +242,10 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           handler: (event as any).handler || (event as any).agent_name || '',
           progress: STATUS_PROGRESS[event.status] ?? ((idx + 1) / events.length) * 100,
         }));
+
+        // Update overall progress to the latest event's mapped percentage
+        const lastEvent = transformedData.history[transformedData.history.length - 1];
+        transformedData.progress = STATUS_PROGRESS[lastEvent.status] ?? lastEvent.progress ?? transformedData.progress;
       } else {
         // If no events, create initial event from shipment
         transformedData.history = [{
@@ -253,6 +259,9 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
           handler: shipment.agent_name || '',
           progress: STATUS_PROGRESS[shipment.status] ?? (shipment.status === 'Delivered' ? 100 : shipment.status === 'In Transit' ? 50 : 25),
         }];
+
+        // Also set overall progress based on status map
+        transformedData.progress = STATUS_PROGRESS[shipment.status] ?? transformedData.progress;
       }
 
       setData(transformedData);
