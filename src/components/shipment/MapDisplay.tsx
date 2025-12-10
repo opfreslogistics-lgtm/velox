@@ -23,7 +23,7 @@ function FitBounds({ positions }: { positions: L.LatLngExpression[] }) {
   useEffect(() => {
     if (positions.length) {
       const bounds = L.latLngBounds(positions as any);
-      map.fitBounds(bounds, { padding: [30, 30] });
+      map.fitBounds(bounds, { padding: [30, 30] } as any);
     }
   }, [positions, map]);
   return null;

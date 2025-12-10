@@ -168,7 +168,7 @@ export default function GoogleMapComponent({
       bounds.extend(new google.maps.LatLng(currentLocationCoords.lat, currentLocationCoords.lng));
     }
 
-    map.fitBounds(bounds, { padding: 50 });
+    map.fitBounds(bounds, 50);
   }, [map, origin, destination, currentLocationCoords]);
 
   if (loading) {

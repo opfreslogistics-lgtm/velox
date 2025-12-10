@@ -54,6 +54,7 @@ export interface Agent {
   photo: string;
   id: string;
   phone: string;
+  email?: string;
   rating: number;
   vehicle: string;
 }
