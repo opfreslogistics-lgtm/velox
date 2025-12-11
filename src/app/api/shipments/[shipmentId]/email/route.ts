@@ -40,34 +40,35 @@ export async function POST(req: Request, { params }: { params: { shipmentId: str
       return NextResponse.json({ error: 'Shipment not found.' }, { status: 404 });
     }
 
-    const routeLabel = `${shipment.sender_city}, ${shipment.sender_country} → ${shipment.recipient_city}, ${shipment.recipient_country}`;
+    const s = shipment as Record<string, any>;
+    const routeLabel = `${s.sender_city}, ${s.sender_country} → ${s.recipient_city}, ${s.recipient_country}`;
 
     if (body.type === 'created') {
       await sendShipmentCreatedEmail(
         {
-          trackingNumber: shipment.tracking_number,
-          senderName: shipment.sender_name,
-          senderEmail: shipment.sender_email,
-          recipientName: shipment.recipient_name,
-          recipientEmail: shipment.recipient_email,
-          status: shipment.status,
+          trackingNumber: s.tracking_number,
+          senderName: s.sender_name,
+          senderEmail: s.sender_email,
+          recipientName: s.recipient_name,
+          recipientEmail: s.recipient_email,
+          status: s.status,
           route: routeLabel,
-          createdAt: shipment.created_at,
+          createdAt: s.created_at,
         },
         process.env.ADMIN_EMAIL
       );
     } else {
       await sendShipmentUpdatedEmail(
         {
-          trackingNumber: shipment.tracking_number,
+          trackingNumber: s.tracking_number,
           route: routeLabel,
-          oldStatus: body.oldStatus || shipment.status,
-          newStatus: shipment.status,
-          updatedAt: shipment.updated_at,
-          senderEmail: shipment.sender_email,
-          recipientEmail: shipment.recipient_email,
-          estimatedDelivery: shipment.estimated_delivery_date,
-          currentLocation: shipment.current_location_name,
+          oldStatus: body.oldStatus || s.status,
+          newStatus: s.status,
+          updatedAt: s.updated_at,
+          senderEmail: s.sender_email,
+          recipientEmail: s.recipient_email,
+          estimatedDelivery: s.estimated_delivery_date,
+          currentLocation: s.current_location_name,
         },
         process.env.ADMIN_EMAIL
       );
