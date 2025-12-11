@@ -69,10 +69,10 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
   const emailPromises: Promise<void>[] = [];
   let hasValidRecipients = false;
 
-  // Send email to sender
+  // Send email to sender - FORCE SEND
   if (isValidEmail(payload.senderEmail)) {
     const senderEmail = payload.senderEmail!.trim();
-    console.log('[email] Sending shipment created email to sender:', senderEmail);
+    console.log('[email] 📧 FORCE SENDING shipment created email to sender:', senderEmail);
     hasValidRecipients = true;
     emailPromises.push(
       sendEmail({
@@ -81,22 +81,30 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         html: template.html,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       })
-        .then(() => {
-          console.log('[email] Successfully sent shipment created email to sender:', senderEmail);
+        .then((result) => {
+          console.log('[email] ✅ SUCCESS: Sent shipment created email to sender:', senderEmail, {
+            messageId: result.messageId,
+            accepted: result.accepted,
+          });
         })
         .catch((err) => {
-          console.error('[email] Failed to send shipment created email to sender:', senderEmail, err);
-          // Don't throw - allow recipient email to still be sent
+          const errorMsg = err.message || String(err);
+          console.error('[email] ❌ FAILED: Could not send shipment created email to sender:', senderEmail, {
+            error: errorMsg,
+            stack: err.stack,
+          });
+          // Re-throw to ensure we know about failures
+          throw new Error(`Failed to send email to sender ${senderEmail}: ${errorMsg}`);
         })
     );
   } else {
-    console.warn('[email] Invalid or missing sender email:', payload.senderEmail);
+    console.warn('[email] ⚠️ Invalid or missing sender email:', payload.senderEmail);
   }
 
-  // Send email to recipient
+  // Send email to recipient - FORCE SEND
   if (isValidEmail(payload.recipientEmail)) {
     const recipientEmail = payload.recipientEmail!.trim();
-    console.log('[email] Sending shipment created email to recipient:', recipientEmail);
+    console.log('[email] 📧 FORCE SENDING shipment created email to recipient:', recipientEmail);
     hasValidRecipients = true;
     emailPromises.push(
       sendEmail({
@@ -105,16 +113,24 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         html: template.html,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       })
-        .then(() => {
-          console.log('[email] Successfully sent shipment created email to recipient:', recipientEmail);
+        .then((result) => {
+          console.log('[email] ✅ SUCCESS: Sent shipment created email to recipient:', recipientEmail, {
+            messageId: result.messageId,
+            accepted: result.accepted,
+          });
         })
         .catch((err) => {
-          console.error('[email] Failed to send shipment created email to recipient:', recipientEmail, err);
-          // Don't throw - allow sender email to still be sent
+          const errorMsg = err.message || String(err);
+          console.error('[email] ❌ FAILED: Could not send shipment created email to recipient:', recipientEmail, {
+            error: errorMsg,
+            stack: err.stack,
+          });
+          // Re-throw to ensure we know about failures
+          throw new Error(`Failed to send email to recipient ${recipientEmail}: ${errorMsg}`);
         })
     );
   } else {
-    console.warn('[email] Invalid or missing recipient email:', payload.recipientEmail);
+    console.warn('[email] ⚠️ Invalid or missing recipient email:', payload.recipientEmail);
   }
 
   // If no sender or recipient emails, send to admin only
@@ -147,8 +163,36 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
     throw error;
   }
 
-  await Promise.all(emailPromises);
-  console.log('[email] All shipment created emails processed');
+  // Use Promise.allSettled to ensure both emails are attempted even if one fails
+  const results = await Promise.allSettled(emailPromises);
+  
+  // Log results
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      console.log('[email] ✅ Email promise resolved successfully');
+    } else {
+      console.error('[email] ❌ Email promise rejected:', result.reason);
+    }
+  });
+  
+  // Check if any emails were successfully sent
+  const successful = results.filter(r => r.status === 'fulfilled').length;
+  const failed = results.filter(r => r.status === 'rejected').length;
+  
+  console.log('[email] All shipment created emails processed', {
+    total: results.length,
+    successful,
+    failed,
+  });
+  
+  // If all failed, throw an error
+  if (failed === results.length && results.length > 0) {
+    const errors = results
+      .filter(r => r.status === 'rejected')
+      .map(r => (r as PromiseRejectedResult).reason?.message || 'Unknown error')
+      .join('; ');
+    throw new Error(`All emails failed to send: ${errors}`);
+  }
 }
 
 export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayload, adminEmail?: string) {
@@ -165,10 +209,10 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
   const emailPromises: Promise<void>[] = [];
   let hasValidRecipients = false;
 
-  // Send email to sender
+  // Send email to sender - FORCE SEND
   if (isValidEmail(payload.senderEmail)) {
     const senderEmail = payload.senderEmail!.trim();
-    console.log('[email] Sending shipment updated email to sender:', senderEmail);
+    console.log('[email] 📧 FORCE SENDING shipment updated email to sender:', senderEmail);
     hasValidRecipients = true;
     emailPromises.push(
       sendEmail({
@@ -177,22 +221,30 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         html: template.html,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       })
-        .then(() => {
-          console.log('[email] Successfully sent shipment updated email to sender:', senderEmail);
+        .then((result) => {
+          console.log('[email] ✅ SUCCESS: Sent shipment updated email to sender:', senderEmail, {
+            messageId: result.messageId,
+            accepted: result.accepted,
+          });
         })
         .catch((err) => {
-          console.error('[email] Failed to send shipment updated email to sender:', senderEmail, err);
-          // Don't throw - allow recipient email to still be sent
+          const errorMsg = err.message || String(err);
+          console.error('[email] ❌ FAILED: Could not send shipment updated email to sender:', senderEmail, {
+            error: errorMsg,
+            stack: err.stack,
+          });
+          // Re-throw to ensure we know about failures
+          throw new Error(`Failed to send email to sender ${senderEmail}: ${errorMsg}`);
         })
     );
   } else {
-    console.warn('[email] Invalid or missing sender email:', payload.senderEmail);
+    console.warn('[email] ⚠️ Invalid or missing sender email:', payload.senderEmail);
   }
 
-  // Send email to recipient
+  // Send email to recipient - FORCE SEND
   if (isValidEmail(payload.recipientEmail)) {
     const recipientEmail = payload.recipientEmail!.trim();
-    console.log('[email] Sending shipment updated email to recipient:', recipientEmail);
+    console.log('[email] 📧 FORCE SENDING shipment updated email to recipient:', recipientEmail);
     hasValidRecipients = true;
     emailPromises.push(
       sendEmail({
@@ -201,16 +253,24 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         html: template.html,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       })
-        .then(() => {
-          console.log('[email] Successfully sent shipment updated email to recipient:', recipientEmail);
+        .then((result) => {
+          console.log('[email] ✅ SUCCESS: Sent shipment updated email to recipient:', recipientEmail, {
+            messageId: result.messageId,
+            accepted: result.accepted,
+          });
         })
         .catch((err) => {
-          console.error('[email] Failed to send shipment updated email to recipient:', recipientEmail, err);
-          // Don't throw - allow sender email to still be sent
+          const errorMsg = err.message || String(err);
+          console.error('[email] ❌ FAILED: Could not send shipment updated email to recipient:', recipientEmail, {
+            error: errorMsg,
+            stack: err.stack,
+          });
+          // Re-throw to ensure we know about failures
+          throw new Error(`Failed to send email to recipient ${recipientEmail}: ${errorMsg}`);
         })
     );
   } else {
-    console.warn('[email] Invalid or missing recipient email:', payload.recipientEmail);
+    console.warn('[email] ⚠️ Invalid or missing recipient email:', payload.recipientEmail);
   }
 
   // If no sender or recipient emails, send to admin only
@@ -243,8 +303,36 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
     throw error;
   }
 
-  await Promise.all(emailPromises);
-  console.log('[email] All shipment updated emails processed');
+  // Use Promise.allSettled to ensure both emails are attempted even if one fails
+  const results = await Promise.allSettled(emailPromises);
+  
+  // Log results
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      console.log('[email] ✅ Email promise resolved successfully');
+    } else {
+      console.error('[email] ❌ Email promise rejected:', result.reason);
+    }
+  });
+  
+  // Check if any emails were successfully sent
+  const successful = results.filter(r => r.status === 'fulfilled').length;
+  const failed = results.filter(r => r.status === 'rejected').length;
+  
+  console.log('[email] All shipment updated emails processed', {
+    total: results.length,
+    successful,
+    failed,
+  });
+  
+  // If all failed, throw an error
+  if (failed === results.length && results.length > 0) {
+    const errors = results
+      .filter(r => r.status === 'rejected')
+      .map(r => (r as PromiseRejectedResult).reason?.message || 'Unknown error')
+      .join('; ');
+    throw new Error(`All emails failed to send: ${errors}`);
+  }
 }
 
 export async function sendContactEmail(payload: ContactEmailPayload, adminRecipients?: Recipient | Recipient[]) {

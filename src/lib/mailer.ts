@@ -19,12 +19,48 @@ function assertMailerEnv() {
 async function getTransporter() {
   if (transporter) return transporter;
   assertMailerEnv();
+  
+  console.log('[mailer] Creating transporter with config:', {
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465,
+    user: smtpUser,
+    hasPass: !!smtpPass,
+  });
+  
   transporter = nodemailer.createTransport({
     host: smtpHost,
     port: smtpPort,
     secure: smtpPort === 465,
-    auth: { user: smtpUser, pass: smtpPass },
+    auth: { 
+      user: smtpUser, 
+      pass: smtpPass 
+    },
+    // Add connection timeout and better error handling
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+    // For Gmail and other services
+    tls: {
+      rejectUnauthorized: false, // Allow self-signed certificates
+    },
   });
+  
+  // Verify connection
+  try {
+    await transporter.verify();
+    console.log('[mailer] SMTP connection verified successfully');
+  } catch (verifyErr: any) {
+    console.error('[mailer] SMTP verification failed:', {
+      error: verifyErr.message,
+      code: verifyErr.code,
+      command: verifyErr.command,
+      response: verifyErr.response,
+    });
+    transporter = null; // Reset so it tries again next time
+    throw new Error(`SMTP connection failed: ${verifyErr.message}`);
+  }
+  
   return transporter;
 }
 
@@ -64,35 +100,64 @@ export async function sendEmail(options: {
 
   try {
     const transport = await getTransporter();
-    console.log('[mailer] Transporter created, sending email...');
+    console.log('[mailer] Transporter ready, sending email...', {
+      from: smtpFrom,
+      to: to,
+      subject: options.subject,
+    });
 
-    const result = await transport.sendMail({
+    const mailOptions = {
       from: smtpFrom,
       to: to.join(', '),
       cc: cc.length ? cc.join(', ') : undefined,
       bcc: bcc.length ? bcc.join(', ') : undefined,
       subject: options.subject,
       html: options.html,
-      text: options.text,
+      text: options.text || options.html.replace(/<[^>]*>/g, ''), // Auto-generate text from HTML
       replyTo: options.replyTo,
       headers: options.headers,
+    };
+
+    console.log('[mailer] Sending mail with options:', {
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      hasHtml: !!mailOptions.html,
+      hasText: !!mailOptions.text,
     });
 
-    console.log('[mailer] Email sent successfully', {
+    const result = await transport.sendMail(mailOptions);
+
+    console.log('[mailer] ✅ Email sent successfully!', {
       messageId: result.messageId,
+      accepted: result.accepted,
+      rejected: result.rejected,
+      response: result.response,
       to: to.join(', '),
     });
 
+    // Verify that email was actually accepted
+    if (result.rejected && result.rejected.length > 0) {
+      console.error('[mailer] ⚠️ Some recipients were rejected:', result.rejected);
+      throw new Error(`Email rejected for recipients: ${result.rejected.join(', ')}`);
+    }
+
+    if (!result.messageId) {
+      console.warn('[mailer] ⚠️ No messageId returned, email may not have been sent');
+    }
+
     return result;
   } catch (err: any) {
-    console.error('[mailer] Failed to send email', {
-      error: err.message || err,
+    console.error('[mailer] ❌ Failed to send email', {
+      error: err.message || String(err),
       code: err.code,
       command: err.command,
       response: err.response,
       responseCode: err.responseCode,
+      stack: err.stack,
     });
-    throw err;
+    // Re-throw with more context
+    throw new Error(`Email sending failed: ${err.message || String(err)}`);
   }
 }
 
