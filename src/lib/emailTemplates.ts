@@ -1,7 +1,7 @@
 const brandRed = '#e02828';
 const brandBlack = '#000000';
 const brandGray = '#1a1a1a';
-const lightGray = '#f3f3f3';
+const lightGray = '#f5f5f5';
 const white = '#ffffff';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@veloxlogistics.com';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxlogistics.com';
@@ -50,57 +50,39 @@ function formatDate(value?: string | Date) {
   return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
-function formatAddress(parts: {
-  line1?: string;
-  line2?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
-}): string {
-  const addressParts: string[] = [];
-  if (parts.line1) addressParts.push(parts.line1);
-  if (parts.line2) addressParts.push(parts.line2);
-  if (parts.city) addressParts.push(parts.city);
-  if (parts.state) addressParts.push(parts.state);
-  if (parts.postalCode) addressParts.push(parts.postalCode);
-  if (parts.country) addressParts.push(parts.country);
-  return addressParts.length > 0 ? addressParts.join(', ') : '—';
-}
-
 const STATUS_COPY: Record<string, { title: string; tip: string; icon: string }> = {
-  Pending: { title: 'We received your order.', tip: 'We are preparing your shipment details.', icon: 'fa-clock' },
-  'Awaiting Payment': { title: 'Payment required.', tip: 'Complete payment to start processing.', icon: 'fa-credit-card' },
-  'Payment Confirmed': { title: 'Payment confirmed.', tip: 'Processing will start shortly.', icon: 'fa-check-circle' },
-  Processing: { title: 'We are packing your order.', tip: 'Labels are being prepared.', icon: 'fa-box' },
-  'Ready for Pickup': { title: 'Ready for pickup.', tip: 'Driver will collect soon.', icon: 'fa-truck' },
-  'Driver En Route': { title: 'Driver is on the way.', tip: 'Keep your phone nearby for updates.', icon: 'fa-route' },
-  'Picked Up': { title: 'Package picked up.', tip: 'In hand and heading to origin facility.', icon: 'fa-map-marker-alt' },
-  'At Warehouse': { title: 'At warehouse.', tip: 'Queued for the next leg of the journey.', icon: 'fa-warehouse' },
-  'In Transit': { title: 'In transit.', tip: 'Moving to the next facility.', icon: 'fa-truck' },
-  'Departed Facility': { title: 'Departed facility.', tip: 'On the road to the next stop.', icon: 'fa-arrow-right' },
-  'Arrived at Facility': { title: 'Arrived at facility.', tip: 'Sorting for the next transfer.', icon: 'fa-building' },
-  'Out for Delivery': { title: 'Out for delivery.', tip: 'Expect delivery today.', icon: 'fa-shipping-fast' },
-  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Velox.', icon: 'fa-check-circle' },
-  'Delivery Attempted': { title: 'Delivery attempted.', tip: 'We will re-attempt or contact you.', icon: 'fa-exclamation-triangle' },
-  'Returned to Sender': { title: 'Returned to sender.', tip: 'Contact support to reschedule.', icon: 'fa-undo' },
-  Cancelled: { title: 'Shipment cancelled.', tip: 'Reach out if this is unexpected.', icon: 'fa-ban' },
-  'On Hold': { title: 'Shipment on hold.', tip: 'We will notify you once it resumes.', icon: 'fa-pause-circle' },
-  Delayed: { title: 'Shipment delayed.', tip: 'We are expediting the next leg.', icon: 'fa-hourglass-half' },
-  'Weather Delay': { title: 'Weather delay.', tip: 'Safety first—new ETA will follow.', icon: 'fa-cloud-rain' },
-  'Address Issue': { title: 'Address issue.', tip: 'Please confirm the delivery address.', icon: 'fa-map-marked-alt' },
-  'Customs Hold': { title: 'Customs hold.', tip: 'Awaiting clearance.', icon: 'fa-passport' },
-  'Inspection Required': { title: 'Inspection in progress.', tip: 'We will share findings soon.', icon: 'fa-search' },
-  'Payment Verification Required': { title: 'Payment verification needed.', tip: 'Please verify payment details.', icon: 'fa-credit-card' },
-  'Lost Package': { title: 'Package reported lost.', tip: 'Support will reach out with options.', icon: 'fa-question-circle' },
-  'Damaged Package': { title: 'Package reported damaged.', tip: 'Support will coordinate a resolution.', icon: 'fa-tools' },
+  Pending: { title: 'We received your order.', tip: 'We are preparing your shipment details.', icon: '⏰' },
+  'Awaiting Payment': { title: 'Payment required.', tip: 'Complete payment to start processing.', icon: '💳' },
+  'Payment Confirmed': { title: 'Payment confirmed.', tip: 'Processing will start shortly.', icon: '✅' },
+  Processing: { title: 'We are packing your order.', tip: 'Labels are being prepared.', icon: '📦' },
+  'Ready for Pickup': { title: 'Ready for pickup.', tip: 'Driver will collect soon.', icon: '🚚' },
+  'Driver En Route': { title: 'Driver is on the way.', tip: 'Keep your phone nearby for updates.', icon: '🛣️' },
+  'Picked Up': { title: 'Package picked up.', tip: 'In hand and heading to origin facility.', icon: '📍' },
+  'At Warehouse': { title: 'At warehouse.', tip: 'Queued for the next leg of the journey.', icon: '🏢' },
+  'In Transit': { title: 'In transit.', tip: 'Moving to the next facility.', icon: '🚚' },
+  'Departed Facility': { title: 'Departed facility.', tip: 'On the road to the next stop.', icon: '➡️' },
+  'Arrived at Facility': { title: 'Arrived at facility.', tip: 'Sorting for the next transfer.', icon: '🏬' },
+  'Out for Delivery': { title: 'Out for delivery.', tip: 'Expect delivery today.', icon: '📦' },
+  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Velox.', icon: '🎉' },
+  'Delivery Attempted': { title: 'Delivery attempted.', tip: 'We will re-attempt or contact you.', icon: '⚠️' },
+  'Returned to Sender': { title: 'Returned to sender.', tip: 'Contact support to reschedule.', icon: '↩️' },
+  Cancelled: { title: 'Shipment cancelled.', tip: 'Reach out if this is unexpected.', icon: '⛔' },
+  'On Hold': { title: 'Shipment on hold.', tip: 'We will notify you once it resumes.', icon: '⏸️' },
+  Delayed: { title: 'Shipment delayed.', tip: 'We are expediting the next leg.', icon: '⌛' },
+  'Weather Delay': { title: 'Weather delay.', tip: 'Safety first—new ETA will follow.', icon: '🌧️' },
+  'Address Issue': { title: 'Address issue.', tip: 'Please confirm the delivery address.', icon: '📮' },
+  'Customs Hold': { title: 'Customs hold.', tip: 'Awaiting clearance.', icon: '🛃' },
+  'Inspection Required': { title: 'Inspection in progress.', tip: 'We will share findings soon.', icon: '🔍' },
+  'Payment Verification Required': { title: 'Payment verification needed.', tip: 'Please verify payment details.', icon: '💳' },
+  'Lost Package': { title: 'Package reported lost.', tip: 'Support will reach out with options.', icon: '❓' },
+  'Damaged Package': { title: 'Package reported damaged.', tip: 'Support will coordinate a resolution.', icon: '🛠️' },
 };
 
 const PROGRESS_STEPS = [
-  { label: 'Picked Up', icon: 'fa-map-marker-alt' },
-  { label: 'In Transit', icon: 'fa-truck' },
-  { label: 'Out for Delivery', icon: 'fa-shipping-fast' },
-  { label: 'Delivered', icon: 'fa-check-circle' },
+  { label: 'Picked Up', icon: '📍' },
+  { label: 'In Transit', icon: '🚚' },
+  { label: 'Out for Delivery', icon: '📦' },
+  { label: 'Delivered', icon: '✅' },
 ];
 
 function getProgressStepIndex(status: string): number {
@@ -113,323 +95,455 @@ function getProgressStepIndex(status: string): number {
 }
 
 function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { html: string; text: string } {
-  const statusCopy = STATUS_COPY[data.status] || { title: data.status, tip: 'We are monitoring your shipment.', icon: 'fa-box' };
+  const statusCopy = STATUS_COPY[data.status] || { title: data.status, tip: 'We are monitoring your shipment.', icon: '📦' };
   const recipientName = data.recipientName || 'Valued Customer';
   const progressStep = getProgressStepIndex(data.status);
   const progressPercent = Math.round(((progressStep + 1) / PROGRESS_STEPS.length) * 100);
+  
+  // Agent photo with fallback
+  const agentPhoto = data.agent?.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.agent?.name || 'Agent')}&size=120&background=${brandRed.replace('#', '')}&color=ffffff&bold=true&format=png`;
 
   const html = `
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
   <title>${isUpdate ? 'Shipment Update' : 'Shipment Created'} • ${data.trackingNumber}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { margin: 0; padding: 0; background-color: ${lightGray}; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-    a { text-decoration: none; color: ${brandRed}; }
-    
-    .email-wrapper { width: 100%; background-color: ${lightGray}; padding: 20px 0; }
-    .email-container { max-width: 720px; margin: 0 auto; background-color: ${white}; border-radius: 0; }
-    
-    /* Header */
-    .email-header { background-color: ${brandBlack}; padding: 40px 20px; text-align: center; }
-    .email-header img { max-width: 200px; height: auto; display: block; margin: 0 auto; }
-    
-    /* Welcome Section */
-    .welcome-section { background-color: ${white}; padding: 40px 30px; }
-    .welcome-heading { font-size: 28px; font-weight: bold; color: ${brandGray}; margin: 0 0 10px; line-height: 1.3; }
-    .welcome-heading i { color: ${brandRed}; margin-right: 10px; }
-    .welcome-text { font-size: 16px; color: #666666; line-height: 1.6; margin: 0; }
-    
-    /* Shipment Summary Card */
-    .summary-card { background-color: ${lightGray}; border-radius: 8px; padding: 30px; margin: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .summary-item { margin-bottom: 20px; }
-    .summary-item:last-child { margin-bottom: 0; }
-    .summary-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #666666; margin-bottom: 5px; }
-    .summary-value { font-size: 18px; font-weight: bold; color: ${brandGray}; }
-    .summary-value i { color: ${brandRed}; margin-right: 8px; }
-    
-    /* Sender & Receiver Cards */
-    .info-cards { padding: 0 30px 30px; }
-    .info-cards-table { width: 100%; border-collapse: separate; border-spacing: 20px 0; }
-    .info-card { background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .info-card-title { font-size: 18px; font-weight: bold; color: ${brandGray}; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid ${brandRed}; }
-    .info-card-title i { color: ${brandRed}; margin-right: 8px; }
-    .info-item { margin-bottom: 15px; font-size: 14px; color: #333333; line-height: 1.6; }
-    .info-item:last-child { margin-bottom: 0; }
-    .info-item i { color: ${brandRed}; width: 20px; margin-right: 10px; }
-    .info-item strong { color: ${brandGray}; }
-    
-    /* Agent Section */
-    .agent-section { background-color: ${lightGray}; padding: 30px; margin: 0 30px 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .agent-title { font-size: 20px; font-weight: bold; color: ${brandGray}; margin-bottom: 20px; }
-    .agent-content { display: table; width: 100%; }
-    .agent-image-cell { display: table-cell; vertical-align: middle; width: 100px; padding-right: 20px; }
-    .agent-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid ${brandRed}; }
-    .agent-info-cell { display: table-cell; vertical-align: middle; }
-    .agent-name { font-size: 18px; font-weight: bold; color: ${brandGray}; margin-bottom: 8px; }
-    .agent-detail { font-size: 14px; color: #666666; margin-bottom: 5px; }
-    .agent-detail i { color: ${brandRed}; width: 20px; margin-right: 8px; }
-    
-    /* Progress Section */
-    .progress-section { padding: 30px; }
-    .progress-title { font-size: 20px; font-weight: bold; color: ${brandGray}; margin-bottom: 25px; text-align: center; }
-    .progress-steps { display: table; width: 100%; margin-bottom: 20px; }
-    .progress-step { display: table-cell; text-align: center; vertical-align: top; position: relative; }
-    .progress-step-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #e0e0e0; display: inline-block; line-height: 50px; color: #999999; font-size: 20px; margin-bottom: 10px; }
-    .progress-step.active .progress-step-icon { background-color: ${brandRed}; color: ${white}; }
-    .progress-step.completed .progress-step-icon { background-color: ${brandRed}; color: ${white}; }
-    .progress-step-label { font-size: 12px; color: #666666; }
-    .progress-step.active .progress-step-label { color: ${brandGray}; font-weight: bold; }
-    .progress-step.completed .progress-step-label { color: ${brandGray}; font-weight: bold; }
-    .progress-bar-container { width: 100%; height: 8px; background-color: #e0e0e0; border-radius: 4px; margin: 20px 0; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background-color: ${brandRed}; border-radius: 4px; transition: width 0.3s ease; }
-    .progress-text { text-align: center; font-size: 14px; color: #666666; margin-top: 10px; }
-    
-    /* Notes & Actions */
-    .notes-section { padding: 30px; background-color: ${white}; }
-    .notes-text { font-size: 14px; color: #666666; line-height: 1.6; margin-bottom: 25px; }
-    .action-buttons { text-align: center; }
-    .btn { display: inline-block; padding: 14px 30px; margin: 5px; border-radius: 6px; font-size: 16px; font-weight: bold; text-decoration: none; transition: all 0.3s ease; }
-    .btn-primary { background-color: ${brandRed}; color: ${white}; box-shadow: 0 4px 8px rgba(224,40,40,0.3); }
-    .btn-primary:hover { background-color: #c01f1f; box-shadow: 0 6px 12px rgba(224,40,40,0.4); }
-    .btn-secondary { background-color: #f5f5f5; color: ${brandGray}; border: 1px solid #e0e0e0; }
-    .btn-secondary:hover { background-color: #e8e8e8; }
-    
-    /* Footer */
-    .email-footer { background-color: ${brandRed}; padding: 40px 30px; text-align: center; }
-    .footer-content { color: ${white}; font-size: 14px; line-height: 1.8; }
-    .footer-content a { color: ${white}; text-decoration: underline; }
-    .footer-company { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
-    .footer-contact { margin-bottom: 20px; }
-    .social-icons { margin: 20px 0; }
-    .social-icons a { display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 5px; color: ${white}; text-decoration: none; transition: all 0.3s ease; }
-    .social-icons a:hover { background-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
-    .footer-copyright { font-size: 12px; margin-top: 20px; opacity: 0.9; }
-    
-    /* Help Section */
-    .help-section { background-color: ${white}; padding: 25px 30px; border-top: 1px solid #e0e0e0; }
-    .help-text { font-size: 14px; color: #666666; text-align: center; }
-    .help-text a { color: ${brandRed}; font-weight: bold; }
-    
-    /* Responsive */
-    @media only screen and (max-width: 600px) {
-      .email-container { width: 100% !important; }
-      .welcome-section, .summary-card, .info-cards, .agent-section, .progress-section, .notes-section, .help-section { padding-left: 20px !important; padding-right: 20px !important; }
-      .info-cards-table { border-spacing: 0 !important; }
-      .info-card { display: block !important; width: 100% !important; margin-bottom: 20px !important; }
-      .agent-content { display: block !important; }
-      .agent-image-cell { display: block !important; width: 100% !important; padding-right: 0 !important; text-align: center !important; margin-bottom: 20px !important; }
-      .agent-info-cell { display: block !important; }
-      .progress-step { display: block !important; width: 100% !important; margin-bottom: 20px !important; }
-      .btn { display: block !important; width: 100% !important; margin: 10px 0 !important; }
-      .welcome-heading { font-size: 24px !important; }
-    }
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
   </style>
+  <![endif]-->
 </head>
-<body>
-  <div class="email-wrapper">
-    <div class="email-container">
-      <!-- Header -->
-      <div class="email-header">
-        <img src="${logoUrl}" alt="Velox Logistics" />
-      </div>
-      
-      <!-- Welcome Section -->
-      <div class="welcome-section">
-        <h1 class="welcome-heading">
-          <i class="fas fa-truck"></i>
-          Hello ${recipientName}, your shipment update is here!
-        </h1>
-        <p class="welcome-text">
-          ${isUpdate 
-            ? `We have an update on your shipment. ${statusCopy.tip}` 
-            : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
-        </p>
-      </div>
-      
-      <!-- Shipment Summary Card -->
-      <div class="summary-card">
-        <div class="summary-item">
-          <div class="summary-label">Shipment Number</div>
-          <div class="summary-value">
-            <i class="fas fa-barcode"></i>
-            ${data.trackingNumber}
-          </div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Status</div>
-          <div class="summary-value">
-            <i class="fas ${statusCopy.icon}"></i>
-            ${data.status}
-          </div>
-        </div>
-        ${data.deliveryDate || data.estimatedDelivery ? `
-        <div class="summary-item">
-          <div class="summary-label">Expected Delivery</div>
-          <div class="summary-value">
-            <i class="fas fa-calendar-alt"></i>
-            ${formatDate(data.deliveryDate || data.estimatedDelivery)}
-          </div>
-        </div>
-        ` : ''}
-      </div>
-      
-      <!-- Sender & Receiver Info Cards -->
-      <div class="info-cards">
-        <table class="info-cards-table">
+<body style="margin: 0; padding: 0; background-color: ${lightGray}; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
+  <!-- Wrapper Table -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0; padding: 0; background-color: ${lightGray};">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Main Container Table -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; margin: 0 auto; background-color: ${white}; border-radius: 0;">
+          
+          <!-- Header -->
           <tr>
-            <td class="info-card" style="width: 50%;">
-              <div class="info-card-title">
-                <i class="fas fa-user"></i>
-                Sender Information
-              </div>
-              <div class="info-item">
-                <i class="fas fa-user"></i>
-                <strong>Name:</strong> ${data.senderName || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-envelope"></i>
-                <strong>Email:</strong> ${data.senderEmail || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-phone"></i>
-                <strong>Phone:</strong> ${data.senderPhone || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <strong>Address:</strong> ${data.senderAddress || '—'}
-              </div>
-            </td>
-            <td class="info-card" style="width: 50%;">
-              <div class="info-card-title">
-                <i class="fas fa-user-friends"></i>
-                Receiver Information
-              </div>
-              <div class="info-item">
-                <i class="fas fa-user"></i>
-                <strong>Name:</strong> ${data.recipientName || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-envelope"></i>
-                <strong>Email:</strong> ${data.recipientEmail || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-phone"></i>
-                <strong>Phone:</strong> ${data.recipientPhone || '—'}
-              </div>
-              <div class="info-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <strong>Address:</strong> ${data.recipientAddress || '—'}
-              </div>
+            <td style="background-color: ${brandBlack}; padding: 40px 20px; text-align: center;">
+              <img src="${logoUrl}" alt="Velox Logistics" width="180" height="auto" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
             </td>
           </tr>
+          
+          <!-- Welcome Section -->
+          <tr>
+            <td style="background-color: ${white}; padding: 40px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="padding: 0 0 15px 0;">
+                    <h1 style="margin: 0; padding: 0; font-size: 28px; font-weight: bold; color: ${brandGray}; line-height: 1.3; font-family: Arial, Helvetica, sans-serif;">
+                      <span style="color: ${brandRed}; font-size: 32px; vertical-align: middle; margin-right: 10px;">🚚</span>
+                      Hello ${recipientName}, your shipment update is here!
+                    </h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0;">
+                    <p style="margin: 0; padding: 0; font-size: 16px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                      ${isUpdate 
+                        ? `We have an update on your shipment. ${statusCopy.tip}` 
+                        : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Shipment Summary Card -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${lightGray}; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <tr>
+                  <td style="padding: 30px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 0 0 20px 0;">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding: 0 0 5px 0;">
+                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Shipment Number</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 0;">
+                                <p style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandRed}; margin-right: 8px;">📋</span>${data.trackingNumber}
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 20px 0;">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding: 0 0 5px 0;">
+                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Status</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 0;">
+                                <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandRed}; margin-right: 8px; font-size: 20px;">${statusCopy.icon}</span>${data.status}
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      ${data.deliveryDate || data.estimatedDelivery ? `
+                      <tr>
+                        <td style="padding: 0;">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding: 0 0 5px 0;">
+                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Expected Delivery</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 0;">
+                                <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandRed}; margin-right: 8px; font-size: 20px;">📅</span>${formatDate(data.deliveryDate || data.estimatedDelivery)}
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      ` : ''}
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Sender & Receiver Cards -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <!-- Sender Card -->
+                  <td width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 0 0 20px 0; border-bottom: 2px solid ${brandRed};">
+                          <h2 style="margin: 0; padding: 0 0 15px 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span>Sender Information
+                          </h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 15px 0 0 0;">
+                          <p style="margin: 0; padding: 0 0 12px 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span><strong style="color: ${brandGray};">Name:</strong> ${data.senderName || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 12px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">✉️</span><strong style="color: ${brandGray};">Email:</strong> ${data.senderEmail || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 12px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">📞</span><strong style="color: ${brandGray};">Phone:</strong> ${data.senderPhone || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">📍</span><strong style="color: ${brandGray};">Address:</strong> ${data.senderAddress || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <!-- Spacer -->
+                  <td width="4%"></td>
+                  <!-- Receiver Card -->
+                  <td width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 0 0 20px 0; border-bottom: 2px solid ${brandRed};">
+                          <h2 style="margin: 0; padding: 0 0 15px 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">👥</span>Receiver Information
+                          </h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 15px 0 0 0;">
+                          <p style="margin: 0; padding: 0 0 12px 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span><strong style="color: ${brandGray};">Name:</strong> ${data.recipientName || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 12px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">✉️</span><strong style="color: ${brandGray};">Email:</strong> ${data.recipientEmail || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0 0 12px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">📞</span><strong style="color: ${brandGray};">Phone:</strong> ${data.recipientPhone || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0;">
+                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 8px;">📍</span><strong style="color: ${brandGray};">Address:</strong> ${data.recipientAddress || '—'}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          ${data.agent && (data.agent.name || data.agent.email || data.agent.phone) ? `
+          <!-- Assigned Agent Section -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${lightGray}; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <tr>
+                  <td style="padding: 30px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 0 0 20px 0;">
+                          <h2 style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Assigned Agent</h2>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="120" valign="top" style="padding: 0 20px 0 0;">
+                                <img src="${agentPhoto}" alt="${data.agent.name || 'Agent'}" width="100" height="100" style="display: block; width: 100px; height: 100px; border-radius: 50%; border: 3px solid ${brandRed}; object-fit: cover; background-color: ${brandRed};" />
+                              </td>
+                              <td valign="top">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                  <tr>
+                                    <td style="padding: 0 0 10px 0;">
+                                      <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">${data.agent.name || 'Assigned Agent'}</p>
+                                    </td>
+                                  </tr>
+                                  ${data.agent.phone ? `
+                                  <tr>
+                                    <td style="padding: 0 0 8px 0;">
+                                      <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                                        <span style="color: ${brandRed}; margin-right: 8px;">📞</span>${data.agent.phone}
+                                      </p>
+                                    </td>
+                                  </tr>
+                                  ` : ''}
+                                  ${data.agent.email ? `
+                                  <tr>
+                                    <td style="padding: 0;">
+                                      <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                                        <span style="color: ${brandRed}; margin-right: 8px;">✉️</span>${data.agent.email}
+                                      </p>
+                                    </td>
+                                  </tr>
+                                  ` : ''}
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- Shipment Progress Section -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="padding: 0 0 25px 0; text-align: center;">
+                    <h2 style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Shipment Progress</h2>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        ${PROGRESS_STEPS.map((step, index) => {
+                          const isActive = index === progressStep;
+                          const isCompleted = index < progressStep;
+                          const stepColor = isActive || isCompleted ? brandRed : '#cccccc';
+                          const stepBg = isActive || isCompleted ? `${brandRed}20` : '#f0f0f0';
+                          return `
+                            <td width="25%" align="center" valign="top" style="padding: 0 5px;">
+                              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                  <td align="center" style="padding: 0 0 10px 0;">
+                                    <div style="width: 50px; height: 50px; border-radius: 50%; background-color: ${stepBg}; display: inline-block; line-height: 50px; text-align: center; border: 2px solid ${stepColor};">
+                                      <span style="font-size: 24px; color: ${stepColor}; vertical-align: middle;">${step.icon}</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td align="center" style="padding: 0;">
+                                    <p style="margin: 0; padding: 0; font-size: 11px; color: ${isActive || isCompleted ? brandGray : '#999999'}; font-weight: ${isActive || isCompleted ? 'bold' : 'normal'}; font-family: Arial, Helvetica, sans-serif; line-height: 1.4;">${step.label}</p>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          `;
+                        }).join('')}
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 20px 0 10px 0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #e0e0e0; border-radius: 4px; height: 8px;">
+                      <tr>
+                        <td width="${progressPercent}%" style="background-color: ${brandRed}; border-radius: 4px; height: 8px;"></td>
+                        <td width="${100 - progressPercent}%"></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding: 0;">
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; font-family: Arial, Helvetica, sans-serif;">${progressPercent}% Complete</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Additional Notes & Actions -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="padding: 0 0 25px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                      <strong style="color: ${brandGray};">Important:</strong> Please ensure someone is available to receive the package at the delivery address. You can track your shipment in real-time using the tracking number above.
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding: 0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="padding: 0 10px 0 0;">
+                          <a href="${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}" style="display: inline-block; padding: 14px 30px; background-color: ${brandRed}; color: ${white}; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; box-shadow: 0 4px 8px rgba(224,40,40,0.3);">
+                            🔍 Track Shipment
+                          </a>
+                        </td>
+                        <td>
+                          <a href="mailto:${supportEmail}" style="display: inline-block; padding: 14px 30px; background-color: #f5f5f5; color: ${brandGray}; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; border: 1px solid #e0e0e0;">
+                            💬 Contact Support
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Help Section -->
+          <tr>
+            <td style="padding: 0 30px 30px 30px; border-top: 1px solid #e0e0e0;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding: 25px 0 0 0;">
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; font-family: Arial, Helvetica, sans-serif;">
+                      Need help? Contact us at <a href="mailto:${supportEmail}" style="color: ${brandRed}; font-weight: bold; text-decoration: none;">${supportEmail}</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: ${brandRed}; padding: 40px 30px; text-align: center;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="padding: 0 0 15px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${white}; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: ${white}; line-height: 1.8; font-family: Arial, Helvetica, sans-serif;">
+                      Global Delivery Solutions<br>
+                      Email: <a href="mailto:${supportEmail}" style="color: ${white}; text-decoration: underline;">${supportEmail}</a>
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 0 20px 0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                      <tr>
+                        <td style="padding: 0 5px;">
+                          <a href="${siteUrl}" style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; text-decoration: none; color: ${white}; font-size: 18px;">🌐</a>
+                        </td>
+                        <td style="padding: 0 5px;">
+                          <a href="https://facebook.com" style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; text-decoration: none; color: ${white}; font-size: 18px;">f</a>
+                        </td>
+                        <td style="padding: 0 5px;">
+                          <a href="https://instagram.com" style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; text-decoration: none; color: ${white}; font-size: 18px;">📷</a>
+                        </td>
+                        <td style="padding: 0 5px;">
+                          <a href="https://linkedin.com" style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; text-decoration: none; color: ${white}; font-size: 18px;">in</a>
+                        </td>
+                        <td style="padding: 0 5px;">
+                          <a href="https://twitter.com" style="display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; text-align: center; text-decoration: none; color: ${white}; font-size: 18px;">🐦</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0;">
+                    <p style="margin: 0; padding: 0; font-size: 12px; color: rgba(255,255,255,0.9); font-family: Arial, Helvetica, sans-serif; line-height: 1.6;">
+                      © ${new Date().getFullYear()} Velox Logistics. All rights reserved.<br>
+                      <a href="${siteUrl}/unsubscribe" style="color: rgba(255,255,255,0.8); text-decoration: underline;">Unsubscribe</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
         </table>
-      </div>
-      
-      ${data.agent && (data.agent.name || data.agent.email || data.agent.phone) ? `
-      <!-- Assigned Agent Section -->
-      <div class="agent-section">
-        <div class="agent-title">Assigned Agent</div>
-        <div class="agent-content">
-          <div class="agent-image-cell">
-            <img src="${data.agent.photo || `${siteUrl}/agent-placeholder.png`}" alt="${data.agent.name || 'Agent'}" class="agent-image" />
-          </div>
-          <div class="agent-info-cell">
-            <div class="agent-name">${data.agent.name || 'Assigned Agent'}</div>
-            ${data.agent.phone ? `
-            <div class="agent-detail">
-              <i class="fas fa-phone"></i>
-              ${data.agent.phone}
-            </div>
-            ` : ''}
-            ${data.agent.email ? `
-            <div class="agent-detail">
-              <i class="fas fa-envelope"></i>
-              ${data.agent.email}
-            </div>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-      ` : ''}
-      
-      <!-- Shipment Progress Section -->
-      <div class="progress-section">
-        <div class="progress-title">Shipment Progress</div>
-        <div class="progress-steps">
-          ${PROGRESS_STEPS.map((step, index) => {
-            const isActive = index === progressStep;
-            const isCompleted = index < progressStep;
-            const stepClass = isActive ? 'active' : isCompleted ? 'completed' : '';
-            return `
-              <div class="progress-step ${stepClass}">
-                <div class="progress-step-icon">
-                  <i class="fas ${step.icon}"></i>
-                </div>
-                <div class="progress-step-label">${step.label}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
-        </div>
-        <div class="progress-text">${progressPercent}% Complete</div>
-      </div>
-      
-      <!-- Additional Notes & Actions -->
-      <div class="notes-section">
-        <p class="notes-text">
-          <strong>Important:</strong> Please ensure someone is available to receive the package at the delivery address. 
-          You can track your shipment in real-time using the tracking number above.
-        </p>
-        <div class="action-buttons">
-          <a href="${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}" class="btn btn-primary">
-            <i class="fas fa-search"></i> Track Shipment
-          </a>
-          <a href="mailto:${supportEmail}" class="btn btn-secondary">
-            <i class="fas fa-headset"></i> Contact Support
-          </a>
-        </div>
-      </div>
-      
-      <!-- Help Section -->
-      <div class="help-section">
-        <p class="help-text">
-          Need help? Contact us at <a href="mailto:${supportEmail}">${supportEmail}</a>
-        </p>
-      </div>
-      
-      <!-- Footer -->
-      <div class="email-footer">
-        <div class="footer-content">
-          <div class="footer-company">Velox Logistics</div>
-          <div class="footer-contact">
-            Global Delivery Solutions<br>
-            Email: <a href="mailto:${supportEmail}">${supportEmail}</a>
-          </div>
-          <div class="social-icons">
-            <a href="${siteUrl}" title="Website"><i class="fas fa-globe"></i></a>
-            <a href="https://facebook.com" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://instagram.com" title="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://linkedin.com" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-            <a href="https://twitter.com" title="Twitter"><i class="fab fa-twitter"></i></a>
-          </div>
-          <div class="footer-copyright">
-            © ${new Date().getFullYear()} Velox Logistics. All rights reserved.<br>
-            <a href="${siteUrl}/unsubscribe" style="color: rgba(255,255,255,0.8);">Unsubscribe</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
   `;
@@ -649,40 +763,46 @@ export function contactEmailTemplate(payload: {
   subject?: string;
   inquiryType?: string;
 }) {
-  // Keep the contact email template simple - it's for admin notifications
   const html = `
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background-color: ${brandBlack}; color: ${white}; padding: 20px; text-align: center; }
-    .content { background-color: ${white}; padding: 30px; }
-    .footer { background-color: ${brandRed}; color: ${white}; padding: 20px; text-align: center; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Contact Inquiry</title>
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h2>New Contact Inquiry</h2>
-    </div>
-    <div class="content">
-      <p><strong>Name:</strong> ${payload.name}</p>
-      <p><strong>Email:</strong> ${payload.email}</p>
-      ${payload.phone ? `<p><strong>Phone:</strong> ${payload.phone}</p>` : ''}
-      ${payload.subject ? `<p><strong>Subject:</strong> ${payload.subject}</p>` : ''}
-      ${payload.inquiryType ? `<p><strong>Inquiry Type:</strong> ${payload.inquiryType}</p>` : ''}
-      <p><strong>Message:</strong></p>
-      <p>${payload.message.replace(/\n/g, '<br>')}</p>
-      <p><strong>Received:</strong> ${formatDate(payload.createdAt)}</p>
-      <p><a href="mailto:${payload.email}" style="background-color: ${brandRed}; color: ${white}; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reply via Email</a></p>
-    </div>
-    <div class="footer">
-      <p>Velox Logistics</p>
-    </div>
-  </div>
+<body style="margin: 0; padding: 0; background-color: ${lightGray}; font-family: Arial, Helvetica, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${lightGray}; padding: 20px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: ${white}; border-radius: 0;">
+          <tr>
+            <td style="background-color: ${brandBlack}; padding: 20px; text-align: center;">
+              <h2 style="margin: 0; color: ${white}; font-family: Arial, Helvetica, sans-serif;">New Contact Inquiry</h2>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px;">
+              <p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Name:</strong> ${payload.name}</p>
+              <p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Email:</strong> ${payload.email}</p>
+              ${payload.phone ? `<p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Phone:</strong> ${payload.phone}</p>` : ''}
+              ${payload.subject ? `<p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Subject:</strong> ${payload.subject}</p>` : ''}
+              ${payload.inquiryType ? `<p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Inquiry Type:</strong> ${payload.inquiryType}</p>` : ''}
+              <p style="margin: 0 0 15px 0; font-size: 14px; color: #333; font-family: Arial, Helvetica, sans-serif;"><strong>Message:</strong></p>
+              <p style="margin: 0 0 20px 0; font-size: 14px; color: #333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">${payload.message.replace(/\n/g, '<br>')}</p>
+              <p style="margin: 0 0 20px 0; font-size: 14px; color: #666; font-family: Arial, Helvetica, sans-serif;"><strong>Received:</strong> ${formatDate(payload.createdAt)}</p>
+              <a href="mailto:${payload.email}" style="display: inline-block; padding: 10px 20px; background-color: ${brandRed}; color: ${white}; text-decoration: none; border-radius: 5px; font-family: Arial, Helvetica, sans-serif;">Reply via Email</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: ${brandRed}; padding: 20px; text-align: center;">
+              <p style="margin: 0; color: ${white}; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
   `;
