@@ -187,65 +187,62 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       errors: [] as string[],
     };
 
-    if (notificationHash !== existingData.last_notified_hash) {
-      try {
-        console.log('[shipments:update] Attempting to send email notification', {
+    // FORCE SEND EMAILS on every update - always notify sender and recipient
+    try {
+      console.log('[shipments:update] FORCE sending email notification to sender and recipient', {
+        trackingNumber: data.tracking_number,
+        senderEmail: data.sender_email,
+        recipientEmail: data.recipient_email,
+        adminEmail: adminNotificationEmail,
+        oldStatus: existingData.status,
+        newStatus: data.status,
+      });
+
+      emailStatus.attempted = true;
+
+      await sendShipmentUpdatedEmail(
+        {
           trackingNumber: data.tracking_number,
-          senderEmail: data.sender_email,
-          recipientEmail: data.recipient_email,
-          adminEmail: adminNotificationEmail,
+          route,
           oldStatus: existingData.status,
           newStatus: data.status,
-        });
-
-        emailStatus.attempted = true;
-
-        await sendShipmentUpdatedEmail(
-          {
-            trackingNumber: data.tracking_number,
-            route,
-            oldStatus: existingData.status,
-            newStatus: data.status,
-            updatedAt: data.updated_at,
-            senderEmail: data.sender_email,
-            recipientEmail: data.recipient_email,
-          },
-          adminNotificationEmail
-        );
-
-        // Check if emails were sent by looking at the email addresses
-        if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
-          emailStatus.senderSent = true;
-        }
-        if (data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email)) {
-          emailStatus.recipientSent = true;
-        }
-
-        console.log('[shipments:update] Email notification sent successfully', emailStatus);
-
-        await (supabase
-          .from('shipments') as any)
-          .update({
-            last_notified_status: data.status,
-            last_notified_hash: notificationHash,
-            last_notified_at: new Date().toISOString(),
-          })
-          .eq('id', data.id);
-      } catch (notifyErr: any) {
-        const errorMessage = notifyErr?.message || String(notifyErr);
-        emailStatus.errors.push(errorMessage);
-        console.error('[shipments:update] Failed to send notification email', {
-          error: errorMessage,
-          stack: notifyErr?.stack,
-          trackingNumber: data.tracking_number,
+          updatedAt: data.updated_at,
           senderEmail: data.sender_email,
           recipientEmail: data.recipient_email,
-        });
-        // Don't fail the request if email fails - shipment was updated successfully
+        },
+        adminNotificationEmail
+      );
+
+      // Check if emails were sent by looking at the email addresses
+      if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
+        emailStatus.senderSent = true;
       }
-    } else {
-      emailStatus.skipped = true;
-      console.log('[shipments:update] Skipping email notification - no changes detected (hash matches)');
+      if (data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email)) {
+        emailStatus.recipientSent = true;
+      }
+
+      console.log('[shipments:update] Email notification sent successfully', emailStatus);
+
+      // Update notification hash to track that emails were sent
+      await (supabase
+        .from('shipments') as any)
+        .update({
+          last_notified_status: data.status,
+          last_notified_hash: notificationHash,
+          last_notified_at: new Date().toISOString(),
+        })
+        .eq('id', data.id);
+    } catch (notifyErr: any) {
+      const errorMessage = notifyErr?.message || String(notifyErr);
+      emailStatus.errors.push(errorMessage);
+      console.error('[shipments:update] Failed to send notification email', {
+        error: errorMessage,
+        stack: notifyErr?.stack,
+        trackingNumber: data.tracking_number,
+        senderEmail: data.sender_email,
+        recipientEmail: data.recipient_email,
+      });
+      // Don't fail the request if email fails - shipment was updated successfully
     }
 
     return NextResponse.json({ 

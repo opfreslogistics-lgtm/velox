@@ -103,8 +103,9 @@ export async function POST(req: Request) {
       errors: [] as string[],
     };
 
+    // FORCE SEND EMAILS on every create - always notify sender and recipient
     try {
-      console.log('[shipments:create] Attempting to send email notification', {
+      console.log('[shipments:create] FORCE sending email notification to sender and recipient', {
         trackingNumber: data.tracking_number,
         senderEmail: data.sender_email,
         recipientEmail: data.recipient_email,
