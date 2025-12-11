@@ -22,6 +22,8 @@ export type ShipmentUpdatedEmailPayload = {
   updatedAt?: string;
   senderEmail?: string;
   recipientEmail?: string;
+  estimatedDelivery?: string;
+  currentLocation?: string;
 };
 
 export type ContactEmailPayload = {
@@ -148,6 +150,8 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
     adminEmail,
     senderValid: isValidEmail(payload.senderEmail),
     recipientValid: isValidEmail(payload.recipientEmail),
+    eta: payload.estimatedDelivery,
+    location: payload.currentLocation,
   });
 
   const template = shipmentUpdatedEmailTemplate(payload);

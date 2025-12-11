@@ -1,5 +1,33 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendShipmentCreatedEmail } from '@/lib/emailService';
+
+const STATUS_PROGRESS: Record<string, number> = {
+  'Pending': 5,
+  'Awaiting Payment': 10,
+  'Payment Confirmed': 20,
+  'Processing': 30,
+  'Ready for Pickup': 35,
+  'Driver En Route': 40,
+  'Picked Up': 45,
+  'At Warehouse': 50,
+  'In Transit': 60,
+  'Departed Facility': 65,
+  'Arrived at Facility': 70,
+  'Out for Delivery': 85,
+  'Delivered': 100,
+  'Returned to Sender': 0,
+  'Cancelled': 0,
+  'On Hold': 15,
+  'Delayed': 25,
+  'Weather Delay': 25,
+  'Address Issue': 25,
+  'Customs Hold': 35,
+  'Inspection Required': 45,
+  'Payment Verification Required': 15,
+  'Lost Package': 0,
+  'Damaged Package': 0,
+};
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -87,6 +115,41 @@ export async function POST(req: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Create initial tracking event with immutable snapshot
+    await (supabase.from('tracking_events') as any).insert([{
+      shipment_id: id,
+      status: payload.status,
+      description: `Shipment created with status: ${payload.status}`,
+      timestamp: now,
+      location: payload.current_location_name || payload.sender_city || 'Origin',
+      latitude: payload.current_lat || payload.sender_lat,
+      longitude: payload.current_lng || payload.sender_lng,
+      handler: payload.agent_name || 'Assigned Agent',
+      progress: STATUS_PROGRESS[payload.status] ?? 0,
+    }]);
+
+    // Fire-and-forget email notification to sender & receiver
+    (async () => {
+      try {
+        const routeLabel = `${body.sender_city}, ${body.sender_country} → ${body.recipient_city}, ${body.recipient_country}`;
+        await sendShipmentCreatedEmail(
+          {
+            trackingNumber: body.tracking_number,
+            senderName: body.sender_name,
+            senderEmail: body.sender_email,
+            recipientName: body.recipient_name,
+            recipientEmail: body.recipient_email,
+            status: payload.status,
+            route: routeLabel,
+            createdAt: payload.created_at,
+          },
+          process.env.ADMIN_EMAIL
+        );
+      } catch (mailErr: any) {
+        console.error('[shipments/create] Email send failed', mailErr?.message || mailErr);
+      }
+    })();
 
     return NextResponse.json(data, { status: 201 });
   } catch (err: any) {

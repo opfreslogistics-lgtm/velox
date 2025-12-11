@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendShipmentUpdatedEmail } from '@/lib/emailService';
 
 // Status to progress percentage mapping (must match Tracking.tsx)
 const STATUS_PROGRESS: Record<string, number> = {
@@ -160,6 +161,29 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
         progress: progressToStore, // Store the progress at the time of this event (immutable)
       }]);
     }
+
+    // Fire-and-forget email notification to sender & receiver about status change
+    (async () => {
+      try {
+        const routeLabel = `${existingData.sender_city}, ${existingData.sender_country} → ${existingData.recipient_city}, ${existingData.recipient_country}`;
+        await sendShipmentUpdatedEmail(
+          {
+            trackingNumber: existingData.tracking_number,
+            route: routeLabel,
+            oldStatus,
+            newStatus: updates.status,
+            updatedAt: updates.updated_at || new Date().toISOString(),
+            senderEmail: existingData.sender_email,
+            recipientEmail: existingData.recipient_email,
+            estimatedDelivery: updates.estimated_delivery_date,
+            currentLocation: updates.current_location_name,
+          },
+          process.env.ADMIN_EMAIL
+        );
+      } catch (mailErr: any) {
+        console.error('[shipments/update] Email send failed', mailErr?.message || mailErr);
+      }
+    })();
 
     return NextResponse.json(data);
   } catch (err: any) {

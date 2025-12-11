@@ -355,6 +355,9 @@ export default function ShipmentsPage() {
       };
 
       let savedShipmentId: string;
+      const previousStatus = isEditing && currentShipment.id
+        ? shipments.find((s) => s.id === currentShipment.id)?.status
+        : undefined;
 
       if (isEditing && currentShipment.id) {
         // Update existing
@@ -400,6 +403,17 @@ export default function ShipmentsPage() {
           progress: STATUS_PROGRESS[currentShipment.status || 'Pending'] ?? 0, // Store immutable progress
         }]);
       }
+
+      // Trigger notification email (fire-and-forget)
+      fetch(`/api/shipments/${savedShipmentId}/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: isEditing ? 'updated' : 'created',
+          oldStatus: previousStatus,
+        }),
+      }).catch((err) => console.error('[shipments/email] Failed to trigger email', err));
+
       await loadShipments();
 
       setIsModalOpen(false);
