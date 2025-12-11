@@ -72,6 +72,13 @@ export async function POST(req: Request) {
       status: body.status || 'Pending',
       created_at: now,
       updated_at: now,
+      // Include coordinates if provided (for OpenStreetMap)
+      sender_lat: body.sender_lat || null,
+      sender_lng: body.sender_lng || null,
+      receiver_lat: body.receiver_lat || null,
+      receiver_lng: body.receiver_lng || null,
+      current_lat: body.current_lat || null,
+      current_lng: body.current_lng || null,
     };
 
     const { data, error } = await (supabase

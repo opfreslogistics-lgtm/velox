@@ -115,6 +115,13 @@ create table public.shipments (
   data jsonb,
   -- Location tracking (name only - Google Maps will geocode automatically)
   current_location_name text,
+  -- Coordinates (required for OpenStreetMap, optional for others)
+  sender_lat numeric,
+  sender_lng numeric,
+  receiver_lat numeric,
+  receiver_lng numeric,
+  current_lat numeric,
+  current_lng numeric,
   
   -- Assigned Agent
   agent_name text,
@@ -133,7 +140,7 @@ create table public.shipments (
 );
 
 -- 4) Tracking events
--- Each event stores immutable location, handler, and progress at the time it was created
+-- Each event stores immutable location, handler, progress, and coordinates at the time it was created
 -- This ensures history entries never change when the shipment's current location is updated
 create table public.tracking_events (
   id uuid primary key default gen_random_uuid(),
@@ -143,7 +150,9 @@ create table public.tracking_events (
   timestamp timestamptz default now(),
   location text, -- Immutable: location at the time this event was created
   handler text, -- Immutable: agent/handler at the time this event was created
-  progress numeric -- Immutable: progress percentage at the time this event was created
+  progress numeric, -- Immutable: progress percentage at the time this event was created
+  latitude numeric, -- Immutable: latitude at the time this event was created (for OpenStreetMap)
+  longitude numeric -- Immutable: longitude at the time this event was created (for OpenStreetMap)
 );
 
 -- 5) Attachments
@@ -166,14 +175,31 @@ create table public.contact_messages (
   created_at timestamptz default now()
 );
 
--- 7) Indexes
+-- 7) Map provider settings
+create type public.map_provider_type as enum ('google', 'openstreetmap', 'mapbox');
+create table if not exists public.map_provider_settings (
+  id uuid primary key default gen_random_uuid(),
+  provider public.map_provider_type not null default 'google',
+  updated_at timestamptz default now(),
+  updated_by text,
+  created_at timestamptz default now()
+);
+insert into public.map_provider_settings (provider, updated_at, created_at)
+values ('google', now(), now())
+on conflict do nothing;
+
+-- 8) Indexes
 create index if not exists idx_shipments_tracking on public.shipments(tracking_number);
 create index if not exists idx_shipments_reference on public.shipments(reference_code);
 create index if not exists idx_shipments_status on public.shipments(status);
 create index if not exists idx_tracking_events_shipment on public.tracking_events(shipment_id);
 create index if not exists idx_contact_created_at on public.contact_messages(created_at);
+create index if not exists idx_shipments_sender_coords on public.shipments(sender_lat, sender_lng) where sender_lat is not null and sender_lng is not null;
+create index if not exists idx_shipments_receiver_coords on public.shipments(receiver_lat, receiver_lng) where receiver_lat is not null and receiver_lng is not null;
+create index if not exists idx_shipments_current_coords on public.shipments(current_lat, current_lng) where current_lat is not null and current_lng is not null;
+create index if not exists idx_tracking_events_coords on public.tracking_events(latitude, longitude) where latitude is not null and longitude is not null;
 
--- 8) Storage bucket for shipment assets
+-- 9) Storage bucket for shipment assets
 insert into storage.buckets (id, name, public)
 values ('shipment-assets', 'shipment-assets', true)
 on conflict (id) do nothing;

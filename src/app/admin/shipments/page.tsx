@@ -8,6 +8,7 @@ import {
   Upload, Image as ImageIcon, FileText, CheckCircle,
   AlertCircle, Loader2, PenTool, Navigation
 } from 'lucide-react';
+import { getCurrentMapProvider, type MapProvider } from '@/lib/mapProvider';
 
 // Status enum matching the schema
 type ShipmentStatus = 
@@ -93,6 +94,14 @@ interface Shipment {
   // Location tracking (name only - will be geocoded by Google Maps)
   current_location_name?: string;
   
+  // Coordinates (required for OpenStreetMap)
+  sender_lat?: number;
+  sender_lng?: number;
+  receiver_lat?: number;
+  receiver_lng?: number;
+  current_lat?: number;
+  current_lng?: number;
+  
   // Assigned Agent
   agent_name?: string;
   agent_phone?: string;
@@ -162,7 +171,13 @@ export default function ShipmentsPage() {
   const [currentShipment, setCurrentShipment] = useState<Partial<Shipment>>(EMPTY_SHIPMENT);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mapProvider, setMapProvider] = useState<MapProvider>('google');
   const isDemoMode = false; // Force live data; no mock/demo mode
+
+  // Load map provider on mount
+  useEffect(() => {
+    getCurrentMapProvider().then(setMapProvider);
+  }, []);
 
   // Load shipments from Supabase
   useEffect(() => {
@@ -762,6 +777,39 @@ export default function ShipmentsPage() {
                       required
                     />
                   </div>
+                  
+                  {/* Coordinate fields for OpenStreetMap */}
+                  {mapProvider === 'openstreetmap' && (
+                    <div className="col-span-full mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                      <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-3 uppercase">
+                        OpenStreetMap Coordinates (Required)
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Sender Latitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.sender_lat || ''}
+                            onChange={(e) => handleFieldChange('sender_lat', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. 40.7128"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Sender Longitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.sender_lng || ''}
+                            onChange={(e) => handleFieldChange('sender_lng', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. -74.0060"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -859,6 +907,39 @@ export default function ShipmentsPage() {
                       required
                     />
                   </div>
+                  
+                  {/* Coordinate fields for OpenStreetMap */}
+                  {mapProvider === 'openstreetmap' && (
+                    <div className="col-span-full mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                      <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-3 uppercase">
+                        OpenStreetMap Coordinates (Required)
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Receiver Latitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.receiver_lat || ''}
+                            onChange={(e) => handleFieldChange('receiver_lat', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. 34.0522"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Receiver Longitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.receiver_lng || ''}
+                            onChange={(e) => handleFieldChange('receiver_lng', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. -118.2437"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1414,9 +1495,44 @@ export default function ShipmentsPage() {
                       placeholder="e.g. New York, USA or 123 Main St, New York, NY 10001"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Enter the current location address. Google Maps will automatically geocode it to show on the map.
+                      {mapProvider === 'openstreetmap' 
+                        ? 'Enter the current location address. Coordinates are required for OpenStreetMap.'
+                        : 'Enter the current location address. Google Maps will automatically geocode it to show on the map.'}
                     </p>
                   </div>
+                  
+                  {/* Coordinate fields for OpenStreetMap */}
+                  {mapProvider === 'openstreetmap' && (
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                      <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-3 uppercase">
+                        Current Location Coordinates (Required)
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Current Latitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.current_lat || ''}
+                            onChange={(e) => handleFieldChange('current_lat', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. 40.7128"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 uppercase">Current Longitude</label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={currentShipment.current_lng || ''}
+                            onChange={(e) => handleFieldChange('current_lng', parseFloat(e.target.value) || undefined)}
+                            className="w-full p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                            placeholder="e.g. -74.0060"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex gap-3">
                     <button
                       type="button"

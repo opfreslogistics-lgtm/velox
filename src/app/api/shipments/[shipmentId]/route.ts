@@ -63,6 +63,8 @@ type ShipmentUpdatePayload = {
   status?: string;
   estimated_delivery_date?: string;
   current_location_name?: string;
+  current_lat?: number;
+  current_lng?: number;
   agent_name?: string;
   agent_phone?: string;
   agent_email?: string;
@@ -89,8 +91,10 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
 
     const existingData = existing as any;
     
-    // Capture the OLD location BEFORE any updates - this is what we'll store in history
+    // Capture the OLD location and coordinates BEFORE any updates - this is what we'll store in history
     const oldLocation = existingData.current_location_name || existingData.sender_city || 'Origin';
+    const oldLat = existingData.current_lat;
+    const oldLng = existingData.current_lng;
     const oldStatus = existingData.status;
     const oldAgentName = existingData.agent_name || 'Assigned Agent';
     
@@ -98,6 +102,8 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       status: body.status ?? existingData.status,
       estimated_delivery_date: body.estimated_delivery_date ?? existingData.estimated_delivery_date,
       current_location_name: body.current_location_name ?? existingData.current_location_name,
+      current_lat: body.current_lat !== undefined ? body.current_lat : existingData.current_lat,
+      current_lng: body.current_lng !== undefined ? body.current_lng : existingData.current_lng,
       agent_name: body.agent_name ?? existingData.agent_name,
       agent_phone: body.agent_phone ?? existingData.agent_phone,
       agent_email: body.agent_email ?? existingData.agent_email,
@@ -111,7 +117,9 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
 
     // Check if status or location changed - these require a new history entry
     const statusChanged = updates.status !== oldStatus;
-    const locationChanged = updates.current_location_name !== oldLocation;
+    const locationChanged = updates.current_location_name !== oldLocation || 
+                           updates.current_lat !== oldLat || 
+                           updates.current_lng !== oldLng;
     const shouldCreateHistoryEntry = statusChanged || locationChanged;
 
     const { data, error } = await (supabase
@@ -126,9 +134,11 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
     }
 
     // Create a new tracking event ONLY if status or location changed
-    // Store the location, status, handler, and progress at THIS moment (after update)
+    // Store the location, coordinates, status, handler, and progress at THIS moment (after update)
     if (shouldCreateHistoryEntry) {
       const locationToStore = updates.current_location_name || oldLocation;
+      const latToStore = updates.current_lat !== undefined ? updates.current_lat : oldLat;
+      const lngToStore = updates.current_lng !== undefined ? updates.current_lng : oldLng;
       const statusToStore = updates.status;
       const handlerToStore = updates.agent_name || oldAgentName;
       const progressToStore = STATUS_PROGRESS[statusToStore] ?? 0;
@@ -139,7 +149,7 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
         ? `Status updated to: ${statusToStore}`
         : `Location updated to: ${locationToStore}`;
 
-      // Insert new tracking event with immutable location, handler, and progress
+      // Insert new tracking event with immutable location, coordinates, handler, and progress
       // This captures the state at the moment of this update
       await (supabase.from('tracking_events') as any).insert([{
         shipment_id: params.shipmentId,
@@ -147,7 +157,9 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
         description: eventDescription,
         timestamp: new Date().toISOString(),
         location: locationToStore, // Store the location at the time of this event (immutable)
-        handler: handlerToStore,   // Store the handler at the time of this event (immutable)
+        latitude: latToStore,      // Store the latitude at the time of this event (immutable)
+        longitude: lngToStore,     // Store the longitude at the time of this event (immutable)
+        handler: handlerToStore,    // Store the handler at the time of this event (immutable)
         progress: progressToStore, // Store the progress at the time of this event (immutable)
       }]);
     }

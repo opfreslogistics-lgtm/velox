@@ -44,8 +44,8 @@ const STATUS_PROGRESS: Record<string, number> = {
   'Damaged Package': 0,
 };
 
-// Dynamically import Google Maps component to avoid SSR issues
-const LeafletMap = dynamic(() => import('@/components/shipment/GoogleMap'), {
+// Dynamically import Unified Map component that selects provider automatically
+const UnifiedMap = dynamic(() => import('@/components/shipment/UnifiedMap'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-[400px] bg-gray-100 dark:bg-gray-800 rounded-xl">
@@ -167,11 +167,17 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
       }
 
       // Extract current location from data field (can be name only or with coordinates)
+      // Use stored coordinates if available (for OpenStreetMap), otherwise use JSON data
       const locationData = (shipment.data as any)?.currentLocation;
-      const currentLocation = locationData
+      const currentLocation = (shipment.current_lat && shipment.current_lng)
         ? {
-            name: locationData.name || 'In Transit',
-            // Coordinates are optional - will be geocoded if not provided
+            name: shipment.current_location_name || 'In Transit',
+            lat: shipment.current_lat,
+            lng: shipment.current_lng,
+          }
+        : locationData
+        ? {
+            name: locationData.name || shipment.current_location_name || 'In Transit',
             lat: locationData.lat,
             lng: locationData.lng,
           }
@@ -288,7 +294,11 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
       }
 
       setData(transformedData);
-      setRawShipment(shipment); // Store raw shipment for additional fields
+      // Store raw shipment with events for coordinate access
+      setRawShipment({
+        ...shipment,
+        history: events || [],
+      });
     } catch (err: any) {
       if (err?.message?.toLowerCase().includes('fetch')) {
         setError('Unable to reach tracking service. Please check your connection and try again.');
@@ -709,14 +719,31 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                         </div>
                         <span className="text-xs font-semibold text-gray-500">Real-time positioning</span>
                       </div>
-                      <LeafletMap
+                      <UnifiedMap
                         originAddress={data.senderAddress || `${data.origin}`}
                         destinationAddress={data.recipientAddress || `${data.destination}`}
+                        originCoords={rawShipment?.sender_lat && rawShipment?.sender_lng ? {
+                          lat: rawShipment.sender_lat,
+                          lng: rawShipment.sender_lng,
+                        } : undefined}
+                        destinationCoords={rawShipment?.receiver_lat && rawShipment?.receiver_lng ? {
+                          lat: rawShipment.receiver_lat,
+                          lng: rawShipment.receiver_lng,
+                        } : undefined}
+                        timelineCoords={rawShipment?.history?.map((event: any) => ({
+                          lat: event.latitude || event.lat,
+                          lng: event.longitude || event.lng,
+                          location: event.location,
+                        })).filter((coords: any) => coords.lat && coords.lng)}
                         currentLocation={data.currentLocation && data.currentLocation.lat && data.currentLocation.lng ? {
                           lat: data.currentLocation.lat,
                           lng: data.currentLocation.lng,
                           name: data.currentLocation.name,
-                        } : undefined}
+                        } : (rawShipment?.current_lat && rawShipment?.current_lng ? {
+                          lat: rawShipment.current_lat,
+                          lng: rawShipment.current_lng,
+                          name: rawShipment.current_location_name,
+                        } : undefined)}
                         height="320px"
                       />
                     </div>
