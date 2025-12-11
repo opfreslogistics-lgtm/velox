@@ -234,17 +234,37 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
         .order('timestamp', { ascending: true });
 
       if (events && events.length > 0) {
-        transformedData.history = events.map((event, idx) => ({
-          id: event.id,
-          status: event.status,
-          description: event.description || event.status,
-          location: (event as any).location || shipment.current_location_name || shipment.recipient_city || 'In Transit',
-          timestamp: new Date(event.timestamp).toLocaleString(),
-          completed: idx < events.length - 1,
-          isCurrent: idx === events.length - 1,
-          handler: (event as any).handler || (event as any).agent_name || shipment.agent_name || 'Assigned Agent',
-          progress: STATUS_PROGRESS[event.status] ?? ((idx + 1) / events.length) * 100,
-        }));
+        transformedData.history = events.map((event, idx) => {
+          // Use stored location from event (immutable) - only fallback for legacy data without location
+          const eventLocation = (event as any).location;
+          const location = eventLocation !== null && eventLocation !== undefined && eventLocation !== ''
+            ? eventLocation
+            : shipment.current_location_name || shipment.recipient_city || 'In Transit';
+          
+          // Use stored handler from event (immutable) - only fallback for legacy data
+          const eventHandler = (event as any).handler;
+          const handler = eventHandler !== null && eventHandler !== undefined && eventHandler !== ''
+            ? eventHandler
+            : (event as any).agent_name || shipment.agent_name || 'Assigned Agent';
+          
+          // Use stored progress from event (immutable) - calculate if not stored
+          const eventProgress = (event as any).progress;
+          const progress = eventProgress !== null && eventProgress !== undefined
+            ? eventProgress
+            : STATUS_PROGRESS[event.status] ?? ((idx + 1) / events.length) * 100;
+          
+          return {
+            id: event.id,
+            status: event.status,
+            description: event.description || event.status,
+            location: location, // Use stored immutable location
+            timestamp: new Date(event.timestamp).toLocaleString(),
+            completed: idx < events.length - 1,
+            isCurrent: idx === events.length - 1,
+            handler: handler, // Use stored immutable handler
+            progress: progress, // Use stored immutable progress
+          };
+        });
 
         // Update overall progress to the latest event's mapped percentage
         const lastEvent = transformedData.history[transformedData.history.length - 1];

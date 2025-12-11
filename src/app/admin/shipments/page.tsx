@@ -276,6 +276,34 @@ export default function ShipmentsPage() {
       setSaving(true);
       setError(null);
 
+      // Status to progress percentage mapping (must match Tracking.tsx)
+      const STATUS_PROGRESS: Record<string, number> = {
+        'Pending': 5,
+        'Awaiting Payment': 10,
+        'Payment Confirmed': 20,
+        'Processing': 30,
+        'Ready for Pickup': 35,
+        'Driver En Route': 40,
+        'Picked Up': 45,
+        'At Warehouse': 50,
+        'In Transit': 60,
+        'Departed Facility': 65,
+        'Arrived at Facility': 70,
+        'Out for Delivery': 85,
+        'Delivered': 100,
+        'Returned to Sender': 0,
+        'Cancelled': 0,
+        'On Hold': 15,
+        'Delayed': 25,
+        'Weather Delay': 25,
+        'Address Issue': 25,
+        'Customs Hold': 35,
+        'Inspection Required': 45,
+        'Payment Verification Required': 15,
+        'Lost Package': 0,
+        'Damaged Package': 0,
+      };
+
       // Store location name and agent data in data field for easy access
       const locationData = currentShipment.current_location_name
         ? {
@@ -323,13 +351,15 @@ export default function ShipmentsPage() {
 
         if (error) throw error;
 
-        // Create tracking event for status update
+        // Create tracking event for status update with immutable location, handler, and progress
         await supabase.from('tracking_events').insert([{
           shipment_id: savedShipmentId,
           status: currentShipment.status,
           description: `Shipment status updated to: ${currentShipment.status}`,
           timestamp: new Date().toISOString(),
-          location: currentShipment.current_location_name || '',
+          location: currentShipment.current_location_name || currentShipment.sender_city || 'Origin', // Store immutable location
+          handler: currentShipment.agent_name || 'Assigned Agent', // Store immutable handler
+          progress: STATUS_PROGRESS[currentShipment.status || 'Pending'] ?? 0, // Store immutable progress
         }]);
       } else {
         // Create new
@@ -344,13 +374,15 @@ export default function ShipmentsPage() {
 
         if (error) throw error;
 
-        // Create initial tracking event
+        // Create initial tracking event with immutable location, handler, and progress
         await supabase.from('tracking_events').insert([{
           shipment_id: savedShipmentId,
           status: currentShipment.status || 'Pending',
           description: `Shipment created with status: ${currentShipment.status || 'Pending'}`,
           timestamp: new Date().toISOString(),
-          location: currentShipment.current_location_name || currentShipment.sender_city || '',
+          location: currentShipment.current_location_name || currentShipment.sender_city || 'Origin', // Store immutable location
+          handler: currentShipment.agent_name || 'Assigned Agent', // Store immutable handler
+          progress: STATUS_PROGRESS[currentShipment.status || 'Pending'] ?? 0, // Store immutable progress
         }]);
       }
       await loadShipments();

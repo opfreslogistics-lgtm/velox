@@ -133,12 +133,17 @@ create table public.shipments (
 );
 
 -- 4) Tracking events
+-- Each event stores immutable location, handler, and progress at the time it was created
+-- This ensures history entries never change when the shipment's current location is updated
 create table public.tracking_events (
   id uuid primary key default gen_random_uuid(),
   shipment_id uuid references public.shipments(id) on delete cascade,
   status public.shipment_status not null,
   description text,
-  timestamp timestamptz default now()
+  timestamp timestamptz default now(),
+  location text, -- Immutable: location at the time this event was created
+  handler text, -- Immutable: agent/handler at the time this event was created
+  progress numeric -- Immutable: progress percentage at the time this event was created
 );
 
 -- 5) Attachments

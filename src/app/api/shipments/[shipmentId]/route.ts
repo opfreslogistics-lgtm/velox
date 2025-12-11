@@ -3,6 +3,34 @@ import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'crypto';
 import { sendShipmentUpdatedEmail } from '@/lib/emailService';
 
+// Status to progress percentage mapping (must match Tracking.tsx)
+const STATUS_PROGRESS: Record<string, number> = {
+  'Pending': 5,
+  'Awaiting Payment': 10,
+  'Payment Confirmed': 20,
+  'Processing': 30,
+  'Ready for Pickup': 35,
+  'Driver En Route': 40,
+  'Picked Up': 45,
+  'At Warehouse': 50,
+  'In Transit': 60,
+  'Departed Facility': 65,
+  'Arrived at Facility': 70,
+  'Out for Delivery': 85,
+  'Delivered': 100,
+  'Returned to Sender': 0,
+  'Cancelled': 0,
+  'On Hold': 15,
+  'Delayed': 25,
+  'Weather Delay': 25,
+  'Address Issue': 25,
+  'Customs Hold': 35,
+  'Inspection Required': 45,
+  'Payment Verification Required': 15,
+  'Lost Package': 0,
+  'Damaged Package': 0,
+};
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const adminNotificationEmail = process.env.SUPPORT_EMAIL || process.env.SALES_EMAIL || process.env.ADMIN_EMAIL;
@@ -60,6 +88,12 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
     }
 
     const existingData = existing as any;
+    
+    // Capture the OLD location BEFORE any updates - this is what we'll store in history
+    const oldLocation = existingData.current_location_name || existingData.sender_city || 'Origin';
+    const oldStatus = existingData.status;
+    const oldAgentName = existingData.agent_name || 'Assigned Agent';
+    
     const updates = {
       status: body.status ?? existingData.status,
       estimated_delivery_date: body.estimated_delivery_date ?? existingData.estimated_delivery_date,
@@ -75,6 +109,11 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       return NextResponse.json({ message: 'No changes detected; shipment left untouched.' }, { status: 200 });
     }
 
+    // Check if status or location changed - these require a new history entry
+    const statusChanged = updates.status !== oldStatus;
+    const locationChanged = updates.current_location_name !== oldLocation;
+    const shouldCreateHistoryEntry = statusChanged || locationChanged;
+
     const { data, error } = await (supabase
       .from('shipments') as any)
       .update({ ...updates, updated_at: new Date().toISOString() })
@@ -84,6 +123,33 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Create a new tracking event ONLY if status or location changed
+    // Store the location, status, handler, and progress at THIS moment (after update)
+    if (shouldCreateHistoryEntry) {
+      const locationToStore = updates.current_location_name || oldLocation;
+      const statusToStore = updates.status;
+      const handlerToStore = updates.agent_name || oldAgentName;
+      const progressToStore = STATUS_PROGRESS[statusToStore] ?? 0;
+      
+      const eventDescription = statusChanged && locationChanged
+        ? `Status updated to: ${statusToStore}, Location: ${locationToStore}`
+        : statusChanged
+        ? `Status updated to: ${statusToStore}`
+        : `Location updated to: ${locationToStore}`;
+
+      // Insert new tracking event with immutable location, handler, and progress
+      // This captures the state at the moment of this update
+      await (supabase.from('tracking_events') as any).insert([{
+        shipment_id: params.shipmentId,
+        status: statusToStore,
+        description: eventDescription,
+        timestamp: new Date().toISOString(),
+        location: locationToStore, // Store the location at the time of this event (immutable)
+        handler: handlerToStore,   // Store the handler at the time of this event (immutable)
+        progress: progressToStore, // Store the progress at the time of this event (immutable)
+      }]);
     }
 
     const route = `${existingData.sender_city}, ${existingData.sender_country} → ${existingData.recipient_city}, ${existingData.recipient_country}`;
