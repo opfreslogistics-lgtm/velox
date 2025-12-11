@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { createHash } from 'crypto';
-import { sendShipmentUpdatedEmail } from '@/lib/emailService';
 
 // Status to progress percentage mapping (must match Tracking.tsx)
 const STATUS_PROGRESS: Record<string, number> = {
@@ -33,7 +31,6 @@ const STATUS_PROGRESS: Record<string, number> = {
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const adminNotificationEmail = process.env.SUPPORT_EMAIL || process.env.SALES_EMAIL || process.env.ADMIN_EMAIL;
 
 let cachedClient: ReturnType<typeof createClient> | null = null;
 
@@ -133,16 +130,6 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Log the actual email addresses from database
-    console.log('[shipments:update] Shipment updated, email addresses in database:', {
-      sender_email: data.sender_email,
-      recipient_email: data.recipient_email,
-      sender_email_type: typeof data.sender_email,
-      recipient_email_type: typeof data.recipient_email,
-      sender_email_length: data.sender_email?.length,
-      recipient_email_length: data.recipient_email?.length,
-    });
-
     // Create a new tracking event ONLY if status or location changed
     // Store the location, coordinates, status, handler, and progress at THIS moment (after update)
     if (shouldCreateHistoryEntry) {
@@ -174,113 +161,7 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       }]);
     }
 
-    const route = `${existingData.sender_city}, ${existingData.sender_country} → ${existingData.recipient_city}, ${existingData.recipient_country}`;
-    const notificationHash = createHash('sha256')
-      .update(
-        JSON.stringify({
-          status: updates.status,
-          eta: updates.estimated_delivery_date,
-          location: updates.current_location_name,
-          note: updates.system_notes,
-          agent_name: updates.agent_name,
-          agent_phone: updates.agent_phone,
-          agent_email: updates.agent_email,
-        })
-      )
-      .digest('hex');
-
-    let emailStatus = {
-      attempted: false,
-      senderSent: false,
-      recipientSent: false,
-      skipped: false,
-      errors: [] as string[],
-    };
-
-    // FORCE SEND EMAILS on every update - DIRECT SEND like contact form
-    emailStatus.attempted = true;
-    
-    console.log('[shipments:update] FORCE sending email notification to sender and recipient', {
-      trackingNumber: data.tracking_number,
-      senderEmail: data.sender_email,
-      recipientEmail: data.recipient_email,
-      adminEmail: adminNotificationEmail,
-      oldStatus: existingData.status,
-      newStatus: data.status,
-      senderEmailValid: data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email),
-      recipientEmailValid: data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email),
-    });
-
-    // Send emails DIRECTLY like contact form - no wrapper function
-    const { sendEmail } = await import('@/lib/mailer');
-    const { shipmentUpdatedEmailTemplate } = await import('@/lib/emailTemplates');
-    
-    const template = shipmentUpdatedEmailTemplate({
-      trackingNumber: data.tracking_number,
-      route,
-      oldStatus: existingData.status,
-      newStatus: data.status,
-      updatedAt: data.updated_at,
-    });
-
-    // Send to sender - DIRECT like contact form
-    if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
-      try {
-        console.log('[shipments:update] 📧 Sending email directly to sender:', data.sender_email);
-        await sendEmail({
-          to: data.sender_email.trim(),
-          subject: template.subject,
-          html: template.html,
-        });
-        console.log('[shipments:update] ✅ SUCCESS: Email sent to sender:', data.sender_email);
-        emailStatus.senderSent = true;
-      } catch (err: any) {
-        console.error('[shipments:update] ❌ FAILED to send email to sender:', data.sender_email, {
-          error: err.message,
-          code: err.code,
-          response: err.response,
-        });
-        emailStatus.errors.push(`Sender email failed: ${err.message}`);
-      }
-    }
-
-    // Send to recipient - DIRECT like contact form
-    if (data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email)) {
-      try {
-        console.log('[shipments:update] 📧 Sending email directly to recipient:', data.recipient_email);
-        await sendEmail({
-          to: data.recipient_email.trim(),
-          subject: template.subject,
-          html: template.html,
-        });
-        console.log('[shipments:update] ✅ SUCCESS: Email sent to recipient:', data.recipient_email);
-        emailStatus.recipientSent = true;
-      } catch (err: any) {
-        console.error('[shipments:update] ❌ FAILED to send email to recipient:', data.recipient_email, {
-          error: err.message,
-          code: err.code,
-          response: err.response,
-        });
-        emailStatus.errors.push(`Recipient email failed: ${err.message}`);
-      }
-    }
-
-    console.log('[shipments:update] ✅ Email notification completed', emailStatus);
-
-    // Update notification hash to track that emails were sent
-    await (supabase
-      .from('shipments') as any)
-      .update({
-        last_notified_status: data.status,
-        last_notified_hash: notificationHash,
-        last_notified_at: new Date().toISOString(),
-      })
-      .eq('id', data.id);
-
-    return NextResponse.json({ 
-      ...data, 
-      emailStatus: emailStatus 
-    });
+    return NextResponse.json(data);
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Failed to update shipment' }, { status: 500 });
   }
