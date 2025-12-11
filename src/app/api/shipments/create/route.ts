@@ -119,7 +119,7 @@ export async function POST(req: Request) {
       errors: [] as string[],
     };
 
-    // FORCE SEND EMAILS on every create - always notify sender and recipient
+    // FORCE SEND EMAILS on every create - DIRECT SEND like contact form
     emailStatus.attempted = true;
     
     console.log('[shipments:create] FORCE sending email notification to sender and recipient', {
@@ -131,52 +131,71 @@ export async function POST(req: Request) {
       recipientEmailValid: data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email),
     });
 
-    try {
-      await sendShipmentCreatedEmail(
-        {
-          trackingNumber: data.tracking_number,
-          senderName: data.sender_name,
-          senderEmail: data.sender_email,
-          recipientName: data.recipient_name,
-          recipientEmail: data.recipient_email,
-          status: data.status,
-          route,
-          createdAt: data.created_at,
-        },
-        adminNotificationEmail
-      );
+    // Send emails DIRECTLY like contact form - no wrapper function
+    const { sendEmail } = await import('@/lib/mailer');
+    const { shipmentCreatedEmailTemplate } = await import('@/lib/emailTemplates');
+    
+    const template = shipmentCreatedEmailTemplate({
+      trackingNumber: data.tracking_number,
+      senderName: data.sender_name,
+      recipientName: data.recipient_name,
+      status: data.status,
+      route,
+      createdAt: data.created_at,
+    });
 
-      // Mark as sent if emails are valid (the function will log actual send status)
-      if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
+    // Send to sender - DIRECT like contact form
+    if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
+      try {
+        console.log('[shipments:create] 📧 Sending email directly to sender:', data.sender_email);
+        await sendEmail({
+          to: data.sender_email.trim(),
+          subject: template.subject,
+          html: template.html,
+        });
+        console.log('[shipments:create] ✅ SUCCESS: Email sent to sender:', data.sender_email);
         emailStatus.senderSent = true;
+      } catch (err: any) {
+        console.error('[shipments:create] ❌ FAILED to send email to sender:', data.sender_email, {
+          error: err.message,
+          code: err.code,
+          response: err.response,
+        });
+        emailStatus.errors.push(`Sender email failed: ${err.message}`);
       }
-      if (data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email)) {
-        emailStatus.recipientSent = true;
-      }
-
-      console.log('[shipments:create] ✅ Email notification completed', emailStatus);
-
-      await (supabase
-        .from('shipments') as any)
-        .update({
-          last_notified_status: data.status,
-          last_notified_hash: notificationHash,
-          last_notified_at: new Date().toISOString(),
-        })
-        .eq('id', data.id);
-    } catch (notifyErr: any) {
-      const errorMessage = notifyErr?.message || String(notifyErr);
-      emailStatus.errors.push(errorMessage);
-      console.error('[shipments:create] ❌ FAILED to send email notification', {
-        error: errorMessage,
-        stack: notifyErr?.stack,
-        trackingNumber: data.tracking_number,
-        senderEmail: data.sender_email,
-        recipientEmail: data.recipient_email,
-        fullError: notifyErr,
-      });
-      // Don't fail the request if email fails - shipment was created successfully
     }
+
+    // Send to recipient - DIRECT like contact form
+    if (data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email)) {
+      try {
+        console.log('[shipments:create] 📧 Sending email directly to recipient:', data.recipient_email);
+        await sendEmail({
+          to: data.recipient_email.trim(),
+          subject: template.subject,
+          html: template.html,
+        });
+        console.log('[shipments:create] ✅ SUCCESS: Email sent to recipient:', data.recipient_email);
+        emailStatus.recipientSent = true;
+      } catch (err: any) {
+        console.error('[shipments:create] ❌ FAILED to send email to recipient:', data.recipient_email, {
+          error: err.message,
+          code: err.code,
+          response: err.response,
+        });
+        emailStatus.errors.push(`Recipient email failed: ${err.message}`);
+      }
+    }
+
+    console.log('[shipments:create] ✅ Email notification completed', emailStatus);
+
+    await (supabase
+      .from('shipments') as any)
+      .update({
+        last_notified_status: data.status,
+        last_notified_hash: notificationHash,
+        last_notified_at: new Date().toISOString(),
+      })
+      .eq('id', data.id);
 
     return NextResponse.json({ 
       ...data, 
