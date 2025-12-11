@@ -3,6 +3,7 @@ const brandBlack = '#000000';
 const brandGray = '#1a1a1a';
 const lightGray = '#f5f5f5';
 const white = '#ffffff';
+const brandYellow = '#FFD700';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@veloxlogistics.com';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxlogistics.com';
 const logoUrl = 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/logo.png';
@@ -118,6 +119,16 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
     body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
   </style>
   <![endif]-->
+  <style type="text/css">
+    @media only screen and (max-width: 600px) {
+      .mobile-full-width { width: 100% !important; }
+      .mobile-padding { padding: 20px 15px !important; }
+      .mobile-center { text-align: center !important; }
+      .mobile-block { display: block !important; width: 100% !important; }
+      .mobile-spacer { height: 15px !important; }
+      .mobile-button { width: 100% !important; margin: 5px 0 !important; display: block !important; }
+    }
+  </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: ${lightGray}; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
   <!-- Wrapper Table -->
@@ -136,19 +147,18 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Welcome Section -->
           <tr>
-            <td style="background-color: ${white}; padding: 40px 30px;">
+            <td class="mobile-padding" style="background-color: ${white}; padding: 30px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td style="padding: 0 0 15px 0;">
-                    <h1 style="margin: 0; padding: 0; font-size: 28px; font-weight: bold; color: ${brandGray}; line-height: 1.3; font-family: Arial, Helvetica, sans-serif;">
-                      <span style="color: ${brandRed}; font-size: 32px; vertical-align: middle; margin-right: 10px;">🚚</span>
+                  <td style="padding: 0 0 12px 0;">
+                    <h1 style="margin: 0; padding: 0; font-size: 22px; font-weight: bold; color: ${brandGray}; line-height: 1.3; font-family: Arial, Helvetica, sans-serif;">
                       Hello ${recipientName}, your shipment update is here!
                     </h1>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 0;">
-                    <p style="margin: 0; padding: 0; font-size: 16px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
                       ${isUpdate 
                         ? `We have an update on your shipment. ${statusCopy.tip}` 
                         : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
@@ -161,7 +171,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Shipment Summary Card -->
           <tr>
-            <td style="padding: 0 30px 30px 30px;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${lightGray}; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <tr>
                   <td style="padding: 30px;">
@@ -171,13 +181,13 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                               <td style="padding: 0 0 5px 0;">
-                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Shipment Number</p>
+                                <p style="margin: 0; padding: 0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Shipment Number</p>
                               </td>
                             </tr>
                             <tr>
                               <td style="padding: 0;">
-                                <p style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
-                                  <span style="color: ${brandRed}; margin-right: 8px;">📋</span>${data.trackingNumber}
+                                <p style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandRed}; margin-right: 6px; font-size: 14px;">📋</span>${data.trackingNumber}
                                 </p>
                               </td>
                             </tr>
@@ -189,13 +199,13 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                               <td style="padding: 0 0 5px 0;">
-                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Status</p>
+                                <p style="margin: 0; padding: 0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Status</p>
                               </td>
                             </tr>
                             <tr>
                               <td style="padding: 0;">
-                                <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
-                                  <span style="color: ${brandRed}; margin-right: 8px; font-size: 20px;">${statusCopy.icon}</span>${data.status}
+                                <p style="margin: 0; padding: 0; font-size: 15px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandRed}; margin-right: 6px; font-size: 16px;">${statusCopy.icon}</span>${data.status}
                                 </p>
                               </td>
                             </tr>
@@ -208,13 +218,13 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                               <td style="padding: 0 0 5px 0;">
-                                <p style="margin: 0; padding: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Expected Delivery</p>
+                                <p style="margin: 0; padding: 0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #999999; font-weight: bold; font-family: Arial, Helvetica, sans-serif;">Expected Delivery</p>
                               </td>
                             </tr>
                             <tr>
                               <td style="padding: 0;">
-                                <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
-                                  <span style="color: ${brandRed}; margin-right: 8px; font-size: 20px;">📅</span>${formatDate(data.deliveryDate || data.estimatedDelivery)}
+                                <p style="margin: 0; padding: 0; font-size: 15px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                                  <span style="color: ${brandYellow}; margin-right: 6px; font-size: 16px;">📅</span>${formatDate(data.deliveryDate || data.estimatedDelivery)}
                                 </p>
                               </td>
                             </tr>
@@ -231,86 +241,86 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Sender & Receiver Cards -->
           <tr>
-            <td style="padding: 0 30px 30px 30px;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <!-- Sender Card -->
-                  <td width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                  <td class="mobile-full-width mobile-block" width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
-                        <td style="padding: 0 0 20px 0; border-bottom: 2px solid ${brandRed};">
-                          <h2 style="margin: 0; padding: 0 0 15px 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span>Sender Information
+                        <td style="padding: 0 0 15px 0; border-bottom: 2px solid ${brandRed};">
+                          <h2 style="margin: 0; padding: 0 0 12px 0; font-size: 15px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                            Sender Information
                           </h2>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 15px 0 0 0;">
-                          <p style="margin: 0; padding: 0 0 12px 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span><strong style="color: ${brandGray};">Name:</strong> ${data.senderName || '—'}
+                        <td style="padding: 12px 0 0 0;">
+                          <p style="margin: 0; padding: 0 0 10px 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">👤</span><strong style="color: ${brandGray}; font-size: 12px;">Name:</strong> <span style="font-size: 12px;">${data.senderName || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 0 0 12px 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">✉️</span><strong style="color: ${brandGray};">Email:</strong> ${data.senderEmail || '—'}
+                        <td style="padding: 0 0 10px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">✉️</span><strong style="color: ${brandGray}; font-size: 12px;">Email:</strong> <span style="font-size: 12px;">${data.senderEmail || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 0 0 12px 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">📞</span><strong style="color: ${brandGray};">Phone:</strong> ${data.senderPhone || '—'}
+                        <td style="padding: 0 0 10px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">📞</span><strong style="color: ${brandGray}; font-size: 12px;">Phone:</strong> <span style="font-size: 12px;">${data.senderPhone || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">📍</span><strong style="color: ${brandGray};">Address:</strong> ${data.senderAddress || '—'}
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">📍</span><strong style="color: ${brandGray}; font-size: 12px;">Address:</strong> <span style="font-size: 12px;">${data.senderAddress || '—'}</span>
                           </p>
                         </td>
                       </tr>
                     </table>
                   </td>
                   <!-- Spacer -->
-                  <td width="4%"></td>
+                  <td class="mobile-spacer" width="4%" style="height: 20px;"></td>
                   <!-- Receiver Card -->
-                  <td width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                  <td class="mobile-full-width mobile-block" width="48%" valign="top" style="background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
-                        <td style="padding: 0 0 20px 0; border-bottom: 2px solid ${brandRed};">
-                          <h2 style="margin: 0; padding: 0 0 15px 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">👥</span>Receiver Information
+                        <td style="padding: 0 0 15px 0; border-bottom: 2px solid ${brandRed};">
+                          <h2 style="margin: 0; padding: 0 0 12px 0; font-size: 15px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">
+                            Receiver Information
                           </h2>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 15px 0 0 0;">
-                          <p style="margin: 0; padding: 0 0 12px 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">👤</span><strong style="color: ${brandGray};">Name:</strong> ${data.recipientName || '—'}
+                        <td style="padding: 12px 0 0 0;">
+                          <p style="margin: 0; padding: 0 0 10px 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">👤</span><strong style="color: ${brandGray}; font-size: 12px;">Name:</strong> <span style="font-size: 12px;">${data.recipientName || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 0 0 12px 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">✉️</span><strong style="color: ${brandGray};">Email:</strong> ${data.recipientEmail || '—'}
+                        <td style="padding: 0 0 10px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">✉️</span><strong style="color: ${brandGray}; font-size: 12px;">Email:</strong> <span style="font-size: 12px;">${data.recipientEmail || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding: 0 0 12px 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">📞</span><strong style="color: ${brandGray};">Phone:</strong> ${data.recipientPhone || '—'}
+                        <td style="padding: 0 0 10px 0;">
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">📞</span><strong style="color: ${brandGray}; font-size: 12px;">Phone:</strong> <span style="font-size: 12px;">${data.recipientPhone || '—'}</span>
                           </p>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0;">
-                          <p style="margin: 0; padding: 0; font-size: 14px; color: #333333; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                            <span style="color: ${brandRed}; margin-right: 8px;">📍</span><strong style="color: ${brandGray};">Address:</strong> ${data.recipientAddress || '—'}
+                          <p style="margin: 0; padding: 0; font-size: 13px; color: #333333; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                            <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">📍</span><strong style="color: ${brandGray}; font-size: 12px;">Address:</strong> <span style="font-size: 12px;">${data.recipientAddress || '—'}</span>
                           </p>
                         </td>
                       </tr>
@@ -324,14 +334,14 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           ${data.agent && (data.agent.name || data.agent.email || data.agent.phone) ? `
           <!-- Assigned Agent Section -->
           <tr>
-            <td style="padding: 0 30px 30px 30px;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: ${lightGray}; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <tr>
                   <td style="padding: 30px;">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
-                        <td style="padding: 0 0 20px 0;">
-                          <h2 style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Assigned Agent</h2>
+                        <td style="padding: 0 0 15px 0;">
+                          <h2 style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Assigned Agent</h2>
                         </td>
                       </tr>
                       <tr>
@@ -344,15 +354,15 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                               <td valign="top">
                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                   <tr>
-                                    <td style="padding: 0 0 10px 0;">
-                                      <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">${data.agent.name || 'Assigned Agent'}</p>
+                                    <td style="padding: 0 0 8px 0;">
+                                      <p style="margin: 0; padding: 0; font-size: 15px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">${data.agent.name || 'Assigned Agent'}</p>
                                     </td>
                                   </tr>
                                   ${data.agent.phone ? `
                                   <tr>
-                                    <td style="padding: 0 0 8px 0;">
-                                      <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                                        <span style="color: ${brandRed}; margin-right: 8px;">📞</span>${data.agent.phone}
+                                    <td style="padding: 0 0 6px 0;">
+                                      <p style="margin: 0; padding: 0; font-size: 13px; color: #666666; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                                        <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">📞</span>${data.agent.phone}
                                       </p>
                                     </td>
                                   </tr>
@@ -360,8 +370,8 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                                   ${data.agent.email ? `
                                   <tr>
                                     <td style="padding: 0;">
-                                      <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                                        <span style="color: ${brandRed}; margin-right: 8px;">✉️</span>${data.agent.email}
+                                      <p style="margin: 0; padding: 0; font-size: 13px; color: #666666; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                                        <span style="color: ${brandRed}; margin-right: 6px; font-size: 12px;">✉️</span>${data.agent.email}
                                       </p>
                                     </td>
                                   </tr>
@@ -382,11 +392,11 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Shipment Progress Section -->
           <tr>
-            <td style="padding: 0 30px 30px 30px;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td style="padding: 0 0 25px 0; text-align: center;">
-                    <h2 style="margin: 0; padding: 0; font-size: 20px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Shipment Progress</h2>
+                  <td style="padding: 0 0 20px 0; text-align: center;">
+                    <h2 style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${brandGray}; font-family: Arial, Helvetica, sans-serif;">Shipment Progress</h2>
                   </td>
                 </tr>
                 <tr>
@@ -402,15 +412,15 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                             <td width="25%" align="center" valign="top" style="padding: 0 5px;">
                               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                 <tr>
-                                  <td align="center" style="padding: 0 0 10px 0;">
-                                    <div style="width: 50px; height: 50px; border-radius: 50%; background-color: ${stepBg}; display: inline-block; line-height: 50px; text-align: center; border: 2px solid ${stepColor};">
-                                      <span style="font-size: 24px; color: ${stepColor}; vertical-align: middle;">${step.icon}</span>
+                                  <td align="center" style="padding: 0 0 8px 0;">
+                                    <div style="width: 42px; height: 42px; border-radius: 50%; background-color: ${stepBg}; display: inline-block; line-height: 42px; text-align: center; border: 2px solid ${stepColor};">
+                                      <span style="font-size: 18px; color: ${stepColor}; vertical-align: middle;">${step.icon}</span>
                                     </div>
                                   </td>
                                 </tr>
                                 <tr>
                                   <td align="center" style="padding: 0;">
-                                    <p style="margin: 0; padding: 0; font-size: 11px; color: ${isActive || isCompleted ? brandGray : '#999999'}; font-weight: ${isActive || isCompleted ? 'bold' : 'normal'}; font-family: Arial, Helvetica, sans-serif; line-height: 1.4;">${step.label}</p>
+                                    <p style="margin: 0; padding: 0; font-size: 10px; color: ${isActive || isCompleted ? brandGray : '#999999'}; font-weight: ${isActive || isCompleted ? 'bold' : 'normal'}; font-family: Arial, Helvetica, sans-serif; line-height: 1.3;">${step.label}</p>
                                   </td>
                                 </tr>
                               </table>
@@ -433,7 +443,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                 </tr>
                 <tr>
                   <td align="center" style="padding: 0;">
-                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; font-family: Arial, Helvetica, sans-serif;">${progressPercent}% Complete</p>
+                    <p style="margin: 0; padding: 0; font-size: 12px; color: #666666; font-family: Arial, Helvetica, sans-serif;">${progressPercent}% Complete</p>
                   </td>
                 </tr>
               </table>
@@ -442,12 +452,12 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Additional Notes & Actions -->
           <tr>
-            <td style="padding: 0 30px 30px 30px;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td style="padding: 0 0 25px 0;">
-                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                      <strong style="color: ${brandGray};">Important:</strong> Please ensure someone is available to receive the package at the delivery address. You can track your shipment in real-time using the tracking number above.
+                  <td style="padding: 0 0 20px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 12px; color: #666666; line-height: 1.5; font-family: Arial, Helvetica, sans-serif;">
+                      <strong style="color: ${brandGray}; font-size: 12px;">Important:</strong> <span style="font-size: 12px;">Please ensure someone is available to receive the package at the delivery address. You can track your shipment in real-time using the tracking number above.</span>
                     </p>
                   </td>
                 </tr>
@@ -455,13 +465,13 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                   <td align="center" style="padding: 0;">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                       <tr>
-                        <td style="padding: 0 10px 0 0;">
-                          <a href="${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}" style="display: inline-block; padding: 14px 30px; background-color: ${brandRed}; color: ${white}; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; box-shadow: 0 4px 8px rgba(224,40,40,0.3);">
+                        <td class="mobile-button" style="padding: 0 8px 0 0;">
+                          <a href="${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}" style="display: inline-block; padding: 12px 24px; background-color: ${brandRed}; color: ${white}; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; box-shadow: 0 3px 6px rgba(224,40,40,0.3);">
                             🔍 Track Shipment
                           </a>
                         </td>
-                        <td>
-                          <a href="mailto:${supportEmail}" style="display: inline-block; padding: 14px 30px; background-color: #f5f5f5; color: ${brandGray}; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; border: 1px solid #e0e0e0;">
+                        <td class="mobile-button">
+                          <a href="mailto:${supportEmail}" style="display: inline-block; padding: 12px 24px; background-color: ${brandYellow}; color: ${brandGray}; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; border: 1px solid #e0e0e0;">
                             💬 Contact Support
                           </a>
                         </td>
@@ -475,12 +485,12 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           
           <!-- Help Section -->
           <tr>
-            <td style="padding: 0 30px 30px 30px; border-top: 1px solid #e0e0e0;">
+            <td class="mobile-padding" style="padding: 0 25px 25px 25px; border-top: 1px solid #e0e0e0;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td align="center" style="padding: 25px 0 0 0;">
-                    <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; font-family: Arial, Helvetica, sans-serif;">
-                      Need help? Contact us at <a href="mailto:${supportEmail}" style="color: ${brandRed}; font-weight: bold; text-decoration: none;">${supportEmail}</a>
+                  <td align="center" style="padding: 20px 0 0 0;">
+                    <p style="margin: 0; padding: 0; font-size: 12px; color: #666666; font-family: Arial, Helvetica, sans-serif;">
+                      Need help? Contact us at <a href="mailto:${supportEmail}" style="color: ${brandRed}; font-weight: bold; text-decoration: none; font-size: 12px;">${supportEmail}</a>
                     </p>
                   </td>
                 </tr>
@@ -493,15 +503,15 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
             <td style="background-color: ${brandRed}; padding: 40px 30px; text-align: center;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td style="padding: 0 0 15px 0;">
-                    <p style="margin: 0; padding: 0; font-size: 18px; font-weight: bold; color: ${white}; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
+                  <td style="padding: 0 0 12px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${white}; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding: 0 0 20px 0;">
-                    <p style="margin: 0; padding: 0; font-size: 14px; color: ${white}; line-height: 1.8; font-family: Arial, Helvetica, sans-serif;">
+                  <td style="padding: 0 0 18px 0;">
+                    <p style="margin: 0; padding: 0; font-size: 12px; color: ${white}; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
                       Global Delivery Solutions<br>
-                      Email: <a href="mailto:${supportEmail}" style="color: ${white}; text-decoration: underline;">${supportEmail}</a>
+                      Email: <a href="mailto:${supportEmail}" style="color: ${white}; text-decoration: underline; font-size: 12px;">${supportEmail}</a>
                     </p>
                   </td>
                 </tr>
