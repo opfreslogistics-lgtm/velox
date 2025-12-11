@@ -28,6 +28,8 @@ build
 .env*.local
 .env.production
 .env.development
+envexample.md
+envexample.md
 
 # Vercel
 .vercel
