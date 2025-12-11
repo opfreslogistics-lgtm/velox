@@ -82,6 +82,7 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         to: senderEmail,
         subject: template.subject,
         html: template.html,
+        text: (template as any).text,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment created email to sender:', senderEmail);
@@ -108,6 +109,7 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         to: recipientEmail,
         subject: template.subject,
         html: template.html,
+        text: (template as any).text,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment created email to recipient:', recipientEmail);
@@ -135,6 +137,7 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
       to: adminRecipients,
       subject: template.subject,
       html: template.html,
+      text: (template as any).text,
     });
     console.log('[email] ✅ Sent shipment created email to admin');
   }
@@ -169,6 +172,7 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         to: senderEmail,
         subject: template.subject,
         html: template.html,
+        text: (template as any).text,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment updated email to sender:', senderEmail);
@@ -195,6 +199,7 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         to: recipientEmail,
         subject: template.subject,
         html: template.html,
+        text: (template as any).text,
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment updated email to recipient:', recipientEmail);
@@ -222,6 +227,7 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
       to: adminRecipients,
       subject: template.subject,
       html: template.html,
+      text: (template as any).text,
     });
     console.log('[email] ✅ Sent shipment updated email to admin');
   }
