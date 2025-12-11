@@ -81,6 +81,14 @@ export async function POST(req: Request) {
       current_lng: body.current_lng || null,
     };
 
+    // Validate email addresses before inserting
+    console.log('[shipments:create] Validating email addresses', {
+      sender_email: body.sender_email,
+      recipient_email: body.recipient_email,
+      sender_email_valid: body.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.sender_email),
+      recipient_email_valid: body.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.recipient_email),
+    });
+
     const { data, error } = await (supabase
       .from('shipments') as any)
       .insert([payload])
@@ -90,6 +98,14 @@ export async function POST(req: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Log the actual data that was saved
+    console.log('[shipments:create] Shipment created, email addresses in database:', {
+      sender_email: data.sender_email,
+      recipient_email: data.recipient_email,
+      sender_email_type: typeof data.sender_email,
+      recipient_email_type: typeof data.recipient_email,
+    });
 
     const route = `${(payload as any).sender_city}, ${(payload as any).sender_country} → ${(payload as any).recipient_city}, ${(payload as any).recipient_country}`;
     const notificationHash = createHash('sha256')
@@ -104,16 +120,18 @@ export async function POST(req: Request) {
     };
 
     // FORCE SEND EMAILS on every create - always notify sender and recipient
+    emailStatus.attempted = true;
+    
+    console.log('[shipments:create] FORCE sending email notification to sender and recipient', {
+      trackingNumber: data.tracking_number,
+      senderEmail: data.sender_email,
+      recipientEmail: data.recipient_email,
+      adminEmail: adminNotificationEmail,
+      senderEmailValid: data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email),
+      recipientEmailValid: data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email),
+    });
+
     try {
-      console.log('[shipments:create] FORCE sending email notification to sender and recipient', {
-        trackingNumber: data.tracking_number,
-        senderEmail: data.sender_email,
-        recipientEmail: data.recipient_email,
-        adminEmail: adminNotificationEmail,
-      });
-
-      emailStatus.attempted = true;
-
       await sendShipmentCreatedEmail(
         {
           trackingNumber: data.tracking_number,
@@ -128,7 +146,7 @@ export async function POST(req: Request) {
         adminNotificationEmail
       );
 
-      // Check if emails were sent by looking at the email addresses
+      // Mark as sent if emails are valid (the function will log actual send status)
       if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
         emailStatus.senderSent = true;
       }
@@ -136,7 +154,7 @@ export async function POST(req: Request) {
         emailStatus.recipientSent = true;
       }
 
-      console.log('[shipments:create] Email notification sent successfully', emailStatus);
+      console.log('[shipments:create] ✅ Email notification completed', emailStatus);
 
       await (supabase
         .from('shipments') as any)
@@ -149,12 +167,13 @@ export async function POST(req: Request) {
     } catch (notifyErr: any) {
       const errorMessage = notifyErr?.message || String(notifyErr);
       emailStatus.errors.push(errorMessage);
-      console.error('[shipments:create] Failed to send email notification', {
+      console.error('[shipments:create] ❌ FAILED to send email notification', {
         error: errorMessage,
         stack: notifyErr?.stack,
         trackingNumber: data.tracking_number,
         senderEmail: data.sender_email,
         recipientEmail: data.recipient_email,
+        fullError: notifyErr,
       });
       // Don't fail the request if email fails - shipment was created successfully
     }

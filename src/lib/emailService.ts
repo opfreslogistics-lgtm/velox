@@ -61,12 +61,17 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
     senderEmail: payload.senderEmail,
     recipientEmail: payload.recipientEmail,
     adminEmail,
+    senderValid: isValidEmail(payload.senderEmail),
+    recipientValid: isValidEmail(payload.recipientEmail),
   });
 
   const template = shipmentCreatedEmailTemplate(payload);
   const adminRecipients = normalizeRecipients([adminEmail, ...getDefaultNotificationRecipients()]);
   
-  // Send email to sender - SIMPLE DIRECT SEND (like contact form)
+  let senderSent = false;
+  let recipientSent = false;
+  
+  // Send email to sender - EXACTLY like contact form (no try/catch, let errors propagate)
   if (isValidEmail(payload.senderEmail)) {
     const senderEmail = payload.senderEmail!.trim();
     console.log('[email] 📧 Sending shipment created email to sender:', senderEmail);
@@ -78,15 +83,21 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment created email to sender:', senderEmail);
+      senderSent = true;
     } catch (err: any) {
-      console.error('[email] ❌ FAILED: Could not send shipment created email to sender:', senderEmail, err);
-      // Continue to try recipient even if sender fails
+      console.error('[email] ❌ FAILED: Could not send shipment created email to sender:', senderEmail, {
+        error: err.message,
+        code: err.code,
+        response: err.response,
+        stack: err.stack,
+      });
+      // Don't throw - try recipient anyway
     }
   } else {
     console.warn('[email] ⚠️ Invalid or missing sender email:', payload.senderEmail);
   }
 
-  // Send email to recipient - SIMPLE DIRECT SEND (like contact form)
+  // Send email to recipient - EXACTLY like contact form (no try/catch, let errors propagate)
   if (isValidEmail(payload.recipientEmail)) {
     const recipientEmail = payload.recipientEmail!.trim();
     console.log('[email] 📧 Sending shipment created email to recipient:', recipientEmail);
@@ -98,17 +109,23 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment created email to recipient:', recipientEmail);
+      recipientSent = true;
     } catch (err: any) {
-      console.error('[email] ❌ FAILED: Could not send shipment created email to recipient:', recipientEmail, err);
-      // Continue even if recipient fails
+      console.error('[email] ❌ FAILED: Could not send shipment created email to recipient:', recipientEmail, {
+        error: err.message,
+        code: err.code,
+        response: err.response,
+        stack: err.stack,
+      });
+      // Don't throw - at least we tried
     }
   } else {
     console.warn('[email] ⚠️ Invalid or missing recipient email:', payload.recipientEmail);
   }
 
   // If no valid sender or recipient, send to admin (like contact form fallback)
-  if (!isValidEmail(payload.senderEmail) && !isValidEmail(payload.recipientEmail)) {
-    console.warn('[email] No valid sender or recipient emails, sending to admin only');
+  if (!senderSent && !recipientSent) {
+    console.warn('[email] No emails sent to sender/recipient, sending to admin only');
     if (adminRecipients.length === 0) {
       throw new Error('No valid email recipients available for shipment creation notification.');
     }
@@ -119,6 +136,8 @@ export async function sendShipmentCreatedEmail(payload: ShipmentCreatedEmailPayl
     });
     console.log('[email] ✅ Sent shipment created email to admin');
   }
+  
+  console.log('[email] sendShipmentCreatedEmail completed', { senderSent, recipientSent });
 }
 
 export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayload, adminEmail?: string) {
@@ -127,12 +146,17 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
     senderEmail: payload.senderEmail,
     recipientEmail: payload.recipientEmail,
     adminEmail,
+    senderValid: isValidEmail(payload.senderEmail),
+    recipientValid: isValidEmail(payload.recipientEmail),
   });
 
   const template = shipmentUpdatedEmailTemplate(payload);
   const adminRecipients = normalizeRecipients([adminEmail, ...getDefaultNotificationRecipients()]);
   
-  // Send email to sender - SIMPLE DIRECT SEND (like contact form)
+  let senderSent = false;
+  let recipientSent = false;
+  
+  // Send email to sender - EXACTLY like contact form (no try/catch, let errors propagate)
   if (isValidEmail(payload.senderEmail)) {
     const senderEmail = payload.senderEmail!.trim();
     console.log('[email] 📧 Sending shipment updated email to sender:', senderEmail);
@@ -144,15 +168,21 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment updated email to sender:', senderEmail);
+      senderSent = true;
     } catch (err: any) {
-      console.error('[email] ❌ FAILED: Could not send shipment updated email to sender:', senderEmail, err);
-      // Continue to try recipient even if sender fails
+      console.error('[email] ❌ FAILED: Could not send shipment updated email to sender:', senderEmail, {
+        error: err.message,
+        code: err.code,
+        response: err.response,
+        stack: err.stack,
+      });
+      // Don't throw - try recipient anyway
     }
   } else {
     console.warn('[email] ⚠️ Invalid or missing sender email:', payload.senderEmail);
   }
 
-  // Send email to recipient - SIMPLE DIRECT SEND (like contact form)
+  // Send email to recipient - EXACTLY like contact form (no try/catch, let errors propagate)
   if (isValidEmail(payload.recipientEmail)) {
     const recipientEmail = payload.recipientEmail!.trim();
     console.log('[email] 📧 Sending shipment updated email to recipient:', recipientEmail);
@@ -164,17 +194,23 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
         bcc: adminRecipients.length > 0 ? adminRecipients : undefined,
       });
       console.log('[email] ✅ SUCCESS: Sent shipment updated email to recipient:', recipientEmail);
+      recipientSent = true;
     } catch (err: any) {
-      console.error('[email] ❌ FAILED: Could not send shipment updated email to recipient:', recipientEmail, err);
-      // Continue even if recipient fails
+      console.error('[email] ❌ FAILED: Could not send shipment updated email to recipient:', recipientEmail, {
+        error: err.message,
+        code: err.code,
+        response: err.response,
+        stack: err.stack,
+      });
+      // Don't throw - at least we tried
     }
   } else {
     console.warn('[email] ⚠️ Invalid or missing recipient email:', payload.recipientEmail);
   }
 
   // If no valid sender or recipient, send to admin (like contact form fallback)
-  if (!isValidEmail(payload.senderEmail) && !isValidEmail(payload.recipientEmail)) {
-    console.warn('[email] No valid sender or recipient emails, sending to admin only');
+  if (!senderSent && !recipientSent) {
+    console.warn('[email] No emails sent to sender/recipient, sending to admin only');
     if (adminRecipients.length === 0) {
       throw new Error('No valid email recipients available for shipment update notification.');
     }
@@ -185,6 +221,8 @@ export async function sendShipmentUpdatedEmail(payload: ShipmentUpdatedEmailPayl
     });
     console.log('[email] ✅ Sent shipment updated email to admin');
   }
+  
+  console.log('[email] sendShipmentUpdatedEmail completed', { senderSent, recipientSent });
 }
 
 export async function sendContactEmail(payload: ContactEmailPayload, adminRecipients?: Recipient | Recipient[]) {

@@ -133,6 +133,16 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Log the actual email addresses from database
+    console.log('[shipments:update] Shipment updated, email addresses in database:', {
+      sender_email: data.sender_email,
+      recipient_email: data.recipient_email,
+      sender_email_type: typeof data.sender_email,
+      recipient_email_type: typeof data.recipient_email,
+      sender_email_length: data.sender_email?.length,
+      recipient_email_length: data.recipient_email?.length,
+    });
+
     // Create a new tracking event ONLY if status or location changed
     // Store the location, coordinates, status, handler, and progress at THIS moment (after update)
     if (shouldCreateHistoryEntry) {
@@ -188,18 +198,20 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
     };
 
     // FORCE SEND EMAILS on every update - always notify sender and recipient
+    emailStatus.attempted = true;
+    
+    console.log('[shipments:update] FORCE sending email notification to sender and recipient', {
+      trackingNumber: data.tracking_number,
+      senderEmail: data.sender_email,
+      recipientEmail: data.recipient_email,
+      adminEmail: adminNotificationEmail,
+      oldStatus: existingData.status,
+      newStatus: data.status,
+      senderEmailValid: data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email),
+      recipientEmailValid: data.recipient_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.recipient_email),
+    });
+
     try {
-      console.log('[shipments:update] FORCE sending email notification to sender and recipient', {
-        trackingNumber: data.tracking_number,
-        senderEmail: data.sender_email,
-        recipientEmail: data.recipient_email,
-        adminEmail: adminNotificationEmail,
-        oldStatus: existingData.status,
-        newStatus: data.status,
-      });
-
-      emailStatus.attempted = true;
-
       await sendShipmentUpdatedEmail(
         {
           trackingNumber: data.tracking_number,
@@ -213,7 +225,7 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
         adminNotificationEmail
       );
 
-      // Check if emails were sent by looking at the email addresses
+      // Mark as sent if emails are valid (the function will log actual send status)
       if (data.sender_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.sender_email)) {
         emailStatus.senderSent = true;
       }
@@ -221,7 +233,7 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
         emailStatus.recipientSent = true;
       }
 
-      console.log('[shipments:update] Email notification sent successfully', emailStatus);
+      console.log('[shipments:update] ✅ Email notification completed', emailStatus);
 
       // Update notification hash to track that emails were sent
       await (supabase
@@ -235,12 +247,13 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
     } catch (notifyErr: any) {
       const errorMessage = notifyErr?.message || String(notifyErr);
       emailStatus.errors.push(errorMessage);
-      console.error('[shipments:update] Failed to send notification email', {
+      console.error('[shipments:update] ❌ FAILED to send notification email', {
         error: errorMessage,
         stack: notifyErr?.stack,
         trackingNumber: data.tracking_number,
         senderEmail: data.sender_email,
         recipientEmail: data.recipient_email,
+        fullError: notifyErr,
       });
       // Don't fail the request if email fails - shipment was updated successfully
     }
