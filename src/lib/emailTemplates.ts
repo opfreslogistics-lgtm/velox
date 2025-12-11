@@ -79,27 +79,88 @@ const STATUS_COPY: Record<string, { title: string; tip: string; icon: string }> 
   'Damaged Package': { title: 'Package reported damaged.', tip: 'Support will coordinate a resolution.', icon: '🛠️' },
 };
 
-const PROGRESS_STEPS = [
+// Standard progress steps (fixed steps 1, 2, 4)
+const STANDARD_STEPS = [
   { label: 'Picked Up', icon: '📍' },
   { label: 'In Transit', icon: '🚚' },
-  { label: 'Out for Delivery', icon: '📦' },
+  { label: 'Out for Delivery', icon: '📦' }, // Default step 3, can be replaced
   { label: 'Delivered', icon: '✅' },
 ];
 
-function getProgressStepIndex(status: string): number {
-  const normalized = status.toLowerCase();
+// Standard statuses that use the default progress steps
+const STANDARD_STATUSES = ['Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
+
+/**
+ * Builds the progress steps array dynamically based on current status
+ * Rule: Always show 4 steps. If status is not standard, replace step 3 with current status
+ */
+function buildProgressSteps(currentStatus: string): Array<{ label: string; icon: string }> {
+  const normalizedStatus = currentStatus.trim();
+  const isStandardStatus = STANDARD_STATUSES.some(standard => 
+    normalizedStatus.toLowerCase() === standard.toLowerCase()
+  );
+
+  // If status is standard, use default steps
+  if (isStandardStatus) {
+    return STANDARD_STEPS;
+  }
+
+  // If status is not standard, replace step 3 with current status
+  const statusCopy = STATUS_COPY[currentStatus] || { 
+    title: currentStatus, 
+    tip: 'We are monitoring your shipment.', 
+    icon: '📦' 
+  };
+
+  return [
+    STANDARD_STEPS[0], // Picked Up
+    STANDARD_STEPS[1], // In Transit
+    { label: currentStatus, icon: statusCopy.icon }, // Dynamic step 3
+    STANDARD_STEPS[3], // Delivered
+  ];
+}
+
+function getProgressStepIndex(status: string, progressSteps: Array<{ label: string; icon: string }>): number {
+  const normalized = status.toLowerCase().trim();
+  
+  // Check for Delivered (always step 4/index 3)
   if (normalized.includes('delivered')) return 3;
-  if (normalized.includes('out for delivery')) return 2;
-  if (normalized.includes('transit') || normalized.includes('en route') || normalized.includes('departed') || normalized.includes('arrived')) return 1;
+  
+  // Check for Out for Delivery (step 3/index 2) - but only if it's actually in the steps
+  if (normalized.includes('out for delivery')) {
+    const step3Label = progressSteps[2]?.label.toLowerCase() || '';
+    if (step3Label.includes('out for delivery')) {
+      return 2;
+    }
+  }
+  
+  // Check for In Transit (step 2/index 1)
+  if (normalized.includes('transit') || normalized.includes('en route') || 
+      normalized.includes('departed') || normalized.includes('arrived') ||
+      normalized.includes('at warehouse')) return 1;
+  
+  // Check for Picked Up (step 1/index 0)
   if (normalized.includes('picked')) return 0;
+  
+  // If status is not standard and replaced step 3, check if current status matches step 3
+  // This handles cases like "On Hold", "Delayed", etc. that replace step 3
+  const step3Label = progressSteps[2]?.label.toLowerCase().trim() || '';
+  if (step3Label === normalized || step3Label.includes(normalized) || normalized.includes(step3Label)) {
+    return 2;
+  }
+  
+  // Default to first step
   return 0;
 }
 
 function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { html: string; text: string } {
   const statusCopy = STATUS_COPY[data.status] || { title: data.status, tip: 'We are monitoring your shipment.', icon: '📦' };
   const recipientName = data.recipientName || 'Valued Customer';
-  const progressStep = getProgressStepIndex(data.status);
-  const progressPercent = Math.round(((progressStep + 1) / PROGRESS_STEPS.length) * 100);
+  
+  // Build dynamic progress steps based on current status
+  const progressSteps = buildProgressSteps(data.status);
+  const progressStep = getProgressStepIndex(data.status, progressSteps);
+  const progressPercent = Math.round(((progressStep + 1) / progressSteps.length) * 100);
   
   // Agent photo with fallback
   const agentPhoto = data.agent?.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.agent?.name || 'Agent')}&size=120&background=${brandRed.replace('#', '')}&color=ffffff&bold=true&format=png`;
@@ -403,7 +464,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                   <td>
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                       <tr>
-                        ${PROGRESS_STEPS.map((step, index) => {
+                        ${progressSteps.map((step, index) => {
                           const isActive = index === progressStep;
                           const isCompleted = index < progressStep;
                           const stepColor = isActive || isCompleted ? brandRed : '#cccccc';
@@ -592,7 +653,7 @@ Email: ${data.agent.email || '—'}
 ` : ''}
 
 SHIPMENT PROGRESS
-${PROGRESS_STEPS.map((step, index) => {
+${progressSteps.map((step, index) => {
   const isActive = index === progressStep;
   const isCompleted = index < progressStep;
   const marker = isActive ? '●' : isCompleted ? '✓' : '○';
