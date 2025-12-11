@@ -172,7 +172,7 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
             route: routeLabel,
             oldStatus,
             newStatus: updates.status,
-            updatedAt: updates.updated_at || new Date().toISOString(),
+            updatedAt: (data as any)?.updated_at || new Date().toISOString(),
             senderEmail: existingData.sender_email,
             recipientEmail: existingData.recipient_email,
             estimatedDelivery: updates.estimated_delivery_date,

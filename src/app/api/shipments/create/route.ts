@@ -117,15 +117,16 @@ export async function POST(req: Request) {
     }
 
     // Create initial tracking event with immutable snapshot
+    const bodyAny = body as Record<string, any>;
     await (supabase.from('tracking_events') as any).insert([{
       shipment_id: id,
       status: payload.status,
       description: `Shipment created with status: ${payload.status}`,
       timestamp: now,
-      location: payload.current_location_name || payload.sender_city || 'Origin',
-      latitude: payload.current_lat || payload.sender_lat,
-      longitude: payload.current_lng || payload.sender_lng,
-      handler: payload.agent_name || 'Assigned Agent',
+      location: bodyAny.current_location_name || bodyAny.sender_city || 'Origin',
+      latitude: bodyAny.current_lat || bodyAny.sender_lat,
+      longitude: bodyAny.current_lng || bodyAny.sender_lng,
+      handler: bodyAny.agent_name || 'Assigned Agent',
       progress: STATUS_PROGRESS[payload.status] ?? 0,
     }]);
 
