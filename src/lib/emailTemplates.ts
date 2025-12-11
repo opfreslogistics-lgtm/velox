@@ -4,16 +4,46 @@ const brandRed = '#D40511';
 const brandOrange = '#F59E0B';
 const brandTeal = '#0f766e';
 const textColor = '#1F2937';
+const supportEmail = process.env.SUPPORT_EMAIL || 'support@veloxlogistics.com';
+
+// Simple inline “logo” so emails look branded even without external assets
+const brandMark = `
+  <div class="brand">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="14" fill="url(#grad)" />
+        <path d="M14 42.5L28.5 18h8.2L50 42.5h-8.9l-3-5.6H25.9l-3 5.6H14zm17.3-12.9h6.2l-3.1-5.8-3.1 5.8z" fill="white" />
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop stop-color="${brandRed}"/>
+            <stop offset="1" stop-color="${brandOrange}"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">Velox Logistics</span>
+      <span class="brand-tagline">Fast. Tracked. Reliable.</span>
+    </div>
+  </div>
+`;
 
 const baseStyles = `
   body { font-family: 'Inter', Arial, sans-serif; margin: 0; padding: 0; background: #f3f4f6; color: ${textColor}; }
-  .wrapper { max-width: 720px; margin: 0 auto; padding: 32px 16px; }
-  .card { background: #ffffff; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
-  .header { background: linear-gradient(135deg, ${brandRed} 0%, ${brandOrange} 100%); color: #fff; padding: 32px 36px; }
-  .title { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
-  .subtitle { margin: 8px 0 0; opacity: 0.9; font-size: 15px; }
-  .content { padding: 32px 36px 18px; background: #f9fafb; }
-  .rows { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .wrapper { max-width: 760px; margin: 0 auto; padding: 32px 16px; }
+  .card { background: #ffffff; border-radius: 18px; overflow: hidden; box-shadow: 0 22px 60px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; }
+  .header { background: linear-gradient(135deg, ${brandRed} 0%, ${brandOrange} 100%); color: #fff; padding: 28px 32px; display: flex; align-items: center; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,0.12); display: grid; place-items: center; }
+  .brand-text { display: flex; flex-direction: column; }
+  .brand-name { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+  .brand-tagline { font-size: 12px; opacity: 0.85; }
+  .title { margin: 0; font-size: 24px; letter-spacing: -0.02em; }
+  .subtitle { margin: 6px 0 0; opacity: 0.9; font-size: 14px; }
+  .hero { padding: 20px 32px 0; background: linear-gradient(180deg, rgba(212,5,17,0.04), rgba(0,0,0,0)); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; font-weight: 600; color: ${textColor}; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+  .content { padding: 18px 32px 8px; background: #f9fafb; }
+  .rows { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
   .row { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px 16px; }
   .row-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7280; margin: 0 0 6px; }
   .row-value { margin: 0; font-weight: 700; color: ${textColor}; }
@@ -21,16 +51,17 @@ const baseStyles = `
   .badge-success { background: rgba(16,185,129,0.12); color: #047857; }
   .badge-warn { background: rgba(245,158,11,0.12); color: #b45309; }
   .muted { color: #6b7280; margin: 0; }
-  .footer { padding: 20px 36px 30px; background: #fff; border-top: 1px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px; }
-  .actions { margin-top: 20px; }
-  .button { display: inline-block; padding: 12px 20px; background: ${brandRed}; color: #fff !important; text-decoration: none; border-radius: 10px; font-weight: 700; letter-spacing: 0.01em; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; font-weight: 600; color: ${textColor}; }
-  .status-card { background: #fff; border-radius: 14px; border: 1px solid #e5e7eb; padding: 16px; margin-top: 16px; }
-  .status-title { margin: 0 0 8px; font-size: 15px; color: ${textColor}; }
-  .progress { height: 10px; background: #e5e7eb; border-radius: 999px; overflow: hidden; margin: 10px 0 4px; }
-  .progress-bar { height: 100%; background: linear-gradient(90deg, ${brandRed}, ${brandOrange}); }
-  .tip { margin: 0; color: #374151; font-weight: 600; }
+  .footer { padding: 20px 32px 28px; background: #fff; border-top: 1px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px; }
+  .actions { margin-top: 22px; text-align: center; }
+  .button { display: inline-block; padding: 12px 20px; background: ${brandRed}; color: #fff !important; text-decoration: none; border-radius: 10px; font-weight: 700; letter-spacing: 0.01em; box-shadow: 0 12px 30px rgba(212,5,17,0.22); }
+  .status-card { background: #fff; border-radius: 14px; border: 1px solid #e5e7eb; padding: 16px; margin-top: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+  .status-title { margin: 0 0 8px; font-size: 15px; color: ${textColor}; display: flex; align-items: center; gap: 8px; }
+  .tip { margin: 0; color: #111827; font-weight: 700; }
   .note { margin: 6px 0 0; color: #6b7280; }
+  .grid-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px; }
+  .meta { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px 16px; }
+  .meta strong { color: #111827; }
+  .meta span { color: #4b5563; }
 `;
 
 function wrapTemplate({
@@ -39,12 +70,14 @@ function wrapTemplate({
   intro,
   rows,
   action,
+  statusCardHtml,
 }: {
   title: string;
   subtitle?: string;
   intro?: string;
   rows: Row[];
   action?: { label: string; url: string };
+  statusCardHtml?: string;
 }) {
   return `
     <!doctype html>
@@ -57,11 +90,21 @@ function wrapTemplate({
         <div class="wrapper">
           <div class="card">
             <div class="header">
-              <h1 class="title">${title}</h1>
-              ${subtitle ? `<p class="subtitle">${subtitle}</p>` : ''}
+              ${brandMark}
+              <div>
+                <h1 class="title">${title}</h1>
+                ${subtitle ? `<p class="subtitle">${subtitle}</p>` : ''}
+              </div>
+            </div>
+            <div class="hero">
+              <div class="pill">
+                <span style="font-size:12px; color:#6b7280;">Powered by</span>
+                <span style="font-weight:800;">Velox Logistics</span>
+              </div>
             </div>
             <div class="content">
               ${intro ? `<p class="muted" style="margin: 0 0 16px;">${intro}</p>` : ''}
+              ${statusCardHtml || ''}
               <div class="rows">
                 ${rows
                   .map(
@@ -81,8 +124,9 @@ function wrapTemplate({
               }
             </div>
             <div class="footer">
-              <p class="muted">This is an automated notification from Velox Logistics.</p>
-              <p class="muted">For assistance, reply to this email or contact our support team.</p>
+              <p class="muted" style="margin-bottom:4px;">This is an automated notification from Velox Logistics.</p>
+              <p class="muted" style="margin-bottom:4px;">Need help? Email <a href="mailto:${supportEmail}" style="color:${brandRed}; text-decoration:none;">${supportEmail}</a></p>
+              <p class="muted">Thank you for shipping with us.</p>
             </div>
           </div>
         </div>
@@ -167,11 +211,18 @@ export function shipmentCreatedEmailTemplate(payload: {
   route: string;
   createdAt?: string;
 }) {
+  const badge =
+    payload.status === 'Delivered'
+      ? `<span class="badge badge-success">${payload.status}</span>`
+      : `<span class="badge">${payload.status}</span>`;
+
   const rows: Row[] = [
     { label: 'Tracking Number', value: payload.trackingNumber },
     { label: 'Route', value: payload.route },
     { label: 'Sender', value: payload.senderName },
+    ...(payload.senderEmail ? [{ label: 'Sender Email', value: payload.senderEmail }] : []),
     { label: 'Recipient', value: payload.recipientName },
+    ...(payload.recipientEmail ? [{ label: 'Recipient Email', value: payload.recipientEmail }] : []),
     { label: 'Status', value: payload.status },
     { label: 'Created', value: formatDate(payload.createdAt) },
   ];
@@ -181,7 +232,7 @@ export function shipmentCreatedEmailTemplate(payload: {
     html: wrapTemplate({
       title: 'Your shipment is booked',
       subtitle: 'Velox Logistics • Real-time updates included',
-      intro: 'We have registered your shipment. You and the receiver will get updates at every key milestone.',
+      intro: `We have registered your shipment. You and the receiver will get updates at every key milestone. Current status: ${badge}`,
       rows,
       action: {
         label: 'Track shipment',
@@ -200,6 +251,8 @@ export function shipmentUpdatedEmailTemplate(payload: {
   currentLocation?: string;
   estimatedDelivery?: string;
 }) {
+  const statusHtml = statusCard(payload.newStatus, payload.estimatedDelivery, payload.currentLocation);
+
   const rows: Row[] = [
     { label: 'Tracking Number', value: payload.trackingNumber },
     { label: 'Route', value: payload.route },
