@@ -165,7 +165,26 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
     // Fire-and-forget email notification to sender & receiver about status change
     (async () => {
       try {
+        const senderAddress = [
+          existingData.sender_address_line1,
+          existingData.sender_address_line2,
+          existingData.sender_city,
+          existingData.sender_state,
+          existingData.sender_postal_code,
+          existingData.sender_country,
+        ].filter(Boolean).join(', ');
+
+        const recipientAddress = [
+          existingData.recipient_address_line1,
+          existingData.recipient_address_line2,
+          existingData.recipient_city,
+          existingData.recipient_state,
+          existingData.recipient_postal_code,
+          existingData.recipient_country,
+        ].filter(Boolean).join(', ');
+
         const routeLabel = `${existingData.sender_city}, ${existingData.sender_country} → ${existingData.recipient_city}, ${existingData.recipient_country}`;
+        
         await sendShipmentUpdatedEmail(
           {
             trackingNumber: existingData.tracking_number,
@@ -173,10 +192,25 @@ export async function PATCH(req: Request, { params }: { params: { shipmentId: st
             oldStatus,
             newStatus: updates.status,
             updatedAt: (data as any)?.updated_at || new Date().toISOString(),
+            senderName: existingData.sender_name,
             senderEmail: existingData.sender_email,
+            senderPhone: existingData.sender_phone,
+            senderAddress: senderAddress,
+            recipientName: existingData.recipient_name,
             recipientEmail: existingData.recipient_email,
+            recipientPhone: existingData.recipient_phone,
+            recipientAddress: recipientAddress,
             estimatedDelivery: updates.estimated_delivery_date,
             currentLocation: updates.current_location_name,
+            shipmentType: existingData.shipment_type,
+            weight: existingData.weight,
+            origin: routeLabel.split(' → ')[0],
+            destination: routeLabel.split(' → ')[1],
+            agent: updates.agent_name || existingData.agent_name || existingData.agent_id ? {
+              name: updates.agent_name || existingData.agent_name,
+              phone: updates.agent_phone || existingData.agent_phone,
+              email: updates.agent_email || existingData.agent_email,
+            } : undefined,
           },
           process.env.ADMIN_EMAIL
         );

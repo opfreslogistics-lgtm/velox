@@ -43,17 +43,51 @@ export async function POST(req: Request, { params }: { params: { shipmentId: str
     const s = shipment as Record<string, any>;
     const routeLabel = `${s.sender_city}, ${s.sender_country} → ${s.recipient_city}, ${s.recipient_country}`;
 
+    const senderAddress = [
+      s.sender_address_line1,
+      s.sender_address_line2,
+      s.sender_city,
+      s.sender_state,
+      s.sender_postal_code,
+      s.sender_country,
+    ].filter(Boolean).join(', ');
+
+    const recipientAddress = [
+      s.recipient_address_line1,
+      s.recipient_address_line2,
+      s.recipient_city,
+      s.recipient_state,
+      s.recipient_postal_code,
+      s.recipient_country,
+    ].filter(Boolean).join(', ');
+
     if (body.type === 'created') {
       await sendShipmentCreatedEmail(
         {
           trackingNumber: s.tracking_number,
           senderName: s.sender_name,
           senderEmail: s.sender_email,
+          senderPhone: s.sender_phone,
+          senderAddress: senderAddress,
           recipientName: s.recipient_name,
           recipientEmail: s.recipient_email,
+          recipientPhone: s.recipient_phone,
+          recipientAddress: recipientAddress,
           status: s.status,
           route: routeLabel,
           createdAt: s.created_at,
+          shipmentType: s.shipment_type,
+          weight: s.weight,
+          origin: routeLabel.split(' → ')[0],
+          destination: routeLabel.split(' → ')[1],
+          currentLocation: s.current_location_name || s.sender_city,
+          estimatedDelivery: s.estimated_delivery_date,
+          agent: s.agent_name || s.agent_id ? {
+            name: s.agent_name,
+            phone: s.agent_phone,
+            email: s.agent_email,
+            photo: s.agent_photo,
+          } : undefined,
         },
         process.env.ADMIN_EMAIL
       );
@@ -65,10 +99,26 @@ export async function POST(req: Request, { params }: { params: { shipmentId: str
           oldStatus: body.oldStatus || s.status,
           newStatus: s.status,
           updatedAt: s.updated_at,
+          senderName: s.sender_name,
           senderEmail: s.sender_email,
+          senderPhone: s.sender_phone,
+          senderAddress: senderAddress,
+          recipientName: s.recipient_name,
           recipientEmail: s.recipient_email,
+          recipientPhone: s.recipient_phone,
+          recipientAddress: recipientAddress,
           estimatedDelivery: s.estimated_delivery_date,
           currentLocation: s.current_location_name,
+          shipmentType: s.shipment_type,
+          weight: s.weight,
+          origin: routeLabel.split(' → ')[0],
+          destination: routeLabel.split(' → ')[1],
+          agent: s.agent_name || s.agent_id ? {
+            name: s.agent_name,
+            phone: s.agent_phone,
+            email: s.agent_email,
+            photo: s.agent_photo,
+          } : undefined,
         },
         process.env.ADMIN_EMAIL
       );

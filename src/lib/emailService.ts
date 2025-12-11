@@ -7,23 +7,55 @@ export type ShipmentCreatedEmailPayload = {
   trackingNumber: string;
   senderName: string;
   senderEmail?: string;
+  senderPhone?: string;
+  senderAddress?: string;
   recipientName: string;
   recipientEmail?: string;
+  recipientPhone?: string;
+  recipientAddress?: string;
   status: string;
-  route: string;
+  route?: string;
   createdAt?: string;
+  shipmentType?: string;
+  weight?: string | number;
+  origin?: string;
+  destination?: string;
+  currentLocation?: string;
+  estimatedDelivery?: string;
+  agent?: {
+    photo?: string;
+    name?: string;
+    phone?: string;
+    email?: string;
+  };
 };
 
 export type ShipmentUpdatedEmailPayload = {
   trackingNumber: string;
-  route: string;
+  route?: string;
   oldStatus: string;
   newStatus: string;
   updatedAt?: string;
+  senderName?: string;
   senderEmail?: string;
+  senderPhone?: string;
+  senderAddress?: string;
+  recipientName?: string;
   recipientEmail?: string;
+  recipientPhone?: string;
+  recipientAddress?: string;
   estimatedDelivery?: string;
   currentLocation?: string;
+  shipmentType?: string;
+  weight?: string | number;
+  origin?: string;
+  destination?: string;
+  agent?: {
+    photo?: string;
+    name?: string;
+    phone?: string;
+    email?: string;
+  };
 };
 
 export type ContactEmailPayload = {

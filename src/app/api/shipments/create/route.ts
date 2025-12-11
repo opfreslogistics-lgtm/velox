@@ -133,17 +133,52 @@ export async function POST(req: Request) {
     // Fire-and-forget email notification to sender & receiver
     (async () => {
       try {
+        const senderAddress = [
+          body.sender_address_line1,
+          body.sender_address_line2,
+          body.sender_city,
+          body.sender_state,
+          body.sender_postal_code,
+          body.sender_country,
+        ].filter(Boolean).join(', ');
+
+        const recipientAddress = [
+          body.recipient_address_line1,
+          body.recipient_address_line2,
+          body.recipient_city,
+          body.recipient_state,
+          body.recipient_postal_code,
+          body.recipient_country,
+        ].filter(Boolean).join(', ');
+
         const routeLabel = `${body.sender_city}, ${body.sender_country} → ${body.recipient_city}, ${body.recipient_country}`;
+        
         await sendShipmentCreatedEmail(
           {
             trackingNumber: body.tracking_number,
             senderName: body.sender_name,
             senderEmail: body.sender_email,
+            senderPhone: body.sender_phone,
+            senderAddress: senderAddress,
             recipientName: body.recipient_name,
             recipientEmail: body.recipient_email,
+            recipientPhone: body.recipient_phone,
+            recipientAddress: recipientAddress,
             status: payload.status,
             route: routeLabel,
             createdAt: payload.created_at,
+            shipmentType: body.shipment_type,
+            weight: body.weight,
+            origin: routeLabel.split(' → ')[0],
+            destination: routeLabel.split(' → ')[1],
+            currentLocation: bodyAny.current_location_name || body.sender_city,
+            estimatedDelivery: body.estimated_delivery_date,
+            agent: bodyAny.agent_name || bodyAny.agent_id ? {
+              name: bodyAny.agent_name,
+              phone: bodyAny.agent_phone,
+              email: bodyAny.agent_email,
+              photo: bodyAny.agent_photo,
+            } : undefined,
           },
           process.env.ADMIN_EMAIL
         );

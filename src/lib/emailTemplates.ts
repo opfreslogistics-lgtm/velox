@@ -1,12 +1,11 @@
-type Row = { label: string; value: string };
-
 const brandRed = '#e02828';
+const brandBlack = '#000000';
 const brandGray = '#1a1a1a';
 const lightGray = '#f3f3f3';
+const white = '#ffffff';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@veloxlogistics.com';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxlogistics.com';
-const logoUrl =
-  'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/emaillogo.png';
+const logoUrl = 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/logo.png';
 
 type TemplateResult = {
   subject: string;
@@ -16,344 +15,534 @@ type TemplateResult = {
   variables: string[];
 };
 
-const baseStyles = `
-  /* Core reset */
-  body { margin: 0; padding: 0; background: ${lightGray}; color: ${brandGray}; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
-  a { color: ${brandRed}; text-decoration: none; }
-  /* Layout */
-  .wrapper { width: 100%; background: ${lightGray}; padding: 24px 12px; }
-  .container { max-width: 720px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #ececec; }
-  .inner { padding: 24px 28px; }
-  .center { text-align: center; }
-  .logo { width: 160px; margin: 0 auto 16px; }
-  .heading { font-size: 22px; font-weight: 800; margin: 8px 0 4px; color: ${brandGray}; }
-  .subheading { font-size: 14px; margin: 0; color: #4b4b4b; }
-  .divider { height: 1px; background: #e9e9e9; margin: 18px 0; }
-  /* Cards */
-  .card { background: #ffffff; border: 1px solid #e9e9e9; border-radius: 14px; padding: 18px; box-shadow: 0 12px 32px rgba(0,0,0,0.04); }
-  .card + .card { margin-top: 14px; }
-  .card-title { margin: 0 0 8px; font-size: 16px; font-weight: 800; color: ${brandGray}; }
-  .card-desc { margin: 0 0 12px; color: #4b4b4b; font-size: 14px; }
-  /* Highlight */
-  .highlight { display: flex; gap: 12px; align-items: center; }
-  .highlight-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(224,40,40,0.1); display: grid; place-items: center; font-size: 22px; }
-  /* Details grid */
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-  .row-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; color: #666; margin: 0 0 4px; }
-  .row-value { margin: 0; font-weight: 700; color: ${brandGray}; font-size: 14px; }
-  /* Agent */
-  .agent { display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center; }
-  .agent img { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; border: 1px solid #e9e9e9; }
-  .agent-meta { font-size: 13px; color: #4b4b4b; }
-  .btn { display: inline-block; padding: 10px 16px; border-radius: 12px; background: ${brandRed}; color: #fff; font-weight: 700; font-size: 14px; box-shadow: 0 12px 24px rgba(224,40,40,0.22); }
-  .btn-secondary { background: #f7f7f7; color: ${brandGray}; border: 1px solid #e6e6e6; box-shadow: none; }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-  /* Progress */
-  .steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  .step { display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #f8f8f8; border: 1px solid #ececec; font-size: 13px; }
-  .step.active { background: rgba(224,40,40,0.1); border-color: rgba(224,40,40,0.3); font-weight: 700; color: ${brandRed}; }
-  .progress-wrap { margin-top: 10px; }
-  .progress-bar { width: 100%; background: #efefef; border-radius: 999px; height: 10px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, ${brandRed}, #f87171); border-radius: 999px; }
-  /* Footer */
-  .footer { text-align: center; font-size: 12px; color: #666; padding: 18px; }
-  .social { display: inline-flex; gap: 10px; margin: 8px 0; }
-  .social a { width: 32px; height: 32px; border-radius: 50%; background: #f5f5f5; display: inline-grid; place-items: center; border: 1px solid #e6e6e6; }
-  /* Responsive */
-  @media (max-width: 520px) {
-    .inner { padding: 18px; }
-    .card { padding: 16px; }
-    .agent { grid-template-columns: 1fr; text-align: left; }
-    .actions { flex-direction: column; }
-    .btn, .btn-secondary { text-align: center; width: 100%; }
-  }
-`;
-
-function wrapTemplate({
-  title,
-  greeting,
-  intro,
-  highlight,
-  details,
-  agent,
-  steps,
-  actions,
-  previewText,
-}: {
-  title: string;
-  greeting: string;
-  intro: string;
-  highlight: { icon: string; label: string; description: string };
-  details: Row[];
-  agent: {
+type ShipmentData = {
+  trackingNumber: string;
+  status: string;
+  deliveryDate?: string;
+  senderName: string;
+  senderEmail?: string;
+  senderPhone?: string;
+  senderAddress?: string;
+  recipientName: string;
+  recipientEmail?: string;
+  recipientPhone?: string;
+  recipientAddress?: string;
+  agent?: {
     photo?: string;
     name?: string;
-    id?: string;
     phone?: string;
     email?: string;
-    shift?: string;
-    department?: string;
   };
-  steps: { label: string; active: boolean }[];
-  actions: { label: string; url: string; primary?: boolean }[];
-  previewText: string;
-}): { html: string; text: string } {
-  const activeIndex = Math.max(
-    0,
-    steps.findIndex((s) => s.active)
-  );
-  const progressPct = Math.round(((activeIndex + 1) / steps.length) * 100);
+  shipmentType?: string;
+  weight?: string | number;
+  origin?: string;
+  destination?: string;
+  currentLocation?: string;
+  estimatedDelivery?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  oldStatus?: string;
+};
+
+function formatDate(value?: string | Date) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function formatAddress(parts: {
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+}): string {
+  const addressParts: string[] = [];
+  if (parts.line1) addressParts.push(parts.line1);
+  if (parts.line2) addressParts.push(parts.line2);
+  if (parts.city) addressParts.push(parts.city);
+  if (parts.state) addressParts.push(parts.state);
+  if (parts.postalCode) addressParts.push(parts.postalCode);
+  if (parts.country) addressParts.push(parts.country);
+  return addressParts.length > 0 ? addressParts.join(', ') : '—';
+}
+
+const STATUS_COPY: Record<string, { title: string; tip: string; icon: string }> = {
+  Pending: { title: 'We received your order.', tip: 'We are preparing your shipment details.', icon: 'fa-clock' },
+  'Awaiting Payment': { title: 'Payment required.', tip: 'Complete payment to start processing.', icon: 'fa-credit-card' },
+  'Payment Confirmed': { title: 'Payment confirmed.', tip: 'Processing will start shortly.', icon: 'fa-check-circle' },
+  Processing: { title: 'We are packing your order.', tip: 'Labels are being prepared.', icon: 'fa-box' },
+  'Ready for Pickup': { title: 'Ready for pickup.', tip: 'Driver will collect soon.', icon: 'fa-truck' },
+  'Driver En Route': { title: 'Driver is on the way.', tip: 'Keep your phone nearby for updates.', icon: 'fa-route' },
+  'Picked Up': { title: 'Package picked up.', tip: 'In hand and heading to origin facility.', icon: 'fa-map-marker-alt' },
+  'At Warehouse': { title: 'At warehouse.', tip: 'Queued for the next leg of the journey.', icon: 'fa-warehouse' },
+  'In Transit': { title: 'In transit.', tip: 'Moving to the next facility.', icon: 'fa-truck' },
+  'Departed Facility': { title: 'Departed facility.', tip: 'On the road to the next stop.', icon: 'fa-arrow-right' },
+  'Arrived at Facility': { title: 'Arrived at facility.', tip: 'Sorting for the next transfer.', icon: 'fa-building' },
+  'Out for Delivery': { title: 'Out for delivery.', tip: 'Expect delivery today.', icon: 'fa-shipping-fast' },
+  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Velox.', icon: 'fa-check-circle' },
+  'Delivery Attempted': { title: 'Delivery attempted.', tip: 'We will re-attempt or contact you.', icon: 'fa-exclamation-triangle' },
+  'Returned to Sender': { title: 'Returned to sender.', tip: 'Contact support to reschedule.', icon: 'fa-undo' },
+  Cancelled: { title: 'Shipment cancelled.', tip: 'Reach out if this is unexpected.', icon: 'fa-ban' },
+  'On Hold': { title: 'Shipment on hold.', tip: 'We will notify you once it resumes.', icon: 'fa-pause-circle' },
+  Delayed: { title: 'Shipment delayed.', tip: 'We are expediting the next leg.', icon: 'fa-hourglass-half' },
+  'Weather Delay': { title: 'Weather delay.', tip: 'Safety first—new ETA will follow.', icon: 'fa-cloud-rain' },
+  'Address Issue': { title: 'Address issue.', tip: 'Please confirm the delivery address.', icon: 'fa-map-marked-alt' },
+  'Customs Hold': { title: 'Customs hold.', tip: 'Awaiting clearance.', icon: 'fa-passport' },
+  'Inspection Required': { title: 'Inspection in progress.', tip: 'We will share findings soon.', icon: 'fa-search' },
+  'Payment Verification Required': { title: 'Payment verification needed.', tip: 'Please verify payment details.', icon: 'fa-credit-card' },
+  'Lost Package': { title: 'Package reported lost.', tip: 'Support will reach out with options.', icon: 'fa-question-circle' },
+  'Damaged Package': { title: 'Package reported damaged.', tip: 'Support will coordinate a resolution.', icon: 'fa-tools' },
+};
+
+const PROGRESS_STEPS = [
+  { label: 'Picked Up', icon: 'fa-map-marker-alt' },
+  { label: 'In Transit', icon: 'fa-truck' },
+  { label: 'Out for Delivery', icon: 'fa-shipping-fast' },
+  { label: 'Delivered', icon: 'fa-check-circle' },
+];
+
+function getProgressStepIndex(status: string): number {
+  const normalized = status.toLowerCase();
+  if (normalized.includes('delivered')) return 3;
+  if (normalized.includes('out for delivery')) return 2;
+  if (normalized.includes('transit') || normalized.includes('en route') || normalized.includes('departed') || normalized.includes('arrived')) return 1;
+  if (normalized.includes('picked')) return 0;
+  return 0;
+}
+
+function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { html: string; text: string } {
+  const statusCopy = STATUS_COPY[data.status] || { title: data.status, tip: 'We are monitoring your shipment.', icon: 'fa-box' };
+  const recipientName = data.recipientName || 'Valued Customer';
+  const progressStep = getProgressStepIndex(data.status);
+  const progressPercent = Math.round(((progressStep + 1) / PROGRESS_STEPS.length) * 100);
 
   const html = `
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <style>${baseStyles}</style>
-      </head>
-      <body>
-        <div class="wrapper">
-          <div class="container">
-            <div class="inner center">
-              <img src="${logoUrl}" alt="Velox Logistics" class="logo" />
-              <div class="heading">${title}</div>
-              <p class="subheading">${previewText}</p>
-            </div>
-            <div class="divider"></div>
-            <div class="inner">
-              <p style="margin:0 0 8px; font-size:14px;">Hello ${greeting},</p>
-              <p style="margin:0 0 16px; font-size:14px; color:#4b4b4b;">${intro}</p>
-
-              <div class="card highlight">
-                <div class="highlight-icon">${highlight.icon}</div>
-                <div>
-                  <div class="card-title">${highlight.label}</div>
-                  <div class="card-desc">${highlight.description}</div>
-                </div>
-              </div>
-
-              <div class="card" style="margin-top:14px;">
-                <div class="card-title">Shipment Details</div>
-                <div class="grid">
-                  ${details
-                    .map(
-                      (row) => `
-                        <div>
-                          <p class="row-label">${row.label}</p>
-                          <p class="row-value">${row.value}</p>
-                        </div>
-                      `
-                    )
-                    .join('')}
-                </div>
-              </div>
-
-              <div class="card" style="margin-top:14px;">
-                <div class="card-title">Assigned Agent</div>
-                <div class="agent">
-                  <img src="${agent.photo || `${siteUrl}/agent-placeholder.png`}" alt="${agent.name || 'Agent'}" />
-                  <div>
-                    <p class="row-value" style="margin:0 0 6px;">${agent.name || 'Assigned Agent'}</p>
-                    <p class="agent-meta" style="margin:0;">ID: ${agent.id || '—'}</p>
-                    <p class="agent-meta" style="margin:0;">Phone: ${agent.phone || '—'}</p>
-                    <p class="agent-meta" style="margin:0;">Email: ${agent.email || '—'}</p>
-                    <p class="agent-meta" style="margin:6px 0 0;">Shift: ${agent.shift || '—'} · Dept: ${agent.department || '—'}</p>
-                    <div class="actions" style="margin-top:10px;">
-                      <a class="btn-secondary" href="tel:${agent.phone || ''}">Call</a>
-                      <a class="btn-secondary" href="mailto:${agent.email || supportEmail}">Email</a>
-                      <a class="btn" href="mailto:${agent.email || supportEmail}">Contact Agent</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card" style="margin-top:14px;">
-                <div class="card-title">Progress</div>
-                <div class="steps">
-                  ${steps
-                    .map(
-                      (step) => `
-                        <div class="step ${step.active ? 'active' : ''}">
-                          ${step.active ? '●' : '○'} ${step.label}
-                        </div>
-                      `
-                    )
-                    .join('')}
-                </div>
-                <div class="progress-wrap">
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width:${progressPct}%;"></div>
-                  </div>
-                  <p style="margin:8px 0 0; font-size:12px; color:#4b4b4b;">${progressPct}% complete</p>
-                </div>
-              </div>
-
-              <div class="card" style="margin-top:14px;">
-                <div class="card-title">Next steps</div>
-                <div class="actions">
-                  ${actions
-                    .map(
-                      (action) =>
-                        `<a class="${action.primary ? 'btn' : 'btn-secondary'}" href="${action.url}" target="_blank" rel="noopener noreferrer">${action.label}</a>`
-                    )
-                    .join('')}
-                </div>
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="footer">
-              <div class="social">
-                <a href="${siteUrl}"><span style="font-size:14px;">🌐</span></a>
-                <a href="https://facebook.com"><span style="font-size:14px;">f</span></a>
-                <a href="https://instagram.com"><span style="font-size:14px;">♛</span></a>
-                <a href="https://linkedin.com"><span style="font-size:14px;">in</span></a>
-              </div>
-              <p style="margin:6px 0;">Velox Logistics — Global Delivery Solutions</p>
-              <p style="margin:0;">123 Velocity Way, Suite 500, Global City</p>
-              <p style="margin:6px 0;"><a href="${siteUrl}/unsubscribe">Unsubscribe</a></p>
-              <p style="margin:6px 0;">© ${new Date().getFullYear()} Velox Logistics. All rights reserved.</p>
-            </div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>${isUpdate ? 'Shipment Update' : 'Shipment Created'} • ${data.trackingNumber}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: ${lightGray}; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    a { text-decoration: none; color: ${brandRed}; }
+    
+    .email-wrapper { width: 100%; background-color: ${lightGray}; padding: 20px 0; }
+    .email-container { max-width: 720px; margin: 0 auto; background-color: ${white}; border-radius: 0; }
+    
+    /* Header */
+    .email-header { background-color: ${brandBlack}; padding: 40px 20px; text-align: center; }
+    .email-header img { max-width: 200px; height: auto; display: block; margin: 0 auto; }
+    
+    /* Welcome Section */
+    .welcome-section { background-color: ${white}; padding: 40px 30px; }
+    .welcome-heading { font-size: 28px; font-weight: bold; color: ${brandGray}; margin: 0 0 10px; line-height: 1.3; }
+    .welcome-heading i { color: ${brandRed}; margin-right: 10px; }
+    .welcome-text { font-size: 16px; color: #666666; line-height: 1.6; margin: 0; }
+    
+    /* Shipment Summary Card */
+    .summary-card { background-color: ${lightGray}; border-radius: 8px; padding: 30px; margin: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .summary-item { margin-bottom: 20px; }
+    .summary-item:last-child { margin-bottom: 0; }
+    .summary-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #666666; margin-bottom: 5px; }
+    .summary-value { font-size: 18px; font-weight: bold; color: ${brandGray}; }
+    .summary-value i { color: ${brandRed}; margin-right: 8px; }
+    
+    /* Sender & Receiver Cards */
+    .info-cards { padding: 0 30px 30px; }
+    .info-cards-table { width: 100%; border-collapse: separate; border-spacing: 20px 0; }
+    .info-card { background-color: ${white}; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .info-card-title { font-size: 18px; font-weight: bold; color: ${brandGray}; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid ${brandRed}; }
+    .info-card-title i { color: ${brandRed}; margin-right: 8px; }
+    .info-item { margin-bottom: 15px; font-size: 14px; color: #333333; line-height: 1.6; }
+    .info-item:last-child { margin-bottom: 0; }
+    .info-item i { color: ${brandRed}; width: 20px; margin-right: 10px; }
+    .info-item strong { color: ${brandGray}; }
+    
+    /* Agent Section */
+    .agent-section { background-color: ${lightGray}; padding: 30px; margin: 0 30px 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .agent-title { font-size: 20px; font-weight: bold; color: ${brandGray}; margin-bottom: 20px; }
+    .agent-content { display: table; width: 100%; }
+    .agent-image-cell { display: table-cell; vertical-align: middle; width: 100px; padding-right: 20px; }
+    .agent-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid ${brandRed}; }
+    .agent-info-cell { display: table-cell; vertical-align: middle; }
+    .agent-name { font-size: 18px; font-weight: bold; color: ${brandGray}; margin-bottom: 8px; }
+    .agent-detail { font-size: 14px; color: #666666; margin-bottom: 5px; }
+    .agent-detail i { color: ${brandRed}; width: 20px; margin-right: 8px; }
+    
+    /* Progress Section */
+    .progress-section { padding: 30px; }
+    .progress-title { font-size: 20px; font-weight: bold; color: ${brandGray}; margin-bottom: 25px; text-align: center; }
+    .progress-steps { display: table; width: 100%; margin-bottom: 20px; }
+    .progress-step { display: table-cell; text-align: center; vertical-align: top; position: relative; }
+    .progress-step-icon { width: 50px; height: 50px; border-radius: 50%; background-color: #e0e0e0; display: inline-block; line-height: 50px; color: #999999; font-size: 20px; margin-bottom: 10px; }
+    .progress-step.active .progress-step-icon { background-color: ${brandRed}; color: ${white}; }
+    .progress-step.completed .progress-step-icon { background-color: ${brandRed}; color: ${white}; }
+    .progress-step-label { font-size: 12px; color: #666666; }
+    .progress-step.active .progress-step-label { color: ${brandGray}; font-weight: bold; }
+    .progress-step.completed .progress-step-label { color: ${brandGray}; font-weight: bold; }
+    .progress-bar-container { width: 100%; height: 8px; background-color: #e0e0e0; border-radius: 4px; margin: 20px 0; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background-color: ${brandRed}; border-radius: 4px; transition: width 0.3s ease; }
+    .progress-text { text-align: center; font-size: 14px; color: #666666; margin-top: 10px; }
+    
+    /* Notes & Actions */
+    .notes-section { padding: 30px; background-color: ${white}; }
+    .notes-text { font-size: 14px; color: #666666; line-height: 1.6; margin-bottom: 25px; }
+    .action-buttons { text-align: center; }
+    .btn { display: inline-block; padding: 14px 30px; margin: 5px; border-radius: 6px; font-size: 16px; font-weight: bold; text-decoration: none; transition: all 0.3s ease; }
+    .btn-primary { background-color: ${brandRed}; color: ${white}; box-shadow: 0 4px 8px rgba(224,40,40,0.3); }
+    .btn-primary:hover { background-color: #c01f1f; box-shadow: 0 6px 12px rgba(224,40,40,0.4); }
+    .btn-secondary { background-color: #f5f5f5; color: ${brandGray}; border: 1px solid #e0e0e0; }
+    .btn-secondary:hover { background-color: #e8e8e8; }
+    
+    /* Footer */
+    .email-footer { background-color: ${brandRed}; padding: 40px 30px; text-align: center; }
+    .footer-content { color: ${white}; font-size: 14px; line-height: 1.8; }
+    .footer-content a { color: ${white}; text-decoration: underline; }
+    .footer-company { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+    .footer-contact { margin-bottom: 20px; }
+    .social-icons { margin: 20px 0; }
+    .social-icons a { display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 5px; color: ${white}; text-decoration: none; transition: all 0.3s ease; }
+    .social-icons a:hover { background-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    .footer-copyright { font-size: 12px; margin-top: 20px; opacity: 0.9; }
+    
+    /* Help Section */
+    .help-section { background-color: ${white}; padding: 25px 30px; border-top: 1px solid #e0e0e0; }
+    .help-text { font-size: 14px; color: #666666; text-align: center; }
+    .help-text a { color: ${brandRed}; font-weight: bold; }
+    
+    /* Responsive */
+    @media only screen and (max-width: 600px) {
+      .email-container { width: 100% !important; }
+      .welcome-section, .summary-card, .info-cards, .agent-section, .progress-section, .notes-section, .help-section { padding-left: 20px !important; padding-right: 20px !important; }
+      .info-cards-table { border-spacing: 0 !important; }
+      .info-card { display: block !important; width: 100% !important; margin-bottom: 20px !important; }
+      .agent-content { display: block !important; }
+      .agent-image-cell { display: block !important; width: 100% !important; padding-right: 0 !important; text-align: center !important; margin-bottom: 20px !important; }
+      .agent-info-cell { display: block !important; }
+      .progress-step { display: block !important; width: 100% !important; margin-bottom: 20px !important; }
+      .btn { display: block !important; width: 100% !important; margin: 10px 0 !important; }
+      .welcome-heading { font-size: 24px !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-container">
+      <!-- Header -->
+      <div class="email-header">
+        <img src="${logoUrl}" alt="Velox Logistics" />
+      </div>
+      
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1 class="welcome-heading">
+          <i class="fas fa-truck"></i>
+          Hello ${recipientName}, your shipment update is here!
+        </h1>
+        <p class="welcome-text">
+          ${isUpdate 
+            ? `We have an update on your shipment. ${statusCopy.tip}` 
+            : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
+        </p>
+      </div>
+      
+      <!-- Shipment Summary Card -->
+      <div class="summary-card">
+        <div class="summary-item">
+          <div class="summary-label">Shipment Number</div>
+          <div class="summary-value">
+            <i class="fas fa-barcode"></i>
+            ${data.trackingNumber}
           </div>
         </div>
-      </body>
-    </html>
+        <div class="summary-item">
+          <div class="summary-label">Status</div>
+          <div class="summary-value">
+            <i class="fas ${statusCopy.icon}"></i>
+            ${data.status}
+          </div>
+        </div>
+        ${data.deliveryDate || data.estimatedDelivery ? `
+        <div class="summary-item">
+          <div class="summary-label">Expected Delivery</div>
+          <div class="summary-value">
+            <i class="fas fa-calendar-alt"></i>
+            ${formatDate(data.deliveryDate || data.estimatedDelivery)}
+          </div>
+        </div>
+        ` : ''}
+      </div>
+      
+      <!-- Sender & Receiver Info Cards -->
+      <div class="info-cards">
+        <table class="info-cards-table">
+          <tr>
+            <td class="info-card" style="width: 50%;">
+              <div class="info-card-title">
+                <i class="fas fa-user"></i>
+                Sender Information
+              </div>
+              <div class="info-item">
+                <i class="fas fa-user"></i>
+                <strong>Name:</strong> ${data.senderName || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <strong>Email:</strong> ${data.senderEmail || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <strong>Phone:</strong> ${data.senderPhone || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <strong>Address:</strong> ${data.senderAddress || '—'}
+              </div>
+            </td>
+            <td class="info-card" style="width: 50%;">
+              <div class="info-card-title">
+                <i class="fas fa-user-friends"></i>
+                Receiver Information
+              </div>
+              <div class="info-item">
+                <i class="fas fa-user"></i>
+                <strong>Name:</strong> ${data.recipientName || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <strong>Email:</strong> ${data.recipientEmail || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <strong>Phone:</strong> ${data.recipientPhone || '—'}
+              </div>
+              <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <strong>Address:</strong> ${data.recipientAddress || '—'}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      ${data.agent && (data.agent.name || data.agent.email || data.agent.phone) ? `
+      <!-- Assigned Agent Section -->
+      <div class="agent-section">
+        <div class="agent-title">Assigned Agent</div>
+        <div class="agent-content">
+          <div class="agent-image-cell">
+            <img src="${data.agent.photo || `${siteUrl}/agent-placeholder.png`}" alt="${data.agent.name || 'Agent'}" class="agent-image" />
+          </div>
+          <div class="agent-info-cell">
+            <div class="agent-name">${data.agent.name || 'Assigned Agent'}</div>
+            ${data.agent.phone ? `
+            <div class="agent-detail">
+              <i class="fas fa-phone"></i>
+              ${data.agent.phone}
+            </div>
+            ` : ''}
+            ${data.agent.email ? `
+            <div class="agent-detail">
+              <i class="fas fa-envelope"></i>
+              ${data.agent.email}
+            </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+      ` : ''}
+      
+      <!-- Shipment Progress Section -->
+      <div class="progress-section">
+        <div class="progress-title">Shipment Progress</div>
+        <div class="progress-steps">
+          ${PROGRESS_STEPS.map((step, index) => {
+            const isActive = index === progressStep;
+            const isCompleted = index < progressStep;
+            const stepClass = isActive ? 'active' : isCompleted ? 'completed' : '';
+            return `
+              <div class="progress-step ${stepClass}">
+                <div class="progress-step-icon">
+                  <i class="fas ${step.icon}"></i>
+                </div>
+                <div class="progress-step-label">${step.label}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
+        </div>
+        <div class="progress-text">${progressPercent}% Complete</div>
+      </div>
+      
+      <!-- Additional Notes & Actions -->
+      <div class="notes-section">
+        <p class="notes-text">
+          <strong>Important:</strong> Please ensure someone is available to receive the package at the delivery address. 
+          You can track your shipment in real-time using the tracking number above.
+        </p>
+        <div class="action-buttons">
+          <a href="${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}" class="btn btn-primary">
+            <i class="fas fa-search"></i> Track Shipment
+          </a>
+          <a href="mailto:${supportEmail}" class="btn btn-secondary">
+            <i class="fas fa-headset"></i> Contact Support
+          </a>
+        </div>
+      </div>
+      
+      <!-- Help Section -->
+      <div class="help-section">
+        <p class="help-text">
+          Need help? Contact us at <a href="mailto:${supportEmail}">${supportEmail}</a>
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div class="email-footer">
+        <div class="footer-content">
+          <div class="footer-company">Velox Logistics</div>
+          <div class="footer-contact">
+            Global Delivery Solutions<br>
+            Email: <a href="mailto:${supportEmail}">${supportEmail}</a>
+          </div>
+          <div class="social-icons">
+            <a href="${siteUrl}" title="Website"><i class="fas fa-globe"></i></a>
+            <a href="https://facebook.com" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://instagram.com" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://twitter.com" title="Twitter"><i class="fab fa-twitter"></i></a>
+          </div>
+          <div class="footer-copyright">
+            © ${new Date().getFullYear()} Velox Logistics. All rights reserved.<br>
+            <a href="${siteUrl}/unsubscribe" style="color: rgba(255,255,255,0.8);">Unsubscribe</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
   `;
 
-  const text =
-    `${title}\n\n` +
-    `${previewText}\n\n` +
-    `Hello ${greeting},\n` +
-    `${intro}\n\n` +
-    `${highlight.label}: ${highlight.description}\n` +
-    `Tracking details:\n` +
-    details.map((d) => `- ${d.label}: ${d.value.replace(/<[^>]+>/g, '')}`).join('\n') +
-    `\n\nAgent:\n` +
-    `- Name: ${agent.name || 'Assigned Agent'}\n` +
-    `- ID: ${agent.id || '—'}\n` +
-    `- Phone: ${agent.phone || '—'}\n` +
-    `- Email: ${agent.email || '—'}\n` +
-    `- Shift: ${agent.shift || '—'} · Dept: ${agent.department || '—'}\n\n` +
-    `Progress: ${progressPct}%\n` +
-    `Steps: ${steps.map((s) => `${s.active ? '*' : '-'} ${s.label}`).join(', ')}\n\n` +
-    `Actions:\n${actions.map((a) => `- ${a.label}: ${a.url}`).join('\n')}\n\n` +
-    `Support: ${supportEmail}`;
+  const text = `
+${isUpdate ? 'Shipment Update' : 'Shipment Created'} • ${data.trackingNumber}
+
+Hello ${recipientName},
+
+${isUpdate 
+  ? `We have an update on your shipment. ${statusCopy.tip}` 
+  : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
+
+SHIPMENT DETAILS
+Shipment Number: ${data.trackingNumber}
+Status: ${data.status}
+${data.deliveryDate || data.estimatedDelivery ? `Expected Delivery: ${formatDate(data.deliveryDate || data.estimatedDelivery)}\n` : ''}
+
+SENDER INFORMATION
+Name: ${data.senderName || '—'}
+Email: ${data.senderEmail || '—'}
+Phone: ${data.senderPhone || '—'}
+Address: ${data.senderAddress || '—'}
+
+RECEIVER INFORMATION
+Name: ${data.recipientName || '—'}
+Email: ${data.recipientEmail || '—'}
+Phone: ${data.recipientPhone || '—'}
+Address: ${data.recipientAddress || '—'}
+
+${data.agent && (data.agent.name || data.agent.email || data.agent.phone) ? `
+ASSIGNED AGENT
+Name: ${data.agent.name || '—'}
+Phone: ${data.agent.phone || '—'}
+Email: ${data.agent.email || '—'}
+` : ''}
+
+SHIPMENT PROGRESS
+${PROGRESS_STEPS.map((step, index) => {
+  const isActive = index === progressStep;
+  const isCompleted = index < progressStep;
+  const marker = isActive ? '●' : isCompleted ? '✓' : '○';
+  return `${marker} ${step.label}`;
+}).join('\n')}
+Progress: ${progressPercent}% Complete
+
+ACTIONS
+Track Shipment: ${siteUrl}/tracking?ref=${encodeURIComponent(data.trackingNumber)}
+Contact Support: ${supportEmail}
+
+Need help? Contact us at ${supportEmail}
+
+---
+Velox Logistics
+Global Delivery Solutions
+Email: ${supportEmail}
+Website: ${siteUrl}
+
+© ${new Date().getFullYear()} Velox Logistics. All rights reserved.
+  `.trim();
 
   return { html, text };
 }
 
-function formatDate(value?: string | Date) {
-  const date = value ? new Date(value) : new Date();
-  return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-}
-
-const STATUS_COPY: Record<string, { title: string; tip: string; icon: string }> = {
-  Pending: { title: 'We received your order.', tip: 'We are preparing your shipment details.', icon: '🕒' },
-  'Awaiting Payment': { title: 'Payment required.', tip: 'Complete payment to start processing.', icon: '💳' },
-  'Payment Confirmed': { title: 'Payment confirmed.', tip: 'Processing will start shortly.', icon: '✅' },
-  Processing: { title: 'We are packing your order.', tip: 'Labels are being prepared.', icon: '📦' },
-  'Ready for Pickup': { title: 'Ready for pickup.', tip: 'Driver will collect soon.', icon: '🚚' },
-  'Driver En Route': { title: 'Driver is on the way.', tip: 'Keep your phone nearby for updates.', icon: '🛣️' },
-  'Picked Up': { title: 'Package picked up.', tip: 'In hand and heading to origin facility.', icon: '📍' },
-  'At Warehouse': { title: 'At warehouse.', tip: 'Queued for the next leg of the journey.', icon: '🏢' },
-  'In Transit': { title: 'In transit.', tip: 'Moving to the next facility.', icon: '🚚' },
-  'Departed Facility': { title: 'Departed facility.', tip: 'On the road to the next stop.', icon: '➡️' },
-  'Arrived at Facility': { title: 'Arrived at facility.', tip: 'Sorting for the next transfer.', icon: '🏬' },
-  'Out for Delivery': { title: 'Out for delivery.', tip: 'Expect delivery today.', icon: '📦' },
-  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Velox.', icon: '🎉' },
-  'Delivery Attempted': { title: 'Delivery attempted.', tip: 'We will re-attempt or contact you.', icon: '⚠️' },
-  'Returned to Sender': { title: 'Returned to sender.', tip: 'Contact support to reschedule.', icon: '↩️' },
-  Cancelled: { title: 'Shipment cancelled.', tip: 'Reach out if this is unexpected.', icon: '⛔' },
-  'On Hold': { title: 'Shipment on hold.', tip: 'We will notify you once it resumes.', icon: '⏸️' },
-  Delayed: { title: 'Shipment delayed.', tip: 'We are expediting the next leg.', icon: '⌛' },
-  'Weather Delay': { title: 'Weather delay.', tip: 'Safety first—new ETA will follow.', icon: '🌧️' },
-  'Address Issue': { title: 'Address issue.', tip: 'Please confirm the delivery address.', icon: '📮' },
-  'Customs Hold': { title: 'Customs hold.', tip: 'Awaiting clearance.', icon: '🛃' },
-  'Inspection Required': { title: 'Inspection in progress.', tip: 'We will share findings soon.', icon: '🔍' },
-  'Payment Verification Required': { title: 'Payment verification needed.', tip: 'Please verify payment details.', icon: '💳' },
-  'Lost Package': { title: 'Package reported lost.', tip: 'Support will reach out with options.', icon: '❓' },
-  'Damaged Package': { title: 'Package reported damaged.', tip: 'Support will coordinate a resolution.', icon: '🛠️' },
-};
-
-const PROGRESS_STEPS = ['Shipment Created', 'Picked Up', 'In Transit', 'Customs', 'Out for Delivery', 'Delivered'];
-
-function buildProgress(currentStatus: string) {
-  const normalized = currentStatus.toLowerCase();
-  let activeIndex = 0;
-  if (normalized.includes('delivered')) activeIndex = 5;
-  else if (normalized.includes('out for delivery')) activeIndex = 4;
-  else if (normalized.includes('customs')) activeIndex = 3;
-  else if (normalized.includes('transit') || normalized.includes('en route')) activeIndex = 2;
-  else if (normalized.includes('picked')) activeIndex = 1;
-  else activeIndex = 0;
-
-  return PROGRESS_STEPS.map((label, idx) => ({ label, active: idx === activeIndex }));
-}
-
 export function shipmentCreatedEmailTemplate(payload: {
   trackingNumber: string;
-  referenceCode?: string;
   senderName: string;
   senderEmail?: string;
+  senderPhone?: string;
+  senderAddress?: string;
   recipientName: string;
   recipientEmail?: string;
+  recipientPhone?: string;
+  recipientAddress?: string;
   status: string;
-  route: string;
+  route?: string;
   createdAt?: string;
   shipmentType?: string;
   weight?: string | number;
   origin?: string;
   destination?: string;
   currentLocation?: string;
-  timestamp?: string;
+  estimatedDelivery?: string;
   agent?: {
     photo?: string;
     name?: string;
-    id?: string;
     phone?: string;
     email?: string;
-    shift?: string;
-    department?: string;
   };
 }): TemplateResult {
-  const statusCopy = STATUS_COPY[payload.status] || { title: payload.status, tip: 'We are monitoring your shipment.', icon: '📦' };
-  const { html, text } = wrapTemplate({
-    title: 'Shipment Created',
-    greeting: payload.senderName || 'there',
-    intro: 'Thanks for choosing Velox Logistics. Below are your shipping updates.',
-    highlight: {
-      icon: statusCopy.icon,
-      label: `Shipment Status: ${payload.status}`,
-      description: statusCopy.tip,
-    },
-    details: [
-      { label: 'Tracking Number', value: payload.trackingNumber },
-      ...(payload.referenceCode ? [{ label: 'Reference Code', value: payload.referenceCode }] : []),
-      ...(payload.shipmentType ? [{ label: 'Shipment Type', value: payload.shipmentType }] : []),
-      ...(payload.weight ? [{ label: 'Package Weight', value: `${payload.weight}` }] : []),
-      ...(payload.origin ? [{ label: 'Origin', value: payload.origin }] : []),
-      ...(payload.destination ? [{ label: 'Destination', value: payload.destination }] : []),
-      ...(payload.currentLocation ? [{ label: 'Current Location', value: payload.currentLocation }] : []),
-      { label: 'Current Status', value: payload.status },
-      { label: 'Timestamp', value: formatDate(payload.timestamp || payload.createdAt) },
-    ],
-    agent: {
-      photo: payload.agent?.photo,
-      name: payload.agent?.name,
-      id: payload.agent?.id,
-      phone: payload.agent?.phone,
-      email: payload.agent?.email,
-      shift: payload.agent?.shift,
-      department: payload.agent?.department,
-    },
-    steps: buildProgress(payload.status),
-    actions: [
-      { label: 'Track Shipment', url: `${siteUrl}/tracking?ref=${encodeURIComponent(payload.trackingNumber)}`, primary: true },
-      { label: 'Contact Support', url: `mailto:${supportEmail}` },
-      { label: 'Download Invoice', url: `${siteUrl}/invoices?ref=${encodeURIComponent(payload.trackingNumber)}` },
-    ],
-    previewText: `Shipment ${payload.trackingNumber} created — status ${payload.status}`,
-  });
+  const data: ShipmentData = {
+    trackingNumber: payload.trackingNumber,
+    status: payload.status,
+    deliveryDate: payload.estimatedDelivery,
+    senderName: payload.senderName,
+    senderEmail: payload.senderEmail,
+    senderPhone: payload.senderPhone,
+    senderAddress: payload.senderAddress,
+    recipientName: payload.recipientName,
+    recipientEmail: payload.recipientEmail,
+    recipientPhone: payload.recipientPhone,
+    recipientAddress: payload.recipientAddress,
+    agent: payload.agent,
+    shipmentType: payload.shipmentType,
+    weight: payload.weight,
+    origin: payload.origin,
+    destination: payload.destination,
+    currentLocation: payload.currentLocation,
+    estimatedDelivery: payload.estimatedDelivery,
+    createdAt: payload.createdAt,
+  };
+
+  const { html, text } = buildEmailTemplate(data, false);
 
   return {
     subject: `Shipment Created • ${payload.trackingNumber}`,
@@ -361,90 +550,72 @@ export function shipmentCreatedEmailTemplate(payload: {
     text,
     preview: `Shipment ${payload.trackingNumber} created • ${payload.status}`,
     variables: [
-      'customer_name',
       'tracking_number',
-      'reference_code',
-      'type',
-      'weight',
-      'origin',
-      'destination',
-      'current_location',
-      'current_status',
-      'timestamp',
-      'agent_photo_url',
-      'agent_name',
-      'agent_id',
-      'agent_phone',
-      'agent_email',
-      'agent_shift',
-      'agent_department',
+      'sender_name',
+      'sender_email',
+      'sender_phone',
+      'sender_address',
+      'recipient_name',
+      'recipient_email',
+      'recipient_phone',
+      'recipient_address',
+      'status',
+      'estimated_delivery',
     ],
   };
 }
 
 export function shipmentUpdatedEmailTemplate(payload: {
   trackingNumber: string;
-  referenceCode?: string;
-  route: string;
+  route?: string;
   oldStatus: string;
   newStatus: string;
   updatedAt?: string;
+  senderName?: string;
+  senderEmail?: string;
+  senderPhone?: string;
+  senderAddress?: string;
+  recipientName?: string;
+  recipientEmail?: string;
+  recipientPhone?: string;
+  recipientAddress?: string;
   currentLocation?: string;
   estimatedDelivery?: string;
-  origin?: string;
-  destination?: string;
   shipmentType?: string;
   weight?: string | number;
+  origin?: string;
+  destination?: string;
   agent?: {
     photo?: string;
     name?: string;
-    id?: string;
     phone?: string;
     email?: string;
-    shift?: string;
-    department?: string;
   };
 }): TemplateResult {
-  const statusCopy = STATUS_COPY[payload.newStatus] || { title: payload.newStatus, tip: 'We are monitoring your shipment.', icon: '🚚' };
-  const { html, text } = wrapTemplate({
-    title: 'Shipment Updated',
-    greeting: 'there',
-    intro: 'Here is the latest movement on your shipment.',
-    highlight: {
-      icon: statusCopy.icon,
-      label: `Shipment Status: ${payload.newStatus}`,
-      description: statusCopy.tip,
-    },
-    details: [
-      { label: 'Tracking Number', value: payload.trackingNumber },
-      ...(payload.referenceCode ? [{ label: 'Reference Code', value: payload.referenceCode }] : []),
-      ...(payload.shipmentType ? [{ label: 'Shipment Type', value: payload.shipmentType }] : []),
-      ...(payload.weight ? [{ label: 'Package Weight', value: `${payload.weight}` }] : []),
-      ...(payload.origin ? [{ label: 'Origin', value: payload.origin }] : []),
-      ...(payload.destination ? [{ label: 'Destination', value: payload.destination }] : []),
-      ...(payload.currentLocation ? [{ label: 'Current Location', value: payload.currentLocation }] : []),
-      { label: 'Previous Status', value: payload.oldStatus },
-      { label: 'Current Status', value: payload.newStatus },
-      ...(payload.estimatedDelivery ? [{ label: 'ETA', value: payload.estimatedDelivery }] : []),
-      { label: 'Timestamp', value: formatDate(payload.updatedAt) },
-    ],
-    agent: {
-      photo: payload.agent?.photo,
-      name: payload.agent?.name,
-      id: payload.agent?.id,
-      phone: payload.agent?.phone,
-      email: payload.agent?.email,
-      shift: payload.agent?.shift,
-      department: payload.agent?.department,
-    },
-    steps: buildProgress(payload.newStatus),
-    actions: [
-      { label: 'Track Shipment', url: `${siteUrl}/tracking?ref=${encodeURIComponent(payload.trackingNumber)}`, primary: true },
-      { label: 'Contact Support', url: `mailto:${supportEmail}` },
-      { label: 'Download Invoice', url: `${siteUrl}/invoices?ref=${encodeURIComponent(payload.trackingNumber)}` },
-    ],
-    previewText: `Shipment ${payload.trackingNumber} updated • ${payload.newStatus}`,
-  });
+  const data: ShipmentData = {
+    trackingNumber: payload.trackingNumber,
+    status: payload.newStatus,
+    oldStatus: payload.oldStatus,
+    deliveryDate: payload.estimatedDelivery,
+    senderName: payload.senderName || 'Valued Customer',
+    senderEmail: payload.senderEmail,
+    senderPhone: payload.senderPhone,
+    senderAddress: payload.senderAddress,
+    recipientName: payload.recipientName || 'Valued Customer',
+    recipientEmail: payload.recipientEmail,
+    recipientPhone: payload.recipientPhone,
+    recipientAddress: payload.recipientAddress,
+    agent: payload.agent,
+    shipmentType: payload.shipmentType,
+    weight: payload.weight,
+    origin: payload.origin,
+    destination: payload.destination,
+    currentLocation: payload.currentLocation,
+    estimatedDelivery: payload.estimatedDelivery,
+    updatedAt: payload.updatedAt,
+  };
+
+  const { html, text } = buildEmailTemplate(data, true);
 
   return {
     subject: `Shipment Update • ${payload.trackingNumber} • ${payload.newStatus}`,
@@ -452,23 +623,19 @@ export function shipmentUpdatedEmailTemplate(payload: {
     text,
     preview: `Shipment ${payload.trackingNumber} updated • ${payload.newStatus}`,
     variables: [
-      'customer_name',
       'tracking_number',
-      'reference_code',
-      'type',
-      'weight',
-      'origin',
-      'destination',
+      'old_status',
+      'new_status',
+      'sender_name',
+      'sender_email',
+      'sender_phone',
+      'sender_address',
+      'recipient_name',
+      'recipient_email',
+      'recipient_phone',
+      'recipient_address',
       'current_location',
-      'current_status',
-      'timestamp',
-      'agent_photo_url',
-      'agent_name',
-      'agent_id',
-      'agent_phone',
-      'agent_email',
-      'agent_shift',
-      'agent_department',
+      'estimated_delivery',
     ],
   };
 }
@@ -482,37 +649,59 @@ export function contactEmailTemplate(payload: {
   subject?: string;
   inquiryType?: string;
 }) {
-  const rows: Row[] = [
-    { label: 'Name', value: payload.name },
-    { label: 'Email', value: payload.email },
-    { label: 'Phone', value: payload.phone || 'Not provided' },
-    { label: 'Received', value: formatDate(payload.createdAt) },
-    ...(payload.subject ? [{ label: 'Subject', value: payload.subject }] : []),
-    ...(payload.inquiryType ? [{ label: 'Inquiry Type', value: payload.inquiryType }] : []),
-    { label: 'Message', value: payload.message.replace(/\n/g, '<br/>') },
-  ];
+  // Keep the contact email template simple - it's for admin notifications
+  const html = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background-color: ${brandBlack}; color: ${white}; padding: 20px; text-align: center; }
+    .content { background-color: ${white}; padding: 30px; }
+    .footer { background-color: ${brandRed}; color: ${white}; padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>New Contact Inquiry</h2>
+    </div>
+    <div class="content">
+      <p><strong>Name:</strong> ${payload.name}</p>
+      <p><strong>Email:</strong> ${payload.email}</p>
+      ${payload.phone ? `<p><strong>Phone:</strong> ${payload.phone}</p>` : ''}
+      ${payload.subject ? `<p><strong>Subject:</strong> ${payload.subject}</p>` : ''}
+      ${payload.inquiryType ? `<p><strong>Inquiry Type:</strong> ${payload.inquiryType}</p>` : ''}
+      <p><strong>Message:</strong></p>
+      <p>${payload.message.replace(/\n/g, '<br>')}</p>
+      <p><strong>Received:</strong> ${formatDate(payload.createdAt)}</p>
+      <p><a href="mailto:${payload.email}" style="background-color: ${brandRed}; color: ${white}; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reply via Email</a></p>
+    </div>
+    <div class="footer">
+      <p>Velox Logistics</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
 
-  const { html, text } = wrapTemplate({
-    title: 'New Contact Inquiry',
-    greeting: payload.name || 'there',
-    intro: 'A new contact form submission was received. Please reply directly to the sender.',
-    highlight: {
-      icon: '✉️',
-      label: 'New contact message',
-      description: payload.subject || 'Website contact form',
-    },
-    details: rows,
-    agent: {
-      email: payload.email,
-      phone: payload.phone,
-    },
-    steps: PROGRESS_STEPS.map((label, idx) => ({ label, active: idx === 0 })),
-    actions: [
-      { label: 'Reply via Email', url: `mailto:${payload.email}`, primary: true },
-      { label: 'Call Sender', url: payload.phone ? `tel:${payload.phone}` : `mailto:${payload.email}` },
-    ],
-    previewText: `New contact from ${payload.name}`,
-  });
+  const text = `
+New Contact Inquiry
+
+Name: ${payload.name}
+Email: ${payload.email}
+${payload.phone ? `Phone: ${payload.phone}\n` : ''}
+${payload.subject ? `Subject: ${payload.subject}\n` : ''}
+${payload.inquiryType ? `Inquiry Type: ${payload.inquiryType}\n` : ''}
+Message:
+${payload.message}
+
+Received: ${formatDate(payload.createdAt)}
+
+Reply to: ${payload.email}
+  `.trim();
 
   return {
     subject: `New Contact Message • ${payload.name}`,
@@ -522,5 +711,3 @@ export function contactEmailTemplate(payload: {
     variables: ['name', 'email', 'phone', 'message', 'subject', 'inquiryType', 'createdAt'],
   };
 }
-
-
