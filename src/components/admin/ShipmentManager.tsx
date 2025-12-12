@@ -356,7 +356,7 @@ const ShipmentManager: React.FC = () => {
                                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                                       <input 
                                         type="text" 
-                                        placeholder="e.g. New York, USA" 
+                                        placeholder="e.g. London, United Kingdom" 
                                         className="w-full pl-10 pr-4 py-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
                                         value={currentShipment.origin}
                                         onChange={(e) => handleChange('origin', e.target.value)}

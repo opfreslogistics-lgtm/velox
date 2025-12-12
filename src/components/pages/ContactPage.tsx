@@ -86,7 +86,7 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Call Us</p>
-                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+1 (800) SAND-EXP</p>
+                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+44 7448 88561</p>
                          <p className="text-gray-500 text-sm flex items-center gap-1 mt-1"><Clock size={12}/> Mon-Fri: 8am - 8pm EST</p>
                       </div>
                    </div>
@@ -108,8 +108,8 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Global HQ</p>
-                         <p className="text-brand-black dark:text-white font-bold text-lg">1 World Trade Center</p>
-                         <p className="text-gray-500 text-sm">Suite 4500, New York, NY 10007</p>
+                         <p className="text-brand-black dark:text-white font-bold text-lg">Coldbath Square</p>
+                         <p className="text-gray-500 text-sm">London, United Kingdom</p>
                       </div>
                    </div>
                 </div>
@@ -299,7 +299,7 @@ const ContactPage: React.FC = () => {
                    <MapPin size={32} />
                 </div>
                 <h3 className="text-3xl font-bold text-white drop-shadow-lg">Visit Our HQ</h3>
-                <p className="text-white/80 mt-2">New York City, USA</p>
+                <p className="text-white/80 mt-2">Coldbath Square, London</p>
              </div>
          </div>
       </div>

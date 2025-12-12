@@ -1427,7 +1427,7 @@ export default function ShipmentsPage() {
                       value={currentShipment.agent_phone || ''}
                       onChange={(e) => handleFieldChange('agent_phone', e.target.value)}
                       className="w-full p-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
-                      placeholder="e.g. +1 555-123-4567"
+                      placeholder="e.g. +44 7448 88561"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1506,7 +1506,7 @@ export default function ShipmentsPage() {
                       value={currentShipment.current_location_name || ''}
                       onChange={(e) => handleFieldChange('current_location_name', e.target.value)}
                       className="w-full p-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
-                      placeholder="e.g. New York, USA or 123 Main St, New York, NY 10001"
+                      placeholder="e.g. London, UK or Coldbath Square, London, EC1R"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {mapProvider === 'openstreetmap' 

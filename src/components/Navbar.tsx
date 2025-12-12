@@ -97,7 +97,7 @@ const Navbar: React.FC = () => {
       <div className="hidden md:flex justify-between items-center bg-brand-black text-white text-xs py-2 px-6 lg:px-12 border-b border-gray-800">
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-2 hover:text-brand-red transition-colors cursor-pointer font-medium">
-            <Phone size={14} className="text-brand-yellow" /> 1-800-SAND-EXP
+            <Phone size={14} className="text-brand-yellow" /> +44 7448 88561
           </span>
           <span className="flex items-center gap-2 hover:text-brand-red transition-colors cursor-pointer font-medium">
             <Mail size={14} className="text-brand-yellow" /> support@sandgloexpress.com

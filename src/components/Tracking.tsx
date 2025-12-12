@@ -407,7 +407,7 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
 
             {/* Mobile-only stamp at bottom */}
             <div className="sm:hidden flex justify-center mt-10">
-              <Stamp status={data.status} date={data.dateCreated} />
+              {data && <Stamp status={data.status} date={data.dateCreated} />}
             </div>
         </div>
     );

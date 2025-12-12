@@ -125,7 +125,7 @@ const Footer: React.FC = () => {
             
             <div className="mt-8 flex items-center gap-4 text-sm text-gray-500">
                <MapPin size={16} className="text-brand-red" />
-               <span>Headquarters: New York, USA</span>
+               <span>Headquarters: Coldbath Square, London, United Kingdom</span>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@ const AboutPage: React.FC = () => {
             
             <div className="relative border-l-4 border-gray-200 dark:border-gray-800 ml-6 md:ml-auto md:mr-auto space-y-12">
                {[
-                  { year: "1995", title: "Founded in New York", desc: "Started with 2 trucks and a small warehouse in Brooklyn." },
+                  { year: "1995", title: "Founded in London", desc: "Started with 2 trucks and a small warehouse near Coldbath Square." },
                   { year: "2005", title: "European Expansion", desc: "Opened our first major hub in Hamburg, Germany." },
                   { year: "2012", title: "Sand Digital Launch", desc: "Released our first real-time tracking platform." },
                   { year: "2020", title: "Carbon Neutral Pledge", desc: "Committed to 100% electric last-mile delivery by 2030." },

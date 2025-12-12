@@ -5,7 +5,7 @@ import PageHero from '../PageHero';
 
 const CareersPage: React.FC = () => {
   const jobs = [
-    { title: "Senior Logistics Coordinator", dept: "Operations", loc: "New York, USA", type: "Full-time", posted: "2 days ago" },
+    { title: "Senior Logistics Coordinator", dept: "Operations", loc: "London, United Kingdom", type: "Full-time", posted: "2 days ago" },
     { title: "Supply Chain Analyst", dept: "Strategy", loc: "London, UK", type: "Full-time", posted: "1 week ago" },
     { title: "Fleet Manager", dept: "Transport", loc: "Berlin, DE", type: "Full-time", posted: "3 days ago" },
     { title: "Frontend Developer", dept: "Engineering", loc: "Remote", type: "Contract", posted: "Just now" },
@@ -60,10 +60,10 @@ const CareersPage: React.FC = () => {
              </div>
              
              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden h-96 relative group">
+                   <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden h-96 relative group">
                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Team Meeting" />
                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                      <p className="font-bold text-white">Brainstorming in NY</p>
+                      <p className="font-bold text-white">Brainstorming in London</p>
                    </div>
                 </div>
                 {[

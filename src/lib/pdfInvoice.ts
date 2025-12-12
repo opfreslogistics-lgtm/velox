@@ -73,7 +73,7 @@ export async function generateInvoicePDF(input: InvoiceInput) {
     doc.setFillColor(LIGHT_GRAY);
     doc.rect(0, footerY - 20, pageWidth, 36, 'F');
     text(
-      'Sand Global Express • 1-800-SAND-EXP • sandgloexpress.com • support@sandgloexpress.com • Thank you for shipping with us.',
+      'Sand Global Express • +44 7448 88561 • sandgloexpress.com • support@sandgloexpress.com • Thank you for shipping with us.',
       marginX,
       footerY,
       9,
