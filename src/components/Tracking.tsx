@@ -404,6 +404,11 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                     </div>
                 </div>
             </div>
+
+            {/* Mobile-only stamp at bottom */}
+            <div className="sm:hidden flex justify-center mt-10">
+              <Stamp status={data.status} date={data.dateCreated} />
+            </div>
         </div>
     );
   }
@@ -488,9 +493,14 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
             {/* 2. Top Header Section with Barcode and Stamp */}
             <div className="bg-gradient-to-r from-brand-black to-gray-900 dark:from-gray-900 dark:to-brand-black rounded-2xl shadow-xl overflow-hidden border-2 border-brand-red/20">
               <div className="p-6 md:p-8">
+                {/* Mobile: full-width barcode on top */}
+                <div className="sm:hidden mb-6">
+                  <Barcode value={data.trackingNumber} width="100%" height={110} />
+                </div>
+
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                   {/* Left: Tracking Info */}
-                  <div className="flex-1">
+                  <div className="flex-1 w-full">
                     <div className="flex flex-wrap items-center gap-4 mb-4">
                       <div>
                         <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase mb-1">Tracking Number</p>
@@ -507,8 +517,8 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                     )}
                   </div>
                   
-                  {/* Right: Barcode and Stamp - Side by Side */}
-                  <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6">
+                  {/* Right: Barcode and Stamp - Desktop only */}
+                  <div className="hidden md:flex flex-col sm:flex-row items-center gap-4 lg:gap-6">
                     <div className="hidden md:block">
                       <Barcode value={data.trackingNumber} width={160} height={60} />
                     </div>
@@ -519,18 +529,18 @@ const Tracking: React.FC<TrackingProps> = ({ mode = 'widget', initialId = '', on
                 </div>
                 
                 {/* Action Buttons */}
-                <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-white/10">
+                <div className="flex gap-3 mt-6 pt-6 border-t border-white/10 flex-nowrap overflow-x-auto">
                   <button
                     onClick={handlePrintInvoice}
                     disabled={isPrinting}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-indigo-500 to-blue-600 hover:to-blue-700 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-indigo-500 to-blue-600 hover:to-blue-700 shadow-md disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
                   >
                     <Printer size={16}/> {isPrinting ? 'Generating PDF...' : 'Print Invoice'}
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-emerald-500 to-green-600 hover:to-green-700 shadow-md">
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-emerald-500 to-green-600 hover:to-green-700 shadow-md whitespace-nowrap">
                     <Share2 size={16}/> Share Tracking
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:to-orange-600 shadow-md">
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors backdrop-blur-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:to-orange-600 shadow-md whitespace-nowrap">
                     <Smartphone size={16}/> Get Updates
                   </button>
                 </div>

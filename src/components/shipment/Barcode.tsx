@@ -4,7 +4,7 @@ import React from 'react';
 
 interface BarcodeProps {
   value: string;
-  width?: number;
+  width?: number | string;
   height?: number;
 }
 
@@ -41,7 +41,7 @@ export default function Barcode({ value, width = 220, height = 90 }: BarcodeProp
   return (
     <div
       className="relative bg-white border border-gray-200 shadow-lg rounded-md px-4 py-3 flex flex-col items-center"
-      style={{ width }}
+      style={{ width: typeof width === 'number' ? `${width}px` : width }}
     >
       {/* top label */}
       <div className="w-full flex items-center justify-between text-[10px] text-gray-500 font-mono mb-1">
