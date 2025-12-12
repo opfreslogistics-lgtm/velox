@@ -26,27 +26,27 @@ const steps = [
 
 const Process: React.FC = () => {
   return (
-    <section className="py-24 bg-green-50 dark:bg-brand-black transition-colors duration-300 border-b border-green-100 dark:border-gray-800">
+    <section className="py-24 bg-brand-green transition-colors duration-300 border-b border-green-700">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="text-center mb-16">
-          <span className="text-brand-red font-bold uppercase tracking-widest text-sm">How It Works</span>
-          <h2 className="text-4xl font-extrabold text-brand-black dark:text-white mt-2">Simplify Your Shipping</h2>
+          <span className="text-white/90 font-bold uppercase tracking-widest text-sm">How It Works</span>
+          <h2 className="text-4xl font-extrabold text-white mt-2">Simplify Your Shipping</h2>
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Connector Line (Desktop) */}
-          <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-green-200 dark:bg-gray-800 -z-10"></div>
+          <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-white/30 -z-10"></div>
 
           {steps.map((step, idx) => (
             <div key={idx} className="relative flex flex-col items-center text-center group">
-              <div className="w-24 h-24 bg-white dark:bg-gray-900 border-4 border-green-200 dark:border-gray-800 rounded-full flex items-center justify-center mb-6 group-hover:border-brand-red transition-colors duration-300 z-10 shadow-sm">
-                <step.icon size={32} className="text-brand-black dark:text-white group-hover:text-brand-red transition-colors" />
+              <div className="w-24 h-24 bg-white border-4 border-white/20 rounded-full flex items-center justify-center mb-6 group-hover:border-brand-red transition-colors duration-300 z-10 shadow-lg">
+                <step.icon size={32} className="text-brand-green group-hover:text-brand-red transition-colors" />
               </div>
-              <div className="absolute top-0 right-0 -mr-4 bg-brand-yellow text-brand-black font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm shadow">
+              <div className="absolute top-0 right-0 -mr-4 bg-brand-yellow text-brand-black font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-lg">
                 {idx + 1}
               </div>
-              <h3 className="text-xl font-bold text-brand-black dark:text-white mb-3">{step.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm px-4">
+              <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+              <p className="text-white/90 leading-relaxed text-sm px-4">
                 {step.desc}
               </p>
             </div>
