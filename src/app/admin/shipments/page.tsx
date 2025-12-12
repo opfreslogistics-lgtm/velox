@@ -207,7 +207,7 @@ export default function ShipmentsPage() {
   };
 
   const generateTrackingNumber = () => {
-    return 'VLX-' + Math.floor(100000 + Math.random() * 900000);
+    return 'SGE-' + Math.floor(100000 + Math.random() * 900000);
   };
 
   const generateReferenceCode = () => {

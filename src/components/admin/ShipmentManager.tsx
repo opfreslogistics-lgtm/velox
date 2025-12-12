@@ -12,7 +12,7 @@ import { Shipment, ShipmentStatus } from '@/types';
 const INITIAL_DATA: Shipment[] = [
   { 
     id: '1', 
-    trackingNumber: 'VLX-882190', 
+    trackingNumber: 'SGE-882190', 
     sender: 'Apple Inc.', 
     senderAddress: '1 Infinite Loop, Cupertino, CA',
     senderEmail: 'logistics@apple.com',
@@ -41,7 +41,7 @@ const INITIAL_DATA: Shipment[] = [
   },
   { 
     id: '2', 
-    trackingNumber: 'VLX-993021', 
+    trackingNumber: 'SGE-993021', 
     sender: 'Samsung Electronics', 
     senderAddress: '129 Samsung-ro, Suwon-si',
     recipient: 'Tech Distro LLC', 
@@ -137,7 +137,7 @@ const ShipmentManager: React.FC = () => {
   };
 
   const handleCreateNew = () => {
-      const newId = 'VLX-' + Math.floor(100000 + Math.random() * 900000);
+      const newId = 'SGE-' + Math.floor(100000 + Math.random() * 900000);
       setCurrentShipment({ ...EMPTY_SHIPMENT, id: Math.random().toString(), trackingNumber: newId });
       setIsModalOpen(true);
   };

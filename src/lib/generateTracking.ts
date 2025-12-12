@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 export const generateTrackingNumber = () => {
-  const prefix = 'VLX';
+  const prefix = 'SGE';
   const random = crypto.randomBytes(4).toString('hex').toUpperCase();
   return `${prefix}-${random}`;
 };

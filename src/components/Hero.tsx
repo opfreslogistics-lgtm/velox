@@ -134,7 +134,7 @@ const Hero: React.FC = () => {
                           <input 
                             type="text" 
                             name="trackingId"
-                            placeholder="e.g. VLX-882192" 
+                            placeholder="e.g. SGE-882192" 
                             className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-brand-red focus:ring-1 focus:ring-brand-red outline-none transition-all"
                             required
                           />
