@@ -1,4 +1,4 @@
-# Velox Logistics
+# Sand Global Express
 
 A modern logistics and shipment tracking platform built with Next.js, TypeScript, and Supabase.
 

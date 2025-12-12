@@ -25,7 +25,7 @@ const CareersPage: React.FC = () => {
             <div className="text-center mb-16">
                <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Our Culture</span>
                <h2 className="text-3xl font-extrabold text-brand-black dark:text-white">Why Work With Us?</h2>
-               <p className="text-gray-500 max-w-2xl mx-auto mt-4">We believe in empowering our people to do their best work. Here's what you can expect when you join Velox.</p>
+               <p className="text-gray-500 max-w-2xl mx-auto mt-4">We believe in empowering our people to do their best work. Here's what you can expect when you join Sand Global Express.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                {[
@@ -45,13 +45,13 @@ const CareersPage: React.FC = () => {
          </div>
       </section>
 
-      {/* Life at Velox Gallery */}
+      {/* Life at Sand Global Express Gallery */}
       <section className="py-24 bg-brand-black text-white overflow-hidden relative">
          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
          <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
              <div className="flex flex-col md:flex-row justify-between items-end mb-12">
                 <div>
-                   <h2 className="text-3xl font-bold mb-2">Life at Velox</h2>
+                   <h2 className="text-3xl font-bold mb-2">Life at Sand Global Express</h2>
                    <p className="text-gray-400">See what our team is up to around the world.</p>
                 </div>
                 <button className="flex items-center gap-2 text-brand-yellow font-bold uppercase text-sm tracking-wider hover:text-white transition-colors">

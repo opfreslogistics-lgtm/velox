@@ -64,7 +64,7 @@ const BlogPreview: React.FC = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute top-4 left-4 bg-brand-yellow text-brand-black text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">
-                  {post.author || 'Velox Logistics'}
+                  {post.author || 'Sand Global Express'}
                 </div>
               </div>
               <div className="p-6">

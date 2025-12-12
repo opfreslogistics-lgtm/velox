@@ -1437,7 +1437,7 @@ export default function ShipmentsPage() {
                       value={currentShipment.agent_email || ''}
                       onChange={(e) => handleFieldChange('agent_email', e.target.value)}
                       className="w-full p-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
-                      placeholder="e.g. agent@velox.com"
+                      placeholder="e.g. agent@sandglobalexpress.com"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1559,7 +1559,7 @@ export default function ShipmentsPage() {
                                 const response = await fetch(
                                   `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`,
                                   {
-                                    headers: { 'User-Agent': 'velox-logistics/1.0' },
+                                    headers: { 'User-Agent': 'sand-global-express/1.0' },
                                   }
                                 );
                                 const data = await response.json();

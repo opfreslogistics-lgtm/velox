@@ -26,7 +26,7 @@ Run `npm run build` and fix any remaining errors.
 ### 2. Initialize Git and Push
 ```bash
 git add .
-git commit -m "Initial commit - Velox Logistics platform"
+git commit -m "Initial commit - Sand Global Express platform"
 git branch -M main
 git remote add origin https://github.com/opfreslogistics-lgtm/velox.git
 git push -u origin main

@@ -15,7 +15,7 @@ export async function geocodeAddress(query: string): Promise<GeocodeResult | nul
   });
   try {
     const res = await fetch(`${NOMINATIM_URL}?${params.toString()}`, {
-      headers: { 'User-Agent': 'velox-logistics/1.0' },
+      headers: { 'User-Agent': 'sand-global-express/1.0' },
     });
     if (!res.ok) return null;
     const data = await res.json();

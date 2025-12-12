@@ -4,7 +4,7 @@ import { sendEmail } from '@/lib/mailer';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { to, subject = 'Test Email from Velox Logistics' } = body;
+    const { to, subject = 'Test Email from Sand Global Express' } = body;
 
     if (!to) {
       return NextResponse.json({ 
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #D40511;">Test Email</h1>
-          <p>This is a test email from Velox Logistics.</p>
+          <p>This is a test email from Sand Global Express.</p>
           <p>If you received this, your email configuration is working correctly!</p>
           <p style="color: #666; font-size: 12px; margin-top: 30px;">
             Sent at: ${new Date().toLocaleString()}

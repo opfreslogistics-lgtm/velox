@@ -9,7 +9,7 @@ const AppDownload: React.FC = () => {
              <span className="text-brand-red font-bold uppercase tracking-wider text-sm mb-2 block">Mobile App</span>
              <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-6">Track Your Cargo <br/> On The Go.</h2>
              <p className="text-gray-600 dark:text-gray-300 text-lg mb-8">
-                 Download the Velox app for real-time notifications, barcode scanning, and instant quotes. Manage your logistics from the palm of your hand.
+                 Download the Sand Global Express app for real-time notifications, barcode scanning, and instant quotes. Manage your logistics from the palm of your hand.
              </p>
              <div className="flex gap-4">
                  <button className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded flex items-center gap-3 hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">

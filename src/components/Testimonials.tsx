@@ -10,7 +10,7 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Jonathan Steele",
     role: "Logistics Director",
     company: "AutoParts Global",
-    content: "Velox has revolutionized our supply chain. The dashboard is intuitive, and the speed of delivery is unmatched in the industry. Highly recommended for enterprise needs.",
+    content: "Sand Global Express has revolutionized our supply chain. The dashboard is intuitive, and the speed of delivery is unmatched in the industry. Highly recommended for enterprise needs.",
     image: "https://randomuser.me/api/portraits/men/32.jpg"
   },
   {
@@ -18,7 +18,7 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Sarah Jenkins",
     role: "CEO",
     company: "Luxe Fashion",
-    content: "Shipping high-value fashion items requires trust. Velox provides that along with speed. Our customer satisfaction scores went up 20% since switching.",
+    content: "Shipping high-value fashion items requires trust. Sand Global Express provides that along with speed. Our customer satisfaction scores went up 20% since switching.",
     image: "https://randomuser.me/api/portraits/women/44.jpg"
   },
   {

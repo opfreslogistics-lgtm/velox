@@ -22,7 +22,7 @@ const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, className = "" }) 
       <div className="relative z-10 max-w-4xl mx-auto animate-fade-in-up">
          <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm shadow-sm">
             <span className="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span className="text-xs font-bold uppercase tracking-widest text-white">Velox Global</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-white">Sand Global Express</span>
          </div>
          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-md leading-tight">{title}</h1>
          {subtitle && <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed">{subtitle}</p>}

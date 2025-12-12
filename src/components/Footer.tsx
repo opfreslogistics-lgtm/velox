@@ -46,10 +46,10 @@ const Footer: React.FC = () => {
               <div className="bg-brand-red text-white p-2 rounded transform -skew-x-12 group-hover:scale-110 transition-transform">
                 <Package size={24} className="transform skew-x-12" />
               </div>
-              <span className="text-3xl font-extrabold text-white tracking-tighter italic">VELOX</span>
+              <span className="text-3xl font-extrabold text-white tracking-tighter italic">SAND</span>
             </div>
             <p className="text-gray-400 mb-8 leading-relaxed text-sm">
-              Global logistics partner for the modern age. We deliver reliability, speed, and innovation to every corner of the world.
+              Global express partner for the modern age. We deliver reliability, speed, and innovation to every corner of the world.
             </p>
             <div className="flex gap-3">
               {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-4">
           <div>
-            &copy; {new Date().getFullYear()} Velox Logistics Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} Sand Global Express Inc. All rights reserved.
           </div>
           <div className="flex gap-8">
             <button onClick={() => go('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>

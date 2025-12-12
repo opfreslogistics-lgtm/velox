@@ -130,7 +130,7 @@ export default function GoogleMapComponent({
     const map = mapRef.current;
 
     // Clear previous markers and route
-    const existingMarkers = map.getContainer().querySelectorAll('.velox-marker');
+    const existingMarkers = map.getContainer().querySelectorAll('.sge-marker');
     existingMarkers.forEach((el) => el.remove());
     if (map.getLayer('route-line')) {
       map.removeLayer('route-line');
@@ -149,7 +149,7 @@ export default function GoogleMapComponent({
 
     const createMarker = (coords: [number, number], color: string, label: string, pulsing = false) => {
       const el = document.createElement('div');
-      el.className = 'velox-marker';
+      el.className = 'sge-marker';
       el.style.width = '14px';
       el.style.height = '14px';
       el.style.borderRadius = '50%';
@@ -157,7 +157,7 @@ export default function GoogleMapComponent({
       el.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.9)';
       el.style.border = '2px solid #ffffff';
       if (pulsing) {
-        el.style.animation = 'velox-pulse 1.4s infinite';
+        el.style.animation = 'sge-pulse 1.4s infinite';
       }
       const marker = new mapboxgl.Marker(el).setLngLat(coords).setPopup(new mapboxgl.Popup({ offset: 12 }).setText(label));
       marker.addTo(map);
@@ -247,7 +247,7 @@ export default function GoogleMapComponent({
     <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg relative" style={{ height }}>
       <div ref={mapContainerRef} className="w-full h-full" />
       <style jsx>{`
-        @keyframes velox-pulse {
+        @keyframes sge-pulse {
           0% {
             box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4);
           }

@@ -45,7 +45,7 @@ export default function Barcode({ value, width = 220, height = 90 }: BarcodeProp
     >
       {/* top label */}
       <div className="w-full flex items-center justify-between text-[10px] text-gray-500 font-mono mb-1">
-        <span>VELOX</span>
+        <span>SAND</span>
         <span>EXPRESS</span>
       </div>
 

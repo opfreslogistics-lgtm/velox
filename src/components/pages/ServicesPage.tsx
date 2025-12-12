@@ -186,7 +186,7 @@ const ServicesPage: React.FC = () => {
                         <div className="absolute inset-0 flex items-center justify-center">
                            <div className="text-center">
                               <Cpu size={64} className="text-white mx-auto mb-4 animate-pulse" />
-                              <h3 className="text-2xl font-bold text-white">VeloxOS 2.0</h3>
+                              <h3 className="text-2xl font-bold text-white">SandOS 2.0</h3>
                               <p className="text-brand-yellow font-mono text-sm mt-2">SYSTEM ACTIVE</p>
                            </div>
                         </div>

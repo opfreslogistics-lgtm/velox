@@ -59,7 +59,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center gap-12">
             <div className="w-full md:w-1/2">
                 <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Why Choose Us</span>
-                <h2 className="text-3xl font-extrabold mb-6 text-brand-black dark:text-white">Why Industry Leaders Choose Velox</h2>
+                <h2 className="text-3xl font-extrabold mb-6 text-brand-black dark:text-white">Why Industry Leaders Choose Sand Global Express</h2>
                 <ul className="space-y-4">
                     {['Transparent Pricing', 'Real-time Satellite Tracking', 'Dedicated Account Managers', 'Carbon Neutral Shipping Options', '24/7 Global Support', 'Customs Clearance Expertise'].map((item, i) => (
                         <li key={i} className="flex items-center gap-3 text-lg text-gray-700 dark:text-gray-300">

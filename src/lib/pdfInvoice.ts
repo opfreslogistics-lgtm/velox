@@ -62,7 +62,7 @@ export async function generateInvoicePDF(input: InvoiceInput) {
   const drawHeader = () => {
     doc.setFillColor(DHL_RED);
     doc.rect(0, 0, pageWidth, 52, 'F');
-    text('VELOX LOGISTICS', marginX, 32, 14, '#FFFFFF', 'bold');
+    text('SAND GLOBAL EXPRESS', marginX, 32, 14, '#FFFFFF', 'bold');
     text('INVOICE', pageWidth - marginX - 86, 32, 16, '#FFFFFF', 'bold');
     doc.setFillColor(DHL_YELLOW);
     doc.rect(0, 52, pageWidth, 4, 'F');
@@ -73,7 +73,7 @@ export async function generateInvoicePDF(input: InvoiceInput) {
     doc.setFillColor(LIGHT_GRAY);
     doc.rect(0, footerY - 20, pageWidth, 36, 'F');
     text(
-      'Velox Logistics • 1-800-VELOX-SHIP • veloxlogistics.com • support@veloxlogistics.com • Thank you for shipping with us.',
+      'Sand Global Express • 1-800-SAND-EXP • sandglobalexpress.com • support@sandglobalexpress.com • Thank you for shipping with us.',
       marginX,
       footerY,
       9,
@@ -227,7 +227,7 @@ export async function generateInvoicePDF(input: InvoiceInput) {
   doc.setDrawColor(DHL_RED);
   doc.setTextColor(DHL_RED);
   doc.setFontSize(22);
-  doc.text('VELOX', pageWidth - marginX - 148, signatureY + 60, { angle: -15, opacity: 0.2 } as any);
+  doc.text('SAND', pageWidth - marginX - 148, signatureY + 60, { angle: -15, opacity: 0.2 } as any);
 
   cursorY = placeOnFirstPage ? pageHeight - footerReserve + 8 : signatureY + 42;
 

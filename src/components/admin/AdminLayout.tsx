@@ -98,7 +98,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ activePage, children }) => {
             <div className="bg-brand-red p-1.5 rounded transform -skew-x-12">
                <Package size={20} className="transform skew-x-12" />
             </div>
-            {!collapsed && <span className="font-extrabold text-xl tracking-tighter italic">VELOX<span className="text-brand-red">.ADMIN</span></span>}
+            {!collapsed && <span className="font-extrabold text-xl tracking-tighter italic">SAND<span className="text-brand-red">.ADMIN</span></span>}
           </div>
         </div>
 

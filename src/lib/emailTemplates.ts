@@ -4,9 +4,12 @@ const brandGray = '#1a1a1a';
 const lightGray = '#f5f5f5';
 const white = '#ffffff';
 const brandYellow = '#FFD700';
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@veloxlogistics.com';
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloxlogistics.com';
-const logoUrl = 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/logo.png';
+const brandName = 'Sand Global Express';
+const brandTagline = 'Global Delivery Solutions';
+const supportPhone = '1-800-SAND-EXP';
+const supportEmail = process.env.SUPPORT_EMAIL || 'support@sandglobalexpress.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sandglobalexpress.com';
+const logoUrl = 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/SAND%20EXPRESS%20LOGO.png';
 
 type TemplateResult = {
   subject: string;
@@ -64,7 +67,7 @@ const STATUS_COPY: Record<string, { title: string; tip: string; icon: string }> 
   'Departed Facility': { title: 'Departed facility.', tip: 'On the road to the next stop.', icon: '➡️' },
   'Arrived at Facility': { title: 'Arrived at facility.', tip: 'Sorting for the next transfer.', icon: '🏬' },
   'Out for Delivery': { title: 'Out for delivery.', tip: 'Expect delivery today.', icon: '📦' },
-  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Velox.', icon: '🎉' },
+  Delivered: { title: 'Delivered successfully!', tip: 'Thank you for choosing Sand Global Express.', icon: '🎉' },
   'Delivery Attempted': { title: 'Delivery attempted.', tip: 'We will re-attempt or contact you.', icon: '⚠️' },
   'Returned to Sender': { title: 'Returned to sender.', tip: 'Contact support to reschedule.', icon: '↩️' },
   Cancelled: { title: 'Shipment cancelled.', tip: 'Reach out if this is unexpected.', icon: '⛔' },
@@ -202,7 +205,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
           <!-- Header -->
           <tr>
             <td style="background-color: ${brandBlack}; padding: 40px 20px; text-align: center;">
-              <img src="${logoUrl}" alt="Velox Logistics" width="180" height="auto" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
+              <img src="${logoUrl}" alt="${brandName}" width="180" height="auto" style="display: block; margin: 0 auto; max-width: 180px; height: auto;" />
             </td>
           </tr>
           
@@ -222,7 +225,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                     <p style="margin: 0; padding: 0; font-size: 14px; color: #666666; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
                       ${isUpdate 
                         ? `We have an update on your shipment. ${statusCopy.tip}` 
-                        : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
+                        : `Thank you for choosing ${brandName}! Your shipment has been created and is being processed. ${statusCopy.tip}`}
                     </p>
                   </td>
                 </tr>
@@ -565,13 +568,13 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td style="padding: 0 0 12px 0;">
-                    <p style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${white}; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
+                    <p style="margin: 0; padding: 0; font-size: 16px; font-weight: bold; color: ${white}; font-family: Arial, Helvetica, sans-serif;">${brandName}</p>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding: 0 0 18px 0;">
                     <p style="margin: 0; padding: 0; font-size: 12px; color: ${white}; line-height: 1.6; font-family: Arial, Helvetica, sans-serif;">
-                      Global Delivery Solutions<br>
+                      ${brandTagline}<br>
                       Email: <a href="mailto:${supportEmail}" style="color: ${white}; text-decoration: underline; font-size: 12px;">${supportEmail}</a>
                     </p>
                   </td>
@@ -602,7 +605,7 @@ function buildEmailTemplate(data: ShipmentData, isUpdate: boolean = false): { ht
                 <tr>
                   <td style="padding: 0;">
                     <p style="margin: 0; padding: 0; font-size: 12px; color: rgba(255,255,255,0.9); font-family: Arial, Helvetica, sans-serif; line-height: 1.6;">
-                      © ${new Date().getFullYear()} Velox Logistics. All rights reserved.<br>
+                      © ${new Date().getFullYear()} ${brandName}. All rights reserved.<br>
                       <a href="${siteUrl}/unsubscribe" style="color: rgba(255,255,255,0.8); text-decoration: underline;">Unsubscribe</a>
                     </p>
                   </td>
@@ -626,7 +629,7 @@ Hello ${recipientName},
 
 ${isUpdate 
   ? `We have an update on your shipment. ${statusCopy.tip}` 
-  : `Thank you for choosing Velox Logistics! Your shipment has been created and is being processed. ${statusCopy.tip}`}
+  : `Thank you for choosing ${brandName}! Your shipment has been created and is being processed. ${statusCopy.tip}`}
 
 SHIPMENT DETAILS
 Shipment Number: ${data.trackingNumber}
@@ -668,12 +671,12 @@ Contact Support: ${supportEmail}
 Need help? Contact us at ${supportEmail}
 
 ---
-Velox Logistics
-Global Delivery Solutions
+${brandName}
+${brandTagline}
 Email: ${supportEmail}
 Website: ${siteUrl}
 
-© ${new Date().getFullYear()} Velox Logistics. All rights reserved.
+© ${new Date().getFullYear()} ${brandName}. All rights reserved.
   `.trim();
 
   return { html, text };
@@ -867,7 +870,7 @@ export function contactEmailTemplate(payload: {
           </tr>
           <tr>
             <td style="background-color: ${brandRed}; padding: 20px; text-align: center;">
-              <p style="margin: 0; color: ${white}; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">Velox Logistics</p>
+              <p style="margin: 0; color: ${white}; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">${brandName}</p>
             </td>
           </tr>
         </table>

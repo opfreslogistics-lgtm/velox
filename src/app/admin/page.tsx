@@ -85,7 +85,7 @@ export default function AdminLogin() {
             <ShieldCheck size={28} />
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] font-bold text-brand-red">Velox Admin</p>
+            <p className="text-xs uppercase tracking-[0.3em] font-bold text-brand-red">Sand Admin</p>
             <h1 className="text-2xl font-extrabold text-brand-black dark:text-white">Secure Sign In</h1>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-sm focus:border-brand-red outline-none"
-              placeholder="admin@velox.com"
+              placeholder="admin@sandglobalexpress.com"
             />
           </div>
           <div>

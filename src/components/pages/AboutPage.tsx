@@ -8,7 +8,7 @@ const AboutPage: React.FC = () => {
     <div className="animate-fade-in-up bg-white dark:bg-brand-black transition-colors duration-300">
       <PageHero 
         title="Driving Global Commerce" 
-        subtitle="Since 1995, Velox has been the backbone of supply chains for the world's leading companies."
+        subtitle="Since 1995, Sand Global Express has been the backbone of supply chains for the world's leading companies."
       />
 
       {/* Mission & Vision */}
@@ -58,7 +58,7 @@ const AboutPage: React.FC = () => {
                {[
                   { year: "1995", title: "Founded in New York", desc: "Started with 2 trucks and a small warehouse in Brooklyn." },
                   { year: "2005", title: "European Expansion", desc: "Opened our first major hub in Hamburg, Germany." },
-                  { year: "2012", title: "Velox Digital Launch", desc: "Released our first real-time tracking platform." },
+                  { year: "2012", title: "Sand Digital Launch", desc: "Released our first real-time tracking platform." },
                   { year: "2020", title: "Carbon Neutral Pledge", desc: "Committed to 100% electric last-mile delivery by 2030." },
                   { year: "2024", title: "Global AI Integration", desc: "Implementing predictive logistics across all routes." }
                ].map((item, i) => (

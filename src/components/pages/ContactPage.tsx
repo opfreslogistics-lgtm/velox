@@ -86,7 +86,7 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Call Us</p>
-                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+1 (800) VELOX-SHIP</p>
+                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+1 (800) SAND-EXP</p>
                          <p className="text-gray-500 text-sm flex items-center gap-1 mt-1"><Clock size={12}/> Mon-Fri: 8am - 8pm EST</p>
                       </div>
                    </div>
@@ -97,7 +97,7 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Email Us</p>
-                         <p className="text-brand-black dark:text-white font-extrabold text-xl">support@velox.com</p>
+                         <p className="text-brand-black dark:text-white font-extrabold text-xl">support@sandglobalexpress.com</p>
                          <p className="text-gray-500 text-sm mt-1">Response within 2 hours</p>
                       </div>
                    </div>

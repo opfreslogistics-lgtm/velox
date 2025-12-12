@@ -17,8 +17,8 @@ const dancing = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Velox Logistics - Global Shipping Solutions",
-  description: "Modern, high-performance shipping and logistics platform.",
+  title: "Sand Global Express - Global Shipping Solutions",
+  description: "Modern, high-performance shipping and logistics platform by Sand Global Express.",
   icons: {
     icon: 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png',
     shortcut: 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/favicon.png',

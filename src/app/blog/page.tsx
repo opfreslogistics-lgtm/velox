@@ -44,7 +44,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-      <PageHero title="Newsroom" subtitle="Latest updates, insights, and stories from Velox Logistics." />
+      <PageHero title="Newsroom" subtitle="Latest updates, insights, and stories from Sand Global Express." />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-24">
         {error && (

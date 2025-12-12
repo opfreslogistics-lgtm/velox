@@ -42,7 +42,7 @@ Make sure these are set in Vercel:
 5. Commit and push: 
    ```bash
    git add .
-   git commit -m "Initial commit - Velox Logistics"
+   git commit -m "Initial commit - Sand Global Express"
    git push -u origin main
    ```
 6. Import to Vercel and configure environment variables

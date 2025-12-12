@@ -97,10 +97,10 @@ const Navbar: React.FC = () => {
       <div className="hidden md:flex justify-between items-center bg-brand-black text-white text-xs py-2 px-6 lg:px-12 border-b border-gray-800">
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-2 hover:text-brand-red transition-colors cursor-pointer font-medium">
-            <Phone size={14} className="text-brand-yellow" /> 1-800-VELOX-SHIP
+            <Phone size={14} className="text-brand-yellow" /> 1-800-SAND-EXP
           </span>
           <span className="flex items-center gap-2 hover:text-brand-red transition-colors cursor-pointer font-medium">
-            <Mail size={14} className="text-brand-yellow" /> support@veloxlogistics.com
+            <Mail size={14} className="text-brand-yellow" /> support@sandglobalexpress.com
           </span>
         </div>
         <div className="flex items-center gap-6 font-medium">
@@ -121,8 +121,8 @@ const Navbar: React.FC = () => {
             <Package size={28} className="transform skew-x-12" />
           </div>
           <div className="flex flex-col">
-            <span className="text-2xl font-extrabold text-brand-black dark:text-white leading-none tracking-tighter italic">VELOX</span>
-            <span className="text-[0.6rem] font-bold text-brand-red uppercase tracking-widest">Global Logistics</span>
+            <span className="text-2xl font-extrabold text-brand-black dark:text-white leading-none tracking-tighter italic">SAND</span>
+            <span className="text-[0.6rem] font-bold text-brand-red uppercase tracking-widest">Global Express</span>
           </div>
         </div>
 

@@ -12,7 +12,7 @@ export default function PrivacyPage() {
           <li>Data is encrypted in transit and at rest.</li>
           <li>Access is restricted to authorized personnel.</li>
         </ul>
-        <p>For deletion or access requests, contact: privacy@veloxlogistics.com.</p>
+        <p>For deletion or access requests, contact: privacy@sandglobalexpress.com.</p>
       </div>
     </div>
   );
