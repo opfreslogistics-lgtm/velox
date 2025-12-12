@@ -26,7 +26,7 @@ const steps = [
 
 const Process: React.FC = () => {
   return (
-    <section className="py-24 bg-brand-green transition-colors duration-300 border-b border-green-700">
+    <section className="py-24 bg-brand-red transition-colors duration-300 border-b border-red-800">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="text-center mb-16">
           <span className="text-white/90 font-bold uppercase tracking-widest text-sm">How It Works</span>
@@ -39,8 +39,8 @@ const Process: React.FC = () => {
 
           {steps.map((step, idx) => (
             <div key={idx} className="relative flex flex-col items-center text-center group">
-              <div className="w-24 h-24 bg-white border-4 border-white/20 rounded-full flex items-center justify-center mb-6 group-hover:border-brand-red transition-colors duration-300 z-10 shadow-lg">
-                <step.icon size={32} className="text-brand-green group-hover:text-brand-red transition-colors" />
+              <div className="w-24 h-24 bg-white border-4 border-white/20 rounded-full flex items-center justify-center mb-6 group-hover:border-brand-yellow transition-colors duration-300 z-10 shadow-lg">
+                <step.icon size={32} className="text-brand-red group-hover:text-brand-yellow transition-colors" />
               </div>
               <div className="absolute top-0 right-0 -mr-4 bg-brand-yellow text-brand-black font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-lg">
                 {idx + 1}

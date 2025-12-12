@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <section className="py-14 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-6 lg:px-12">
           <div className="grid md:grid-cols-[1.1fr_0.9fr] items-center gap-10">
             <div className="space-y-4">
