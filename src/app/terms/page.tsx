@@ -12,7 +12,7 @@ export default function TermsPage() {
           <li>Service-level commitments are subject to carrier and customs constraints.</li>
           <li>Claims must be submitted within the timelines defined per service level.</li>
         </ul>
-        <p>For full legal language, reach out to legal@sandglobalexpress.com.</p>
+        <p>For full legal language, reach out to legal@sandgloexpress.com.</p>
       </div>
     </div>
   );

@@ -97,7 +97,7 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Email Us</p>
-                         <p className="text-brand-black dark:text-white font-extrabold text-xl">support@sandglobalexpress.com</p>
+                         <p className="text-brand-black dark:text-white font-extrabold text-xl">support@sandgloexpress.com</p>
                          <p className="text-gray-500 text-sm mt-1">Response within 2 hours</p>
                       </div>
                    </div>

@@ -7,8 +7,8 @@ const brandYellow = '#FFD700';
 const brandName = 'Sand Global Express';
 const brandTagline = 'Global Delivery Solutions';
 const supportPhone = '1-800-SAND-EXP';
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@sandglobalexpress.com';
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sandglobalexpress.com';
+const supportEmail = process.env.SUPPORT_EMAIL || 'support@sandgloexpress.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sandgloexpress.com';
 const logoUrl = 'https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/SAND%20EXPRESS%20LOGO.png';
 
 type TemplateResult = {

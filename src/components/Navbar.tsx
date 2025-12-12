@@ -100,7 +100,7 @@ const Navbar: React.FC = () => {
             <Phone size={14} className="text-brand-yellow" /> 1-800-SAND-EXP
           </span>
           <span className="flex items-center gap-2 hover:text-brand-red transition-colors cursor-pointer font-medium">
-            <Mail size={14} className="text-brand-yellow" /> support@sandglobalexpress.com
+            <Mail size={14} className="text-brand-yellow" /> support@sandgloexpress.com
           </span>
         </div>
         <div className="flex items-center gap-6 font-medium">
