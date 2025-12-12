@@ -16,7 +16,7 @@ const pageToHref: Partial<Record<PageType, string>> = {
   sustainability: '/about',
   privacy: '/privacy',
   terms: '/terms',
-  news: '/news',
+  news: '/blog',
   partners: '/about',
   'admin-login': '/admin',
   'admin-dashboard': '/admin/dashboard',

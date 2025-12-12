@@ -235,35 +235,50 @@ export default function AdminBlogPage() {
               </div>
 
               {/* Cover Image Upload */}
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase">Cover Image</label>
-                <div className="space-y-2">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Featured Image</label>
+                <div className="space-y-3">
                   {(editing.cover_image || imagePreview) && (
-                    <div className="relative">
+                    <div className="relative group">
                       <img
                         src={editing.cover_image || imagePreview || ''}
                         alt="Cover preview"
-                        className="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                        className="w-full h-64 object-cover rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-sm"
                       />
                       <button
                         onClick={() => {
                           setEditing({ ...editing, cover_image: '' });
                           setImagePreview(null);
                         }}
-                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                        className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                        title="Remove image"
                       >
                         <X size={16} />
                       </button>
                     </div>
                   )}
-                  <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-brand-red transition-colors">
+                  <label className={`flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                    uploadingImage 
+                      ? 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800' 
+                      : 'border-gray-300 dark:border-gray-600 hover:border-brand-red hover:bg-brand-red/5 dark:hover:bg-brand-red/10'
+                  }`}>
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          // Validate file size (5MB max)
+                          if (file.size > 5242880) {
+                            setError('Image size must be less than 5MB');
+                            return;
+                          }
+                          // Validate file type
+                          if (!file.type.startsWith('image/')) {
+                            setError('Please select a valid image file');
+                            return;
+                          }
                           setImagePreview(URL.createObjectURL(file));
                           handleImageUpload(file);
                         }
@@ -271,27 +286,37 @@ export default function AdminBlogPage() {
                       disabled={uploadingImage}
                     />
                     {uploadingImage ? (
-                      <>
-                        <Loader2 className="animate-spin" size={20} />
-                        <span className="text-sm font-medium">Uploading...</span>
-                      </>
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="animate-spin text-brand-red" size={24} />
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Uploading image...</span>
+                      </div>
                     ) : (
-                      <>
-                        <Upload size={20} />
-                        <span className="text-sm font-medium">
-                          {editing.cover_image ? 'Replace Cover Image' : 'Upload Cover Image'}
-                        </span>
-                      </>
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-3 bg-brand-red/10 dark:bg-brand-red/20 rounded-full">
+                          <ImageIcon className="text-brand-red" size={24} />
+                        </div>
+                        <div className="text-center">
+                          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 block">
+                            {editing.cover_image ? 'Replace Featured Image' : 'Upload Featured Image'}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
+                            JPG, PNG, WEBP or GIF (max 5MB)
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </label>
                   {editing.cover_image && (
-                    <input
-                      type="text"
-                      value={editing.cover_image}
-                      onChange={(e) => setEditing({ ...editing, cover_image: e.target.value })}
-                      className="w-full p-2 text-xs rounded bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
-                      placeholder="Or paste image URL directly"
-                    />
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Or paste image URL</label>
+                      <input
+                        type="text"
+                        value={editing.cover_image}
+                        onChange={(e) => setEditing({ ...editing, cover_image: e.target.value })}
+                        className="w-full p-3 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
