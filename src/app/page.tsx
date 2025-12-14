@@ -79,12 +79,12 @@ export default function Home() {
       </div>
 
       {/* Transportation Modes Showcase */}
-      <section className="py-24 bg-white dark:bg-brand-black transition-colors duration-300">
+      <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-brand-black dark:to-gray-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Our Fleet</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-4">Multiple Transportation Modes</h2>
-            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">From air to ocean, road to rail, we have the right solution for every shipment.</p>
+            <span className="inline-block text-brand-red font-bold uppercase tracking-widest text-sm mb-4 px-4 py-2 bg-brand-red/10 dark:bg-brand-red/20 rounded-full">Our Fleet</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-4 mt-4">Multiple Transportation Modes</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">From air to ocean, road to rail, we have the right solution for every shipment.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -92,45 +92,65 @@ export default function Home() {
               {
                 title: "Air Freight",
                 description: "Fastest delivery for time-critical shipments",
-                image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop",
+                image: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/flight.png",
                 icon: "✈️",
-                features: ["24-48h delivery", "Global coverage", "Temperature controlled"]
+                features: ["24-48h delivery", "Global coverage", "Temperature controlled"],
+                gradient: "from-blue-500/20 to-blue-600/10"
               },
               {
                 title: "Ocean Freight",
                 description: "Cost-effective shipping for large volumes",
-                image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop",
+                image: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/ship.png",
                 icon: "🚢",
-                features: ["FCL & LCL", "Port-to-port", "Break bulk"]
+                features: ["FCL & LCL", "Port-to-port", "Break bulk"],
+                gradient: "from-cyan-500/20 to-cyan-600/10"
               },
               {
                 title: "Road Transport",
                 description: "Reliable ground transportation network",
-                image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070&auto=format&fit=crop",
+                image: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/truck.png",
                 icon: "🚛",
-                features: ["FTL & LTL", "GPS tracking", "Cross-border"]
+                features: ["FTL & LTL", "GPS tracking", "Cross-border"],
+                gradient: "from-orange-500/20 to-orange-600/10"
               }
             ].map((mode, idx) => (
-              <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800">
-                <div className="h-64 overflow-hidden">
+              <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand-red/50 dark:hover:border-brand-red/50">
+                {/* Image Container with Overlay */}
+                <div className="relative h-64 overflow-hidden bg-gradient-to-br dark:from-gray-800 dark:to-gray-900">
                   <img 
                     src={mode.image} 
                     alt={mode.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 via-brand-black/20 to-transparent dark:from-brand-black/90 dark:via-brand-black/30"></div>
+                  {/* Icon Badge */}
+                  <div className="absolute top-4 right-4 w-14 h-14 bg-white/20 dark:bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-3xl border border-white/30 dark:border-white/20 group-hover:scale-110 transition-transform duration-300">
+                    {mode.icon}
+                  </div>
                 </div>
-                <div className="p-8 bg-white dark:bg-gray-900">
-                  <div className="text-4xl mb-4">{mode.icon}</div>
-                  <h3 className="text-2xl font-bold text-brand-black dark:text-white mb-2">{mode.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">{mode.description}</p>
-                  <ul className="space-y-2">
+                
+                {/* Content Section */}
+                <div className="p-8 bg-white dark:bg-gray-800 transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-brand-black dark:text-white mb-3 group-hover:text-brand-red dark:group-hover:text-brand-red transition-colors">{mode.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">{mode.description}</p>
+                  <ul className="space-y-3">
                     {mode.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                        <CheckCircle className="text-brand-green" size={16} /> {feature}
+                      <li key={i} className="flex items-center gap-3 text-sm">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-green/20 dark:bg-brand-green/30 flex items-center justify-center">
+                          <CheckCircle className="text-brand-green" size={14} />
+                        </div>
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">{feature}</span>
                       </li>
                     ))}
                   </ul>
+                  
+                  {/* Hover Effect Indicator */}
+                  <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-2 text-brand-red font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span>Learn more</span>
+                      <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
