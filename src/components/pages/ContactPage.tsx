@@ -336,7 +336,7 @@ const ContactPage: React.FC = () => {
               {
                 city: "Berlin, DE",
                 address: "Potsdamer Platz",
-                image: "https://images.unsplash.com/photo-1587330979470-3585acb8a8d8?q=80&w=2070&auto=format&fit=crop",
+                image: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/torre-de-la-television-berlin.webp",
                 phone: "+49 30 9876 5432"
               }
             ].map((office, idx) => (

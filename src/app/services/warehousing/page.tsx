@@ -40,7 +40,7 @@ export default function WarehousingPage() {
             </div>
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=2070&auto=format&fit=crop"
+                src="https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/warehouse.jpg"
                 alt="Warehouse interior"
                 className="rounded-2xl shadow-2xl w-full"
               />
