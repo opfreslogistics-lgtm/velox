@@ -78,6 +78,129 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Transportation Modes Showcase */}
+      <section className="py-24 bg-white dark:bg-brand-black transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Our Fleet</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-4">Multiple Transportation Modes</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">From air to ocean, road to rail, we have the right solution for every shipment.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Air Freight",
+                description: "Fastest delivery for time-critical shipments",
+                image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop",
+                icon: "✈️",
+                features: ["24-48h delivery", "Global coverage", "Temperature controlled"]
+              },
+              {
+                title: "Ocean Freight",
+                description: "Cost-effective shipping for large volumes",
+                image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop",
+                icon: "🚢",
+                features: ["FCL & LCL", "Port-to-port", "Break bulk"]
+              },
+              {
+                title: "Road Transport",
+                description: "Reliable ground transportation network",
+                image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070&auto=format&fit=crop",
+                icon: "🚛",
+                features: ["FTL & LTL", "GPS tracking", "Cross-border"]
+              }
+            ].map((mode, idx) => (
+              <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800">
+                <div className="h-64 overflow-hidden">
+                  <img 
+                    src={mode.image} 
+                    alt={mode.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-transparent"></div>
+                </div>
+                <div className="p-8 bg-white dark:bg-gray-900">
+                  <div className="text-4xl mb-4">{mode.icon}</div>
+                  <h3 className="text-2xl font-bold text-brand-black dark:text-white mb-2">{mode.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{mode.description}</p>
+                  <ul className="space-y-2">
+                    {mode.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <CheckCircle className="text-brand-green" size={16} /> {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Global Network Section */}
+      <section className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Global Reach</span>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-6">Worldwide Logistics Network</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                With operations spanning 220+ countries and territories, we connect your business to markets across the globe. Our strategic hubs ensure fast transit times and reliable service.
+              </p>
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { label: "Countries", value: "220+" },
+                  { label: "Warehouses", value: "850+" },
+                  { label: "Fleet Size", value: "15,000+" },
+                  { label: "Daily Shipments", value: "500k+" }
+                ].map((stat, i) => (
+                  <div key={i} className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div className="text-3xl font-extrabold text-brand-red mb-1">{stat.value}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 font-semibold">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute -top-6 -right-6 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl"></div>
+              <img 
+                src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=2070&auto=format&fit=crop"
+                alt="Global network map"
+                className="rounded-2xl shadow-2xl w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partnership & Trust Section */}
+      <section className="py-24 bg-white dark:bg-brand-black transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Partnerships</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black dark:text-white mb-4">Trusted by Industry Leaders</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">We partner with the world's leading brands to deliver exceptional logistics solutions.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 opacity-60 grayscale hover:grayscale-0 transition-all">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800 flex items-center justify-center h-32">
+                <div className="text-2xl font-bold text-gray-400">PARTNER {i}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-gradient-to-r from-brand-red to-brand-yellow p-12 rounded-2xl text-white text-center">
+            <h3 className="text-3xl font-extrabold mb-4">Become Our Partner</h3>
+            <p className="text-lg mb-8 opacity-90">Join thousands of businesses that trust us with their logistics needs.</p>
+            <Link href="/contact" className="inline-block px-8 py-4 bg-white text-brand-black font-bold rounded-lg hover:bg-gray-100 transition-all">
+              Partner With Us
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <BlogPreview />
       <AppDownload />
       <Testimonials />

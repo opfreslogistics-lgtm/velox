@@ -12,6 +12,50 @@ export default function Pricing() {
         subtitle="Get a tailored quote in seconds, compare modes, and lock in guaranteed rates for your next shipment."
       />
 
+      {/* Transportation Modes Visual */}
+      <section className="py-16 bg-white dark:bg-brand-black">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                mode: "Air Freight",
+                image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop",
+                speed: "12-72h",
+                price: "from $9/kg"
+              },
+              {
+                mode: "Ocean Freight",
+                image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop",
+                speed: "6-28 days",
+                price: "Live schedules"
+              },
+              {
+                mode: "Road Transport",
+                image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070&auto=format&fit=crop",
+                speed: "Same-day/Next-day",
+                price: "Flexible rates"
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-100 dark:border-gray-800">
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={item.image} 
+                    alt={item.mode}
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 to-transparent"></div>
+                </div>
+                <div className="p-6 bg-white dark:bg-gray-900">
+                  <h3 className="text-xl font-bold text-brand-black dark:text-white mb-2">{item.mode}</h3>
+                  <p className="text-brand-red font-semibold mb-1">{item.speed}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{item.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto px-6 lg:px-12">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-start">

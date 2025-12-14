@@ -139,6 +139,83 @@ const AboutPage: React.FC = () => {
              ))}
          </div>
       </section>
+
+      {/* Our Facilities */}
+      <section className="py-24 bg-white dark:bg-brand-black transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Facilities</span>
+            <h2 className="text-4xl font-extrabold text-brand-black dark:text-white mb-4">State-of-the-Art Infrastructure</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">Our global network of warehouses and distribution centers ensures efficient operations worldwide.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Warehouses",
+                description: "850+ strategically located warehouses",
+                image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop",
+                count: "850+"
+              },
+              {
+                title: "Distribution Centers",
+                description: "Modern facilities with advanced automation",
+                image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=2070&auto=format&fit=crop",
+                count: "120+"
+              },
+              {
+                title: "Sorting Facilities",
+                description: "High-speed sorting and processing hubs",
+                image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070&auto=format&fit=crop",
+                count: "200+"
+              }
+            ].map((facility, idx) => (
+              <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-100 dark:border-gray-800">
+                <div className="h-64 overflow-hidden">
+                  <img 
+                    src={facility.image} 
+                    alt={facility.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 to-transparent"></div>
+                </div>
+                <div className="p-6 bg-white dark:bg-gray-900">
+                  <div className="text-3xl font-extrabold text-brand-red mb-2">{facility.count}</div>
+                  <h3 className="text-xl font-bold text-brand-black dark:text-white mb-2">{facility.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{facility.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Our Values</span>
+            <h2 className="text-4xl font-extrabold text-brand-black dark:text-white mb-4">What Drives Us</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { icon: Target, title: "Excellence", desc: "Uncompromising quality in every shipment" },
+              { icon: Globe, title: "Innovation", desc: "Leading with cutting-edge technology" },
+              { icon: Shield, title: "Integrity", desc: "Transparent and ethical business practices" },
+              { icon: Users, title: "Partnership", desc: "Building lasting relationships with clients" }
+            ].map((value, i) => (
+              <div key={i} className="text-center p-8 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div className="bg-brand-red/10 p-6 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <value.icon className="text-brand-red" size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-brand-black dark:text-white mb-2">{value.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{value.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

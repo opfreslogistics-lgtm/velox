@@ -303,6 +303,108 @@ const ContactPage: React.FC = () => {
              </div>
          </div>
       </div>
+
+      {/* Office Locations */}
+      <section className="py-24 bg-white dark:bg-brand-black transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <span className="text-brand-red font-bold uppercase tracking-widest text-sm mb-2 block">Locations</span>
+            <h2 className="text-4xl font-extrabold text-brand-black dark:text-white mb-4">Our Global Offices</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">Visit us at any of our regional offices worldwide.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              {
+                city: "London, UK",
+                address: "Coldbath Square",
+                image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop",
+                phone: "+44 20 7123 4567"
+              },
+              {
+                city: "Singapore",
+                address: "Marina Bay",
+                image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop",
+                phone: "+65 6789 0123"
+              },
+              {
+                city: "Dubai, UAE",
+                address: "Business Bay",
+                image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop",
+                phone: "+971 4 321 0987"
+              },
+              {
+                city: "Berlin, DE",
+                address: "Potsdamer Platz",
+                image: "https://images.unsplash.com/photo-1587330979470-3585acb8a8d8?q=80&w=2070&auto=format&fit=crop",
+                phone: "+49 30 9876 5432"
+              }
+            ].map((office, idx) => (
+              <div key={idx} className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-100 dark:border-gray-800">
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={office.image} 
+                    alt={office.city}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
+                <div className="p-6 bg-white dark:bg-gray-900">
+                  <MapPin className="text-brand-red mb-2" size={24} />
+                  <h3 className="text-xl font-bold text-brand-black dark:text-white mb-1">{office.city}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{office.address}</p>
+                  <p className="text-brand-red font-semibold text-sm">{office.phone}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Support Channels */}
+      <section className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-extrabold text-brand-black dark:text-white mb-4">Multiple Ways to Reach Us</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-lg">Choose the channel that works best for you</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Phone,
+                title: "Phone Support",
+                description: "24/7 phone support for urgent matters",
+                contact: "+44 7448 88561",
+                hours: "Mon-Fri: 8am - 8pm EST"
+              },
+              {
+                icon: Mail,
+                title: "Email Support",
+                description: "Get help via email anytime",
+                contact: "support@sandgloexpress.com",
+                hours: "Response within 2 hours"
+              },
+              {
+                icon: MessageSquare,
+                title: "Live Chat",
+                description: "Instant help via our chat system",
+                contact: "Available 24/7",
+                hours: "Average response: 2 minutes"
+              }
+            ].map((channel, i) => (
+              <div key={i} className="bg-white dark:bg-gray-800 p-8 rounded-xl border border-gray-100 dark:border-gray-700 text-center">
+                <div className="bg-brand-red/10 p-6 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                  <channel.icon className="text-brand-red" size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-brand-black dark:text-white mb-2">{channel.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{channel.description}</p>
+                <p className="text-brand-red font-bold mb-1">{channel.contact}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">{channel.hours}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
