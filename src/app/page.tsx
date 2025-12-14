@@ -165,7 +165,7 @@ export default function Home() {
             <div className="relative">
               <div className="absolute -top-6 -right-6 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl"></div>
               <img 
-                src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=2070&auto=format&fit=crop"
+                src="https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/1524431745933.png"
                 alt="Global network map"
                 className="rounded-2xl shadow-2xl w-full"
               />
@@ -184,9 +184,18 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 opacity-60 grayscale hover:grayscale-0 transition-all">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            {[
+              "Maersk",
+              "DHL",
+              "FedEx",
+              "UPS",
+              "Amazon Logistics",
+              "DB Schenker",
+              "Kuehne + Nagel",
+              "CEVA Logistics"
+            ].map((name, i) => (
               <div key={i} className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800 flex items-center justify-center h-32">
-                <div className="text-2xl font-bold text-gray-400">PARTNER {i}</div>
+                <div className="text-xl font-bold text-gray-400 text-center">{name}</div>
               </div>
             ))}
           </div>
