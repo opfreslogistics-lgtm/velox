@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Target, Award, Globe, Users, TrendingUp, Clock, MapPin } from 'lucide-react';
+import { Target, Award, Globe, Users, TrendingUp, Clock, MapPin, Shield } from 'lucide-react';
 import PageHero from '../PageHero';
 
 const AboutPage: React.FC = () => {
