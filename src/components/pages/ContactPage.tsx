@@ -121,7 +121,7 @@ const ContactPage: React.FC = () => {
                 <ul className="space-y-4 text-sm text-gray-600 dark:text-gray-400">
                    <li className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700">
                       <span className="font-bold">London, UK</span> 
-                      <span>+44 20 7123 4567</span>
+                      <span>+44 7345 518 417</span>
                    </li>
                    <li className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700">
                       <span className="font-bold">Singapore</span> 
@@ -320,7 +320,7 @@ const ContactPage: React.FC = () => {
                 city: "London, UK",
                 address: "Coldbath Square",
                 image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop",
-                phone: "+44 20 7123 4567"
+                phone: "+44 7345 518 417"
               },
               {
                 city: "Singapore",

@@ -203,7 +203,7 @@ export default function Home() {
             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">We partner with the world's leading brands to deliver exceptional logistics solutions.</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 opacity-60 grayscale hover:grayscale-0 transition-all">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {[
               {
                 name: "Maersk",
@@ -211,7 +211,7 @@ export default function Home() {
               },
               {
                 name: "DHL",
-                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/Kuehne%20+%20Nagel%20logo.png",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/dhl%20logo.png",
               },
               {
                 name: "FedEx",
