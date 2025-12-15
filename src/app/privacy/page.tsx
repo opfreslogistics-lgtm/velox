@@ -202,7 +202,7 @@ export default function PrivacyPage() {
               <p className="font-semibold text-brand-black dark:text-white">Sand Global Express</p>
               <p>Email: <a href="mailto:privacy@sandgloexpress.com" className="text-brand-red hover:underline">privacy@sandgloexpress.com</a></p>
               <p>Address: Coldbath Square, London, United Kingdom</p>
-              <p>Phone: +44 7448 88561</p>
+              <p>Phone: +44 7345 518 417</p>
             </div>
           </section>
         </div>

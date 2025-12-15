@@ -1427,7 +1427,7 @@ export default function ShipmentsPage() {
                       value={currentShipment.agent_phone || ''}
                       onChange={(e) => handleFieldChange('agent_phone', e.target.value)}
                       className="w-full p-3 rounded bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:border-brand-red dark:text-white"
-                      placeholder="e.g. +44 7448 88561"
+          placeholder="e.g. +44 7345 518 417"
                     />
                   </div>
                   <div className="space-y-2">

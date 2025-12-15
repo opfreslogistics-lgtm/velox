@@ -86,8 +86,7 @@ const ContactPage: React.FC = () => {
                       </div>
                       <div>
                          <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Call Us</p>
-                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+44 7448 88561</p>
-                         <p className="text-gray-600 dark:text-gray-300 font-semibold">+44 7345 518 417</p>
+                         <p className="text-brand-black dark:text-white font-extrabold text-xl">+44 7345 518 417</p>
                          <p className="text-gray-500 text-sm flex items-center gap-1 mt-1"><Clock size={12}/> Mon-Fri: 8am - 8pm EST</p>
                       </div>
                    </div>
@@ -375,7 +374,7 @@ const ContactPage: React.FC = () => {
                 icon: Phone,
                 title: "Phone Support",
                 description: "24/7 phone support for urgent matters",
-                contact: "+44 7448 88561",
+                contact: "+44 7345 518 417",
                 hours: "Mon-Fri: 8am - 8pm EST"
               },
               {
