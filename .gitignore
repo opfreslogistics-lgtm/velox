@@ -28,8 +28,8 @@ build
 .env*.local
 .env.production
 .env.development
-envexample.md
-envexample.md
+# Note: envexample.md should be committed (it's a template with placeholders)
+# Only actual .env files with real credentials should be ignored
 
 # Vercel
 .vercel

@@ -205,17 +205,49 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 opacity-60 grayscale hover:grayscale-0 transition-all">
             {[
-              "Maersk",
-              "DHL",
-              "FedEx",
-              "UPS",
-              "Amazon Logistics",
-              "DB Schenker",
-              "Kuehne + Nagel",
-              "CEVA Logistics"
-            ].map((name, i) => (
-              <div key={i} className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800 flex items-center justify-center h-32">
-                <div className="text-xl font-bold text-gray-400 text-center">{name}</div>
+              {
+                name: "Maersk",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/maersk%20logo.png",
+              },
+              {
+                name: "DHL",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/Kuehne%20+%20Nagel%20logo.png",
+              },
+              {
+                name: "FedEx",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/fedex%20logo.png",
+              },
+              {
+                name: "UPS",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/ups%20logo.jpg",
+              },
+              {
+                name: "Amazon Logistics",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/amazon-logistics-logo.webp",
+              },
+              {
+                name: "DB Schenker",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/DB_Schenker_logo.svg.png",
+              },
+              {
+                name: "Kuehne + Nagel",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/Kuehne%20+%20Nagel%20logo.png",
+              },
+              {
+                name: "CEVA Logistics",
+                logo: "https://lasenhevaefulhabxqar.supabase.co/storage/v1/object/public/website-images/CEVA_Logo_HR.jpg",
+              },
+            ].map((partner, i) => (
+              <div
+                key={i}
+                className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800 flex items-center justify-center h-32"
+              >
+                <img
+                  src={partner.logo}
+                  alt={`${partner.name} logo`}
+                  className="max-h-14 w-full object-contain"
+                  loading="lazy"
+                />
               </div>
             ))}
           </div>
